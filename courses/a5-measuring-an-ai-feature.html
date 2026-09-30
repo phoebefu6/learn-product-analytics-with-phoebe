@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 5 of 6. The event chain an AI suggestion travels, what the one large study of a code assistant actually found (acceptance rate correlates with perceived productivity at rho 0.24, and persistence less well), and how to choose the metric for the decision instead of the metric that flatters the feature.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Measuring an AI feature - learn product analytics with phoebe">
+<meta property="og:description" content="Leader session 5 of 6. Shown, accepted, kept, edited, deleted: the chain behind every AI feature metric, what Ziegler et al. found about acceptance rate, and a one-page metric sheet you write tonight.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/a5-measuring-an-ai-feature.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Measuring an AI feature - learn product analytics with phoebe">
+<meta name="twitter:description" content="Leader session 5 of 6. Acceptance rate, persistence, and the metric that fits the decision.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 5 · Measuring an AI feature - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Leader session 5 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Leader track · Session 5 of 6</div>
+    <h1>Measuring an <span class="accent">AI feature</span></h1>
+    <p class="sub">An AI feature does something no ordinary feature does: it makes a proposal, and the user decides what to do with it. That one extra step is why the usual adoption numbers from session 4 stop being enough. A suggestion can be shown and ignored, accepted and kept, accepted and rewritten, accepted and deleted ten minutes later. Tonight we draw that chain as events, read exactly what the one large published study of a code assistant found about the metric everyone quotes, and then choose the metric for the decision in front of you rather than the one that flatters the feature.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Hands-on</span>
+      <span class="chip audience">Product managers and product leaders</span>
+      <span class="chip audience">No code</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · The chain, the study, the choice</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: the AI feature metric sheet</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Most AI feature reviews open with one number: the acceptance rate. It is easy to compute, it moves when the model changes, and the vendor dashboards put it first. It is also a measurement of a click, not of value. The best evidence available comes from GitHub's own researchers, who asked 2,047 developers how productive they felt and matched the answers to their usage data. Their headline is careful and often misread: acceptance rate tracks how productive people <em>feel</em>, not how much of the suggested code survives. Everything tonight hangs on holding those two things apart. One honesty note before we begin: no real AI-feature event stream is public, so the worked comparison in Part 3 runs on a constructed stream and says so wherever it appears.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = you make the artifact</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A one-page AI feature metric sheet for a feature you own or are about to ship: the event chain it needs written into the tracking plan, the single decision the metric has to serve, one primary metric and one guardrail chosen for that decision, and a line naming how the primary metric could be gamed. Plus the sentence to say when someone puts the acceptance rate on a slide as if it were value.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the event chain of an AI feature</span>
+      <h2>Shown, accepted, kept, edited, deleted</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">An ordinary feature has one moment worth writing down: it was used. An AI feature has a chain. The suggestion is shown; the user accepts it or does not; and if accepted, the code, the sentence or the reply then lives on in the document where it can be kept unchanged, edited or deleted. The study we lean on tonight checked that last question at four clocks: 30, 120, 300 and 600 seconds after acceptance. Every honest AI feature metric is a ratio between two links of this chain, so the chain has to be in the tracking plan before any metric can exist.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The event chain of an AI suggestion, drawn left to right. Suggestion Shown leads to Suggestion Accepted or, more often, to Suggestion Dismissed. From Accepted, three arrows run through two dashed clock lines at 30 seconds and 600 seconds to three endings: kept unchanged, edited, deleted. A note says acceptance rate is measured at the second box and persistence at the three endings, with a clock. In the study, 27 percent of shown suggestions were accepted.">
+        <defs>
+          <filter id="a5aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a5aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a5aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a5aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a5aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a5aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a5aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a5aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a5aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a5aH" x="30" y="26">THE CHAIN ONE AI SUGGESTION TRAVELS</text>
+        <text class="a5aS" x="300" y="26">one proposal, four endings, checked at two clocks</text>
+
+        <g filter="url(#a5aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the two clock lines -->
+          <path d="M540 56 L540 250" stroke="#4B5372" stroke-dasharray="5 4"/>
+          <path d="M596 56 L596 250" stroke="#4B5372" stroke-dasharray="5 4"/>
+          <!-- shown -->
+          <rect x="30" y="100" width="160" height="44" rx="8" transform="rotate(-0.8 110 122)" fill="#EEF1FF"/>
+          <!-- accepted -->
+          <rect x="270" y="100" width="170" height="44" rx="8" transform="rotate(0.6 355 122)" fill="#FFFFFF"/>
+          <!-- dismissed pile -->
+          <rect x="270" y="196" width="170" height="44" rx="8" transform="rotate(-0.5 355 218)" fill="url(#a5aHc)"/>
+          <!-- endings -->
+          <rect x="650" y="60" width="200" height="40" rx="8" transform="rotate(0.7 750 80)" fill="#F7B928" stroke="#614300"/>
+          <rect x="650" y="120" width="200" height="40" rx="8" transform="rotate(-0.6 750 140)" fill="#FFFFFF"/>
+          <rect x="650" y="180" width="200" height="40" rx="8" transform="rotate(0.5 750 200)" fill="#FFFFFF" stroke="#4B5372"/>
+          <!-- arrows -->
+          <path d="M190 122 L262 122" marker-end="url(#a5aAr)"/>
+          <path d="M110 144 C110 200 180 218 262 218" marker-end="url(#a5aAr)"/>
+          <path d="M440 116 C520 100 560 80 642 80" marker-end="url(#a5aAr)"/>
+          <path d="M440 124 C520 130 560 140 642 140" marker-end="url(#a5aAr)"/>
+          <path d="M440 132 C520 160 560 200 642 200" marker-end="url(#a5aAr)"/>
+          <!-- doodle: a clock -->
+          <circle cx="568" cy="282" r="14" fill="#FFFFFF"/>
+          <path d="M568 282 L568 272 M568 282 L575 286"/>
+        </g>
+
+        <text class="a5aL" x="54" y="127">Suggestion Shown</text>
+        <text class="a5aS" x="54" y="164">the denominator of everything</text>
+        <text class="a5aL" x="292" y="127">Suggestion Accepted</text>
+        <text class="a5aA" x="292" y="164">acceptance rate lives here</text>
+        <text class="a5aL" x="292" y="223">Suggestion Dismissed</text>
+        <text class="a5aS" x="292" y="260">most suggestions end here: 27% accepted in the study</text>
+        <text class="a5aA" x="540" y="48" text-anchor="middle">30 s</text>
+        <text class="a5aA" x="596" y="48" text-anchor="middle">600 s</text>
+        <text class="a5aB" x="672" y="85">Kept unchanged</text>
+        <text class="a5aL" x="672" y="145">Edited</text>
+        <text class="a5aS" x="730" y="145">some of it survived</text>
+        <text class="a5aL" x="672" y="205">Deleted</text>
+        <text class="a5aS" x="740" y="205">accepted, then gone</text>
+        <text class="a5aS" x="672" y="240">persistence is read here, at a clock</text>
+        <text class="a5aS" x="590" y="286">the clock is part of the metric</text>
+
+        <text class="a5aN" x="30" y="322">Acceptance is a ratio of the first two boxes. Persistence is a ratio of the gold box to the accepted box, at a stated time.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold box is the one that means "this actually helped"; acceptance never looks at it</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The five events, in Object Action form<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Suggestion Shown</strong> is the denominator of every metric that follows, so it needs a stable id for the suggestion, the length of what was proposed, and the moment it appeared. <strong>Suggestion Accepted</strong> and <strong>Suggestion Dismissed</strong> are the user's answer, and Dismissed includes the quiet case where the person simply kept typing. Ziegler et al. define acceptance rate as "the fraction of completions shown to the developer that are subsequently accepted for inclusion in the source file", which is exactly the second box divided by the first.</p>
+        <p>The last link is the one most tracking plans forget: <strong>Suggestion Persisted</strong>, checked at a fixed clock after acceptance, recording how much of the accepted text is still there. The study used 30, 120, 300 and 600 seconds. Without that event, "accepted" is the end of the story, and the story then cannot tell a suggestion that shipped from one that was deleted before the developer's next coffee. Kept, edited and deleted are three values of one property on that event, not three events, following the no-variables rule from session 1.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why a clock has to be in the definition<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>"Kept" without a time is not a metric, because every accepted suggestion is kept at the instant it is accepted and almost none is kept forever. The clock decides what the number means. Thirty seconds after acceptance mostly measures whether the person immediately regretted it. Ten minutes measures whether it survived the first round of real work around it. Two teams comparing "kept rates" at different clocks are not comparing anything, so the clock is written into the tracking plan as a property and printed on the chart. The same discipline applied to "active" in session 3: the window is part of the definition.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The vendor says it too.</strong> GitHub's own metrics documentation describes acceptance rate as a signal that "measures how often developers accept Copilot's suggestions", and then adds the line most dashboards leave off: "Look for patterns across these signals rather than focusing on any single number". When the company that ships the feature warns you not to run on one number, the burden is on anyone who does.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers what Ziegler et al. found, exactly</span>
+      <h2>Acceptance tracks how productive people feel</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">In 2022 eight GitHub researchers emailed 17,420 Copilot users and matched 2,047 survey responses to those users' real usage data, collected between 10 February and 6 March 2022. They then asked which usage metric best lined up with how productive people said they were. The answer was acceptance rate, at a rank correlation of 0.24. Every persistence measure did worse. That result is real, published and useful, and it is about perception. Read the abstract's own wording once, slowly.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn scale of rank correlation with perceived productivity from 0 to 1. One gold bar for acceptance rate reaches 0.24, labelled rho equals 0.24, P below 0.0001, from 2,047 matched survey responses. Below it a dashed, hatched row for the persistence measures at 30, 120, 300 and 600 seconds is labelled less well correlated, exact values not quoted here. A bracket under the axis from 0.24 to 1 is labelled notable unexplained variance, in the study's own words. A small clipboard doodle notes that 2,047 of 17,420 emailed users answered.">
+        <defs>
+          <filter id="a5bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a5bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a5bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a5bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a5bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a5bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a5bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a5bV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .a5bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a5bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a5bH" x="30" y="26">HOW WELL EACH USAGE METRIC LINES UP WITH PERCEIVED PRODUCTIVITY</text>
+        <text class="a5bS" x="520" y="26">Spearman rank correlation, 0 = none, 1 = perfect</text>
+
+        <g filter="url(#a5bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- acceptance bar: 0.24 of 560px = 134px -->
+          <rect x="250" y="64" width="134" height="36" rx="6" transform="rotate(-0.4 317 82)" fill="#F7B928" stroke="#614300"/>
+          <!-- persistence row: dashed, no value -->
+          <rect x="250" y="120" width="134" height="36" rx="6" transform="rotate(0.4 317 138)" fill="url(#a5bHc)" stroke="#4B5372" stroke-dasharray="6 4"/>
+          <path d="M384 138 L420 138" stroke="#4B5372" stroke-dasharray="3 4"/>
+          <!-- axis -->
+          <path d="M250 200 L818 200" marker-end="url(#a5bAr)"/>
+          <path d="M250 194 L250 206 M390 194 L390 206 M530 194 L530 206 M670 194 L670 206 M810 194 L810 206"/>
+          <!-- unexplained bracket -->
+          <path d="M384 232 L384 242 L810 242 L810 232" stroke="#1030B0"/>
+          <!-- doodle: clipboard -->
+          <rect x="40" y="196" width="56" height="64" rx="5" transform="rotate(-3 68 228)" fill="#FFFFFF"/>
+          <path d="M58 188 L78 188"/>
+          <path d="M50 216 L86 216 M50 230 L86 230 M50 244 L74 244" stroke="#C8CFEA"/>
+        </g>
+
+        <text class="a5bL" x="30" y="82">Acceptance rate</text>
+        <text class="a5bS" x="30" y="98">shown -&gt; accepted</text>
+        <text class="a5bV" x="398" y="86">rho = 0.24</text>
+        <text class="a5bS" x="498" y="86">P &lt; 0.0001, the best of the metrics tested</text>
+        <text class="a5bL" x="30" y="138">Persistence</text>
+        <text class="a5bS" x="30" y="154">kept at 30, 120, 300, 600 s</text>
+        <text class="a5bL" x="430" y="136">less well correlated</text>
+        <text class="a5bS" x="430" y="152">each of the four clocks; exact values not quoted here</text>
+
+        <text class="a5bA" x="250" y="222" text-anchor="middle">0</text>
+        <text class="a5bA" x="390" y="222" text-anchor="middle">0.25</text>
+        <text class="a5bA" x="530" y="222" text-anchor="middle">0.5</text>
+        <text class="a5bA" x="670" y="222" text-anchor="middle">0.75</text>
+        <text class="a5bA" x="810" y="222" text-anchor="middle">1</text>
+        <text class="a5bB" x="597" y="262" text-anchor="middle">"there is still notable unexplained variance"</text>
+        <text class="a5bS" x="120" y="228">2,047 answers</text>
+        <text class="a5bS" x="120" y="244">of 17,420 emailed</text>
+
+        <text class="a5bN" x="30" y="296">A real, significant, modest correlation with how people feel. Nothing on this scale measures the value of the code.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the bracket is the finding people skip: three quarters of the scale is what acceptance rate does not explain</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The abstract, and the two words that matter<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The abstract states the result this way: "the rate with which shown suggestions are accepted, rather than more specific metrics regarding the persistence of completions in the code over time, drives developers' perception of productivity". The two words are <em>perception of</em>. The outcome variable in the study is a survey answer about feeling productive, scored across the SPACE framework's dimensions of satisfaction, performance, communication and efficiency. It is not lines shipped, not bugs, not review time, not revenue. The study is explicit about this and its authors were careful; the slides that quote it usually are not.</p>
+        <p>In section 4 they report acceptance rate correlating with aggregate perceived productivity at rho = 0.24, P &lt; 0.0001, then add in the same breath that "there is still notable unexplained variance". A correlation of 0.24 is real and it is small: it means acceptance rate is a legitimate early signal of whether people like the feature, and a poor stand-in for anything else. The persistence measures, which come closest to "did the code survive", were all less well correlated with the survey. That is the part that surprises people, and it is the part to remember: the metric closest to value is the one furthest from how the feature feels.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why acceptance is not value, in one sentence<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Accepting a suggestion costs a keystroke and commits nobody to anything; it is the cheapest possible yes. A person can accept because reading the proposal is slower than accepting and then fixing it, or because the suggestion is short and harmless, or because accepting is the path of least resistance in the interface. All of those raise acceptance rate and none of them is the feature doing the work. The sentence to keep for the product review is: <strong>acceptance measures how often the yes was cheap enough; persistence measures whether the yes was right.</strong> Both are correlations with an outcome nobody has measured directly, and neither proves the feature caused anything; the experimentation course owns that question: <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">learn-experimentation-with-phoebe</a>.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What else the study measured, and did not<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Two more numbers from the paper belong in a leader's pocket. First, the acceptance rate in the study population was 27 percent, and the authors note by comparison that IntelliCode Compose reported a click-through rate of 10 percent, so "normal" for this metric depends heavily on the product and on what counts as shown. Second, acceptance moved with the clock on the wall: 23.5 percent at weekends, 23 percent in weekday non-working hours, 21.2 percent during working hours. If the same people accept more when they are relaxed, a week-on-week rise in acceptance rate may be a calendar effect before it is a model effect.</p>
+        <p>What the study did not do matters as much. It did not measure code quality, time to complete a task, or defects. It surveyed a self-selected 2,047 of 17,420 users, which is the usual limitation of any survey matched to usage: the people who answer are not the people who left. Treat every number above as a description of one product's users in one month of 2022, not as a law about AI features.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Eight researchers, one careful sentence.</strong> Ziegler, Kalliamvakou, Simister, Sittampalam, Li, Rice, Rifkin and Aftandilian could have titled their paper around "acceptance rate predicts productivity". They wrote "Productivity Assessment of Neural Code Completion" and put "perception" in the abstract. Between the paper and the slide deck that cites it, the word perception is what tends to go missing. The habit to build is to read the abstract of anything quoted at you in a review, and to look for the word the slide dropped.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers choosing the metric for the decision</span>
+      <h2>Three metrics, two winners</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">The metric has to be chosen for the decision, and the fastest way to feel why is to watch one decision flip depending on which metric judges it. The comparison below is <strong>constructed</strong>: a seeded stream of 200 developers per arm over one week, one arm receiving short single-line suggestions and the other long block suggestions, with every rate an assumption written into the generating script. It is not a measurement of any real product. It is built so that the three most common AI metrics disagree, because in practice they do.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three small hand-drawn panels comparing a short-suggestion arm and a long-suggestion arm of a constructed code-assistant stream. Panel one, acceptance rate: short 0.262, long 0.309, long wins. Panel two, share of accepted suggestions still kept unchanged at 600 seconds: short 0.618, long 0.408, short wins; deleted by 600 seconds is 0.078 versus 0.190. Panel three, characters kept at 600 seconds per suggestion shown: short 6.486, long 20.183, long wins. A note says the stream is constructed with seed 2022, 200 developers per arm for one week, and the rates are assumptions, not measurements.">
+        <defs>
+          <filter id="a5cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a5cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a5cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a5cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a5cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a5cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a5cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a5cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .a5cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a5cH" x="30" y="26">SAME TWO ARMS, THREE METRICS, TWO DIFFERENT WINNERS</text>
+        <text class="a5cS" x="470" y="26">constructed stream, short (line) vs long (block)</text>
+
+        <g filter="url(#a5cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three panels -->
+          <rect x="30" y="44" width="260" height="226" rx="10" transform="rotate(-0.3 160 157)" fill="#FFFFFF"/>
+          <rect x="310" y="44" width="260" height="226" rx="10" transform="rotate(0.3 440 157)" fill="#FFFFFF"/>
+          <rect x="590" y="44" width="260" height="226" rx="10" transform="rotate(-0.2 720 157)" fill="#FFFFFF"/>
+          <!-- panel 1: acceptance, scale 0.4 = 200px -->
+          <rect x="46" y="112" width="131" height="28" rx="4" transform="rotate(0.5 111 126)" fill="#EEF1FF"/>
+          <rect x="46" y="176" width="155" height="28" rx="4" transform="rotate(-0.5 123 190)" fill="#F7B928" stroke="#614300"/>
+          <!-- panel 2: kept 600 s of accepted, scale 0.7 = 200px -->
+          <rect x="326" y="112" width="177" height="28" rx="4" transform="rotate(-0.4 414 126)" fill="#F7B928" stroke="#614300"/>
+          <rect x="326" y="176" width="117" height="28" rx="4" transform="rotate(0.5 384 190)" fill="#EEF1FF"/>
+          <!-- panel 3: chars kept per shown, scale 25 = 200px -->
+          <rect x="606" y="112" width="52" height="28" rx="4" transform="rotate(0.6 632 126)" fill="#EEF1FF"/>
+          <rect x="606" y="176" width="161" height="28" rx="4" transform="rotate(-0.4 686 190)" fill="#F7B928" stroke="#614300"/>
+          <!-- doodle: winner ticks -->
+          <circle cx="60" cy="244" r="8" fill="#FFF4D6" stroke="#614300"/><path d="M56 244 L59 247 L64 240" stroke="#614300"/>
+          <circle cx="340" cy="244" r="8" fill="#FFF4D6" stroke="#614300"/><path d="M336 244 L339 247 L344 240" stroke="#614300"/>
+          <circle cx="620" cy="244" r="8" fill="#FFF4D6" stroke="#614300"/><path d="M616 244 L619 247 L624 240" stroke="#614300"/>
+        </g>
+
+        <text class="a5cH" x="46" y="70">Acceptance rate</text>
+        <text class="a5cS" x="46" y="86">accepted / shown</text>
+        <text class="a5cS" x="46" y="106">short</text>
+        <text class="a5cV" x="185" y="133">0.262</text>
+        <text class="a5cS" x="46" y="170">long</text>
+        <text class="a5cV" x="209" y="197">0.309</text>
+        <text class="a5cB" x="76" y="248">long wins</text>
+
+        <text class="a5cH" x="326" y="70">Kept unchanged at 600 s</text>
+        <text class="a5cS" x="326" y="86">of accepted; deleted: 0.078 vs 0.190</text>
+        <text class="a5cS" x="326" y="106">short</text>
+        <text class="a5cV" x="511" y="133">0.618</text>
+        <text class="a5cS" x="326" y="170">long</text>
+        <text class="a5cV" x="451" y="197">0.408</text>
+        <text class="a5cB" x="356" y="248">short wins</text>
+
+        <text class="a5cH" x="606" y="70">Characters kept per shown</text>
+        <text class="a5cS" x="606" y="86">at 600 s, all suggestions counted</text>
+        <text class="a5cS" x="606" y="106">short</text>
+        <text class="a5cV" x="666" y="133">6.486</text>
+        <text class="a5cS" x="606" y="170">long</text>
+        <text class="a5cV" x="775" y="197">20.183</text>
+        <text class="a5cB" x="636" y="248">long wins</text>
+
+        <text class="a5cN" x="30" y="300">Constructed stream (seed 2022, 200 developers per arm, one week). Every rate is an assumption, not a measurement.</text>
+        <text class="a5cN" x="30" y="318">Long suggestions get accepted more and deleted more; each metric is right about the thing it counts.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - no metric is lying; the decision "ship long or short" gets a different answer from each, so the decision has to pick the metric first</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Read the table the way the decision needs it<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The constructed stream has 119,905 shown suggestions in total, 60,023 in the long arm and 59,882 in the short arm. Long wins on acceptance, 0.309 to 0.262, and wins by a wide margin on characters kept per suggestion shown, 20.183 to 6.486, because a block carries far more text than a line even after the deletions. Short wins on persistence: 0.618 of its accepted suggestions are still unchanged at 600 seconds against 0.408 for long, and only 0.078 of short acceptances have been deleted by then against 0.190 for long. Read across a row and each metric is correct about what it counts. Read down the winners column and the "which arm to ship" decision flips twice.</p>
+        <table>
+          <caption>Constructed code-assistant stream, seed 2022; two arms of 200 developers over one week; rates are assumptions in the generating script, not measurements of any real product</caption>
+          <thead><tr><th>Metric</th><th>Short (line)</th><th>Long (block)</th><th>Favours</th></tr></thead>
+          <tbody>
+            <tr><td>Suggestions shown</td><td>59,882</td><td>60,023</td><td>-</td></tr>
+            <tr><td>Acceptance rate</td><td>0.262</td><td>0.309</td><td>long</td></tr>
+            <tr><td>Kept unchanged at 30 s, of accepted</td><td>0.800</td><td>0.693</td><td>short</td></tr>
+            <tr><td>Kept unchanged at 600 s, of accepted</td><td>0.618</td><td>0.408</td><td>short</td></tr>
+            <tr><td>Deleted by 600 s, of accepted</td><td>0.078</td><td>0.190</td><td>short</td></tr>
+            <tr><td>Characters kept at 600 s, per shown</td><td>6.486</td><td>20.183</td><td>long</td></tr>
+          </tbody>
+        </table>
+        <p>So which arm is better? Wrong question. If the decision is "does the feature earn its place on the screen", characters kept per shown is the closest thing to a value metric on the table and long wins. If the decision is "are we teaching developers to accept things they then throw away", persistence and the deletion share are the metrics and short wins. If the decision is "do users like it", acceptance is the perception signal Ziegler found and long wins, modestly. Name the decision, then read one column.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Averages hide the spread<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Even in a constructed stream, developers differ more than arms do. The 10th to 90th percentile of per-developer acceptance runs 0.177 to 0.467 in the long arm and 0.127 to 0.390 in the short arm, so the two ranges overlap across most of their width. An arm-level average of 0.309 versus 0.262 is a small gap sitting on top of a wide spread, and in a real product the spread would also carry seniority, language, task type and time of day. When an AI metric is reported for a team of fewer than a few hundred people, ask for the spread before believing the average; a group of 200 is small enough for a handful of heavy users to move it.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>A common pattern, no numbers attached.</strong> A team ships longer suggestions because acceptance rose in the release notes, and two months later engineers complain the assistant "writes stuff we delete". Nobody lied: the team optimised the metric it was shown. The fix is the sheet you write in the build-along: a primary metric chosen for the decision, and a guardrail that would have caught the deletions before they became a complaint.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>The AI feature metric sheet</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">One page, five rows, for an AI feature you own or are about to ship. Pick a real one: a draft reply, a summary, an autocomplete, a suggested tag. The example row below is a constructed "Draft Reply" feature in a support tool, named so it does not collide with any real product; your rows will differ. The five rows are the same for every AI feature: its event chain, the one decision the metric serves, the primary metric, the guardrail, and what would game it.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn one-page AI feature metric sheet with five rows: event chain, the decision, primary metric, guardrail, and what games it. A constructed Draft Reply example is filled in: chain Draft Shown, Draft Accepted, Draft Persisted at 60 seconds and 10 minutes; decision whether to keep the feature on by default for new agents; primary metric characters kept at 10 minutes per draft shown; guardrail share of accepted drafts deleted by 10 minutes; games it by showing more short drafts. A gold tab says the example is constructed and your rows will differ.">
+        <defs>
+          <filter id="a5dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a5dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a5dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a5dH { font: 800 11px Inter, sans-serif; fill: #0F1535; letter-spacing: .04em; }
+          .a5dL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a5dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a5dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a5dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a5dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="30" width="820" height="192" rx="8" transform="rotate(-0.3 440 126)" fill="#FFFFFF"/>
+          <path d="M30 58 L850 58"/>
+          <path d="M230 30 L230 222" stroke="#C8CFEA"/>
+          <path d="M40 90 L840 90 M40 122 L840 122 M40 154 L840 154 M40 186 L840 186" stroke="#E0E4F5"/>
+          <rect x="236" y="128" width="600" height="22" rx="4" fill="#EEF1FF" stroke="#EEF1FF"/>
+          <rect x="30" y="232" width="330" height="28" rx="6" transform="rotate(0.8 195 246)" fill="#F7B928" stroke="#614300"/>
+          <!-- doodle: a pencil resting on the sheet -->
+          <path d="M790 240 L832 206 M796 246 L838 212 M790 240 L788 250 L796 246 M832 206 L838 212 L842 203 Z"/>
+        </g>
+
+        <text class="a5dH" x="44" y="49">ROW</text>
+        <text class="a5dH" x="244" y="49">DRAFT REPLY (CONSTRUCTED EXAMPLE)</text>
+        <text class="a5dL" x="44" y="80">Event chain</text>
+        <text class="a5dS" x="244" y="80">Draft Shown -&gt; Accepted / Dismissed -&gt; Persisted at 60 s and 10 min (kept, edited, deleted)</text>
+        <text class="a5dL" x="44" y="112">The one decision</text>
+        <text class="a5dS" x="244" y="112">keep Draft Reply on by default for new agents, or make it opt-in</text>
+        <text class="a5dL" x="44" y="144">Primary metric</text>
+        <text class="a5dS" x="244" y="144">characters kept at 10 min per draft shown: the closest thing to value the chain can see</text>
+        <text class="a5dL" x="44" y="176">Guardrail</text>
+        <text class="a5dS" x="244" y="176">share of accepted drafts deleted by 10 min: rising means we teach cheap yeses</text>
+        <text class="a5dL" x="44" y="208">What games it</text>
+        <text class="a5dS" x="244" y="208">more, shorter drafts lift acceptance; the guardrail and the per-shown denominator catch it</text>
+        <text class="a5dB" x="44" y="251">Constructed example: your rows will differ</text>
+
+        <text class="a5dN" x="380" y="251">Five rows. If a row is blank, the metric is not ready to be on a slide.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the highlighted row is the one people write last and should write first: what decision does this number serve?</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Draw the chain for your feature, as events.</strong> Shown, accepted or dismissed, persisted at a clock. Write the clock down: for code it was 30 to 600 seconds in the study, for an email draft it might be "at send". If your product does not record the persisted event, write "not tracked" in the row and keep going; the gap is the finding.</p>
+        <div class="prompt-box good"><span class="label">★ The chain, in Object Action names with the properties each needs</span>Draft Shown        draft_id · ticket_id · chars_shown · model_version
+Draft Accepted     draft_id · accepted_at
+Draft Dismissed    draft_id · reason = "typed_over" | "closed" | "timed_out"
+Draft Persisted    draft_id · clock = 60 | 600   · state = "kept" | "edited" | "deleted" · chars_kept</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the one decision the metric has to serve.</strong> Not "is the feature good". A decision has two branches and a date: keep it on by default or make it opt-in; ship the long variant or the short one; renew the vendor contract or not. If you cannot name the decision, you are about to choose a metric for a slide, and the slide will choose acceptance rate.</p>
+      </div>
+      <div class="step">
+        <p><strong>Choose the primary metric for that decision.</strong> Perception decision, acceptance rate. Value decision, something kept, per shown, at a stated clock. Quality-of-habit decision, persistence or the deletion share. Say in one line why this metric answers this decision and the others do not.</p>
+        <div class="prompt-box good"><span class="label">★ Primary metric, written so an analyst can build it</span>Metric:      characters kept at 600 s, per Draft Shown
+Numerator:   sum of chars_kept where clock = 600 and state in ("kept", "edited")
+Denominator: count of Draft Shown, all drafts, including dismissed
+Clock:       600 s after Draft Accepted
+Why this:    the decision is about value delivered per interruption, so the
+             denominator must be every draft we showed, not only the accepted ones</div>
+      </div>
+      <div class="step">
+        <p><strong>Choose a guardrail that moves the other way when the primary is gamed.</strong> If the primary rewards volume, the guardrail watches waste: the share of accepted suggestions deleted by the clock. If the primary rewards persistence, the guardrail watches reach: the share of users who ever accept. A guardrail is a metric you promise to look at even when the primary is up.</p>
+      </div>
+      <div class="step">
+        <p><strong>Write what would game it.</strong> One honest line. Every AI metric can be lifted by changing what gets shown rather than making the feature better: show fewer, safer suggestions and acceptance rises; show longer ones and characters rise. Naming the cheapest way to move the number is what makes the number defensible in session 6.</p>
+        <div class="prompt-box good"><span class="label">★ The five rows, complete</span>Event chain:     Draft Shown -&gt; Accepted / Dismissed -&gt; Persisted at 60 s and 600 s
+Decision:        keep Draft Reply on by default for new agents, or make it opt-in (decide 30 Nov)
+Primary metric:  characters kept at 600 s per Draft Shown
+Guardrail:       share of accepted drafts deleted by 600 s
+What games it:   showing more short drafts lifts acceptance; showing fewer drafts lifts
+                 acceptance; neither moves chars kept per shown, and deletions catch the rest</div>
+      </div>
+    </div>
+
+    <div class="prompt-box bad"><span class="label">✗ The sheet that becomes a slide and a shrug</span>Metric: acceptance rate, up 4 points since the model update
+Why: it's what the dashboard shows
+Guardrail: none, acceptance is the standard metric for this
+Decision: TBD</div>
+
+    <div class="callout tip">
+      <p><strong>The denominator is where value hides.</strong> "Kept, of accepted" tells you about the quality of the yeses. "Kept, of shown" tells you what the whole feature delivered per interruption, including every suggestion nobody wanted. They can move in opposite directions, and in the constructed stream they do. When two teams quote a "kept rate", the first question is which denominator.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 6</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find the AI metric your organisation already quotes,</strong> in a deck, a vendor dashboard or a renewal case. Write down its numerator, its denominator and its clock. If any of the three is missing, the metric is not yet defined, and that is the first line of your review.</li>
+      <li><strong>Check whether the persisted event exists.</strong> Ask the analyst or the vendor whether anything records what happened to an accepted suggestion afterwards. "No" is a common and honest answer; write it in the blank-pages tab of the tracking plan from session 1.</li>
+      <li><strong>Read one abstract.</strong> Take the study or benchmark most often cited for your AI feature, read only its abstract, and underline the outcome it actually measured. Compare the underlined words with how the result is quoted internally.</li>
+      <li><strong>Bring the metric sheet.</strong> Session 6 puts your product's numbers, including this one, through the review question set: definition, cohort, denominator, sampling, bots, cause. The AI row is usually where the denominator question bites first.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and leader session 5 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · What did Ziegler et al. (2022) actually find about acceptance rate?</p>
+      <button class="qopt" type="button">A · It predicts code quality better than any other metric, rho = 0.24</button>
+      <button class="qopt" type="button">B · Of the usage metrics tested, it correlated best with developers' self-reported, perceived productivity, at rho = 0.24 with notable unexplained variance; persistence measures correlated less well</button>
+      <button class="qopt" type="button">C · Developers who accept more suggestions ship more features</button>
+      <button class="qopt" type="button">D · Acceptance rate above 27 percent proves an AI feature is working</button>
+      <p class="qwhy">The outcome in the study was a survey of how productive people felt, matched to usage data for 2,047 respondents. Acceptance rate lined up with that feeling best, modestly, and the authors said so in the abstract with the word "perception". Nothing in the study measured code quality or shipped output, and 27 percent is simply what the acceptance rate was in that population.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">2 · Why is acceptance rate not a measure of the value an AI feature delivers?</p>
+      <button class="qopt" type="button">A · Because it is usually below 30 percent, which is too low to matter</button>
+      <button class="qopt" type="button">B · Because it is a vendor metric and vendors cannot be trusted</button>
+      <button class="qopt" type="button">C · Because it counts dismissed suggestions as accepted</button>
+      <button class="qopt" type="button">D · Because accepting is the cheapest possible yes: it ends the chain before kept, edited or deleted is known, and it rises when suggestions are simply shorter or safer, whether or not they help</button>
+      <p class="qwhy">Acceptance is a ratio of the first two links of the chain and never looks at the last. In the constructed stream the arm with the higher acceptance also had the higher deletion share, 0.190 against 0.078. The metric is right about what it counts; it just does not count value.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">3 · Your decision is "ship long block suggestions or short line suggestions". In the constructed comparison, acceptance favours long (0.309 vs 0.262), persistence at 600 s favours short (0.618 vs 0.408) and characters kept per shown favours long (20.183 vs 6.486). What should you do?</p>
+      <button class="qopt" type="button">A · Ship long, because two of the three metrics favour it</button>
+      <button class="qopt" type="button">B · Ship short, because persistence is the only honest metric</button>
+      <button class="qopt" type="button">C · Name what the decision is really about, choose the primary metric that answers it, and put the metric that moves the other way on the sheet as a guardrail</button>
+      <button class="qopt" type="button">D · Average the three metrics and pick the arm with the higher score</button>
+      <p class="qwhy">Counting winners treats three different questions as votes on one. A value-per-interruption decision reads characters kept per shown with deletions as the guardrail; a habit-quality decision reads persistence with reach as the guardrail. The decision picks the column, and the guardrail is the promise to keep watching the column that disagreed.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Acceptance rate defined; persistence at 30, 120, 300, 600 s; SPACE dimensions</span><span class="note">Ziegler, A., Kalliamvakou, E., Simister, S., Sittampalam, G., Li, A., Rice, A., Rifkin, D., and Aftandilian, E. (2022). "Productivity Assessment of Neural Code Completion." MAPS '22. arXiv:2205.06537, sections 2 and 3, read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The finding: acceptance rate vs perceived productivity, rho = 0.24, P &lt; 0.0001, "notable unexplained variance"; persistence measures less well correlated; the abstract's wording</span><span class="note">Same paper, abstract and section 4, quoted in its own words</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Survey scale and study numbers: 17,420 emailed, 2,047 matched responses, 10 February to 6 March 2022; 27 percent acceptance; IntelliCode Compose 10 percent; weekend 23.5, non-working 23, working hours 21.2 percent</span><span class="note">Same paper, sections 2, 3.2 and 5</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The vendor caveat: acceptance rate "measures how often developers accept Copilot's suggestions"; "Look for patterns across these signals rather than focusing on any single number"</span><span class="note">GitHub Docs. "Copilot metrics" concepts page, read at source</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The short vs long comparison: 119,905 shown, acceptance 0.262 vs 0.309, kept 600 s 0.618 vs 0.408, deleted 0.078 vs 0.190, chars kept per shown 6.486 vs 20.183, per-developer spread</span><span class="note">Constructed stream, copilot-constructed.py, seed 2022; every rate is an assumption in the script, not a measurement of any real product</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The Draft Reply metric sheet example</span><span class="note">Constructed for the build-along; not from any real product</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Leader session 5 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>The chain</b><span>Shown, accepted or dismissed, then kept, edited or deleted at a clock. Every metric is a ratio of two links.</span></div>
+      <div class="cheat-item"><b>Acceptance = perception</b><span>Ziegler et al.: rho 0.24 with how productive people feel, "notable unexplained variance". Not value.</span></div>
+      <div class="cheat-item"><b>Persistence needs a clock</b><span>Kept at 30 s and kept at 600 s are different metrics. Print the clock on the chart.</span></div>
+      <div class="cheat-item"><b>Denominator decides</b><span>Kept of accepted judges the yeses; kept of shown judges the feature. Ask which.</span></div>
+      <div class="cheat-item"><b>Decision first, metric second</b><span>Three metrics, two winners in the constructed stream. Name the decision, read one column.</span></div>
+      <div class="cheat-item"><b>Guardrail and gaming</b><span>Pick the metric that moves the other way, and write the cheapest way to lift the primary.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>You now have a tracking plan, an activation candidate, an engagement curve you can defend, an adoption table and an AI metric sheet. Session 6 is the product review: one dashboard, six questions asked in order, definition, cohort, denominator, sampling, bots, cause, worked on real numbers from GitHub's public diary, including the ones on these pages. Bring every artifact you have built.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Leader session 5 of 6 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="a4-adopted-is-not-valued.html">← Prev: Adopted is not valued</a> &nbsp;·&nbsp; <a href="a6-the-product-review.html">Next: The product review →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

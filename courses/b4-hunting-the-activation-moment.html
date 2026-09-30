@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 4 of 8. Load the 8,348-repository cohort, sweep six candidate behaviours across three windows, and read lift, difference and returners caught for the eight bench presets: seen on 2+ days is 5.44x, a busy birth hour is 0.88x.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Hunting the activation moment - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 4 of 8. A candidate list, a threshold sweep, and why the strongest predictor is usually an early copy of the outcome.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b4-hunting-the-activation-moment.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hunting the activation moment - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 4 of 8. Candidates, windows, lift and the sweep, on 8,348 real new repositories.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 4 · Hunting the activation moment - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 4 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 4 of 8</div>
+    <h1>Hunting the <span class="accent">activation moment</span></h1>
+    <p class="sub">An activation moment is a claim: people who do X early come back more than people who do not. The claim is cheap to make and cheap to test, and most teams only ever do the first half. Tonight we load a cohort of 8,348 real new GitHub repositories, write down every early behaviour we can count, sweep the thresholds, and read three numbers per candidate: how many it calls activated, how much more they came back, and how many of the returners it caught. Then we face the part the numbers cannot settle: a behaviour that predicts return is not a behaviour you can push people into.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python, standard library only</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Candidates, lift, cause</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: sweep the cohort</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Session 3 settled what "active" means. Tonight's question is earlier in a life: is there something a new project does in its first hours or days that separates the ones that come back from the ones that do not? GH Archive cannot see sign-ups, so the unit is a birth it can see: a public repository created in one hour, 2024-03-04 15:00 UTC, the first new repository of each non-bot account. 8,348 of them. Their first seven days were sampled every second hour, and "came back" means at least one non-bot event in the sampled hours of days 28 to 41, weeks five and six. 325 of 8,348 came back, 3.9 percent. Most new projects are never touched again, and that is the first finding before any definition is written.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A candidate matrix of six behaviours by three windows, one function that scores any cell of it against the same outcome, the eight preset rows the bench in session 8 uses, and a sweep loop you run yourself. Plus the sentence that keeps the whole exercise honest: "seen on two days" predicts return at 5.44x because it is a small copy of return, not because it can be assigned.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the candidate list and the outcome</span>
+      <h2>Write down every early behaviour you can count</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">A hunt needs a list. Six behaviours can be counted for every repository in its early life: events of any kind, pushes of code, separate days seen, issues or pull requests opened, different people active, and stars received. Three windows: the birth hour, the first day, the first seven days. That is eighteen cells, each of which becomes a candidate once you pick a threshold, and every one of them is scored against the same outcome, came back in weeks five and six. Eight cells have been scored and checked twice, once in Python and once in the browser engine, and they agree on every count. The rest are yours to run tonight.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn grid of six candidate behaviours by three windows, all scored against one outcome: 325 of 8,348 repositories came back in weeks five and six. Cells with a checked number: events of any kind in the birth hour, 10 or more, lift 0.88x, with 2 or more at 1.49x and 5 or more at 1.58x; events in the first 7 days, 3 or more, 2.93x; pushes first day 1 or more, 1.74x; pushes first 7 days, 2.84x; separate days seen in the first 7 days, 2 or more, 5.44x, highlighted; issues or pull requests opened first 7 days, 4.01x; different people first 7 days, 2 or more, 5.45x; stars first 7 days, 3.35x. Separate days is always 1 in the birth hour and the first day by construction. Every other cell says try it.">
+        <defs>
+          <filter id="b4aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b4aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b4aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b4aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b4aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b4aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b4aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b4aV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b4aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b4aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b4aH" x="30" y="26">SIX BEHAVIOURS, THREE WINDOWS, ONE OUTCOME</text>
+        <text class="b4aS" x="336" y="26">lift = return rate of the activated / return rate of the rest</text>
+
+        <g filter="url(#b4aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- doodle anchor: a magnifying glass over the grid corner -->
+          <circle cx="826" cy="22" r="9"/>
+          <path d="M833 29 L846 42"/>
+          <!-- the outcome, hachured: the data every cell is scored against -->
+          <rect x="30" y="44" width="190" height="28" rx="6" transform="rotate(-0.6 125 58)" fill="url(#b4aHc)"/>
+          <!-- column headers -->
+          <rect x="230" y="44" width="190" height="28" rx="6" transform="rotate(0.4 325 58)" fill="#EEF1FF"/>
+          <rect x="440" y="44" width="190" height="28" rx="6" transform="rotate(-0.3 535 58)" fill="#EEF1FF"/>
+          <rect x="650" y="44" width="190" height="28" rx="6" transform="rotate(0.5 745 58)" fill="#EEF1FF"/>
+          <!-- row 1: events of any kind -->
+          <rect x="230" y="84" width="190" height="40" rx="6" transform="rotate(-0.5 325 104)" fill="#FFFFFF"/>
+          <rect x="440" y="84" width="190" height="40" rx="6" transform="rotate(0.6 535 104)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="650" y="84" width="190" height="40" rx="6" transform="rotate(-0.4 745 104)" fill="#FFFFFF"/>
+          <!-- row 2: pushes -->
+          <rect x="230" y="130" width="190" height="40" rx="6" transform="rotate(0.5 325 150)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="440" y="130" width="190" height="40" rx="6" transform="rotate(-0.6 535 150)" fill="#FFFFFF"/>
+          <rect x="650" y="130" width="190" height="40" rx="6" transform="rotate(0.3 745 150)" fill="#FFFFFF"/>
+          <!-- row 3: separate days -->
+          <rect x="230" y="176" width="190" height="40" rx="6" transform="rotate(-0.3 325 196)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="440" y="176" width="190" height="40" rx="6" transform="rotate(0.4 535 196)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="650" y="176" width="190" height="40" rx="6" transform="rotate(-0.6 745 196)" fill="#F7B928" stroke="#614300"/>
+          <!-- row 4: issues or PRs -->
+          <rect x="230" y="222" width="190" height="40" rx="6" transform="rotate(0.6 325 242)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="440" y="222" width="190" height="40" rx="6" transform="rotate(-0.4 535 242)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="650" y="222" width="190" height="40" rx="6" transform="rotate(0.5 745 242)" fill="#FFFFFF"/>
+          <!-- row 5: people -->
+          <rect x="230" y="268" width="190" height="40" rx="6" transform="rotate(-0.5 325 288)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="440" y="268" width="190" height="40" rx="6" transform="rotate(0.3 535 288)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="650" y="268" width="190" height="40" rx="6" transform="rotate(-0.4 745 288)" fill="#FFFFFF"/>
+          <!-- row 6: stars -->
+          <rect x="230" y="314" width="190" height="40" rx="6" transform="rotate(0.4 325 334)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="440" y="314" width="190" height="40" rx="6" transform="rotate(-0.5 535 334)" fill="#FFFFFF" stroke="#C8CFEA"/>
+          <rect x="650" y="314" width="190" height="40" rx="6" transform="rotate(0.6 745 334)" fill="#FFFFFF"/>
+        </g>
+
+        <text class="b4aL" x="42" y="62">came back wk 5-6: 325 of 8,348</text>
+        <text class="b4aA" x="325" y="62" text-anchor="middle">the birth hour</text>
+        <text class="b4aA" x="535" y="62" text-anchor="middle">the first day</text>
+        <text class="b4aA" x="745" y="62" text-anchor="middle">the first 7 days</text>
+
+        <text class="b4aL" x="30" y="108">events of any kind</text>
+        <text class="b4aL" x="242" y="100">10+ · 0.88x</text>
+        <text class="b4aS" x="242" y="116">2+ · 1.49x · 5+ · 1.58x</text>
+        <text class="b4aS" x="535" y="108" text-anchor="middle">try it</text>
+        <text class="b4aL" x="662" y="108">3+ · 2.93x</text>
+
+        <text class="b4aL" x="30" y="154">pushes of code</text>
+        <text class="b4aS" x="325" y="154" text-anchor="middle">try it</text>
+        <text class="b4aL" x="452" y="154">1+ · 1.74x</text>
+        <text class="b4aL" x="662" y="154">1+ · 2.84x</text>
+
+        <text class="b4aL" x="30" y="200">separate days seen</text>
+        <text class="b4aS" x="325" y="200" text-anchor="middle">always 1, by construction</text>
+        <text class="b4aS" x="535" y="200" text-anchor="middle">always 1, by construction</text>
+        <text class="b4aB" x="662" y="200">2+ · 5.44x</text>
+
+        <text class="b4aL" x="30" y="246">issues or PRs opened</text>
+        <text class="b4aS" x="325" y="246" text-anchor="middle">try it</text>
+        <text class="b4aS" x="535" y="246" text-anchor="middle">try it</text>
+        <text class="b4aL" x="662" y="246">1+ · 4.01x</text>
+
+        <text class="b4aL" x="30" y="292">different people active</text>
+        <text class="b4aS" x="325" y="292" text-anchor="middle">try it</text>
+        <text class="b4aS" x="535" y="292" text-anchor="middle">try it</text>
+        <text class="b4aL" x="662" y="292">2+ · 5.45x</text>
+
+        <text class="b4aL" x="30" y="338">stars received</text>
+        <text class="b4aS" x="325" y="338" text-anchor="middle">try it</text>
+        <text class="b4aS" x="535" y="338" text-anchor="middle">try it</text>
+        <text class="b4aL" x="662" y="338">1+ · 3.35x</text>
+
+        <text class="b4aN" x="30" y="384">Eight cells are checked canon, agreed by two engines. A lift is a correlation on one hour's cohort; the pale cells are the sweep you run tonight.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the grid is the whole hunt: pick a cell, pick a threshold, score it against the same 325 returners</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The outcome comes first, and it is fixed<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every candidate is scored against one outcome that never moves: a non-bot event on the repository in the sampled hours of days 28 to 41. Fixing it before the hunt is what stops the hunt from cheating. If you let the outcome drift with each candidate, "pushed on day one" gets scored against "pushed again in week five" and "opened an issue" against "issues in week five", and every candidate looks like the one. One outcome, one denominator of 8,348, one count of 325 returners, and every definition has to earn its lift against the same bar.</p>
+        <p>The 3.9 percent is low and that is expected: public repositories are cheap to create and most are a test, a fork of a tutorial or a one-off script. A workspace-based product would see a higher base rate, but the shape of the hunt is identical: a birth event the stream can see, a short early window, a later window that says "still here".</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the six behaviours can and cannot see<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Each count is "seen in the sampled hours": every second hour of the first seven days, 84 files, then every second hour of days 28 to 41, 168 files. A push at 15:30 in a sampled hour is seen; a push at 16:30 is not. That undercounts every behaviour equally, so lifts between candidates stay comparable while every absolute count is a floor. Events by <code>[bot]</code> logins are dropped everywhere; bots without the suffix cannot be told apart from people by name and stay in.</p>
+        <p>"Separate days seen" is only meaningful in the seven-day window: in the birth hour and the first day it is 1 for every repository that has any event at all, so those two cells are not candidates and the grid says so. Stars are the odd one out in the list, and Part 3 says why.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Slack's 2,000 messages.</strong> Stewart Butterfield told First Round Review in 2015 that a team which has exchanged 2,000 messages has "really tried" Slack, and that 93 percent of such teams were still using it. Read the sentence the way tonight's grid reads a cell: the threshold was chosen "based on experience of which companies stuck with us and which didn't", and a team that reaches 2,000 messages has, by definition, already stayed long enough to send them. It is a real finding about the teams that kept going and a weak one about what makes a new team keep going. The 93 percent is the return rate of the activated; the number the interview does not give is the return rate of the rest, which is what a lift needs.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers lift, difference and returners caught</span>
+      <h2>Three numbers per candidate, and none of them is enough alone</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Take "pushed code on the first day". 2,779 repositories did, 33.3 percent of the cohort. Of those, 151 came back, 5.4 percent. Of the other 5,569, 174 came back, 3.1 percent. Lift is the ratio, 1.74x. The difference is 2.3 points. And of all 325 returners, this definition caught 151, 46.5 percent. Move the same behaviour to a seven-day window and every number changes: 3,268 activated, 6.4 percent came back against 2.3 percent, lift 2.84x, 64.6 percent of returners caught. Same behaviour, different threshold, a different story. That is why a single hand-picked definition is a guess, and a sweep is the job.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 412" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn scatter of the eight bench presets. Horizontal axis: share of the cohort a definition calls activated, 0 to 50 percent. Vertical axis: lift, 0 to 6x. A dashed line at 1.0x marks no signal, and a hachured band from 0.85x to 1.33x shows where the seeded shuffle lands. Points: ppl2, 2 or more people in 7 days, 3.4 percent activated, lift 5.45x, caught 16.3 percent; days2, seen on 2 or more days, 14.2 percent, 5.44x, caught 47.4 percent, highlighted; work1, 2.6 percent, 4.01x, caught 9.5 percent; star1, 2.3 percent, 3.35x, caught 7.4 percent; push7, 39.1 percent, 2.84x, caught 64.6 percent; vol3, 3 or more events in 7 days, 46.0 percent, 2.93x, caught 71.4 percent; push1, 33.3 percent, 1.74x, caught 46.5 percent; burst10, 10 or more events in the birth hour, 1.4 percent, 0.88x, caught 1.2 percent, 117 rows and small.">
+        <defs>
+          <filter id="b4bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b4bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b4bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b4bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b4bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b4bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b4bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b4bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b4bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b4bH" x="30" y="26">EIGHT PRESETS: HOW MANY YOU CALL ACTIVATED, AGAINST HOW MUCH THEY RETURN</text>
+
+        <g filter="url(#b4bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes -->
+          <path d="M80 40 L80 340 L800 340" marker-end="url(#b4bAr)"/>
+          <path d="M80 40 L80 36" marker-end="url(#b4bAr)"/>
+          <!-- the shuffle band: 0.85x to 1.33x -->
+          <rect x="82" y="274" width="716" height="24" fill="url(#b4bHc)" stroke="none"/>
+          <!-- lift 1 -->
+          <path d="M82 290 L798 290" stroke="#C8CFEA" stroke-dasharray="6 5"/>
+          <!-- a soft frontier stroke through the top-left points -->
+          <path d="M129 68 C200 66 260 66 285 68 C400 90 560 150 742 194" stroke="#BFCBFF" stroke-dasharray="3 6"/>
+          <!-- doodle anchor: a small target ring on the frontier -->
+          <circle cx="285" cy="68" r="15" stroke="#3558F0" stroke-dasharray="2 3"/>
+          <!-- points -->
+          <circle cx="129" cy="68" r="7" fill="#EEF1FF"/>
+          <circle cx="285" cy="68" r="7" fill="#F7B928" stroke="#614300"/>
+          <circle cx="117" cy="140" r="7" fill="#EEF1FF"/>
+          <circle cx="113" cy="173" r="7" fill="#EEF1FF"/>
+          <circle cx="643" cy="198" r="7" fill="#EEF1FF"/>
+          <circle cx="742" cy="194" r="7" fill="#FFFFFF"/>
+          <circle cx="560" cy="253" r="7" fill="#EEF1FF"/>
+          <circle cx="100" cy="296" r="7" fill="#FFFFFF"/>
+        </g>
+
+        <text class="b4bA" x="30" y="52">lift</text>
+        <text class="b4bS" x="70" y="44" text-anchor="end">6x</text>
+        <text class="b4bS" x="70" y="94" text-anchor="end">5x</text>
+        <text class="b4bS" x="70" y="144" text-anchor="end">4x</text>
+        <text class="b4bS" x="70" y="194" text-anchor="end">3x</text>
+        <text class="b4bS" x="70" y="244" text-anchor="end">2x</text>
+        <text class="b4bS" x="70" y="294" text-anchor="end">1x</text>
+        <text class="b4bS" x="80" y="358" text-anchor="middle">0%</text>
+        <text class="b4bS" x="224" y="358" text-anchor="middle">10%</text>
+        <text class="b4bS" x="368" y="358" text-anchor="middle">20%</text>
+        <text class="b4bS" x="512" y="358" text-anchor="middle">30%</text>
+        <text class="b4bS" x="656" y="358" text-anchor="middle">40%</text>
+        <text class="b4bS" x="800" y="358" text-anchor="middle">50%</text>
+        <text class="b4bA" x="440" y="376" text-anchor="middle">share of the 8,348 called activated</text>
+
+        <text class="b4bL" x="96" y="48">ppl2 · 5.45x · caught 16.3%</text>
+        <text class="b4bB" x="304" y="72">days2 · 5.44x · caught 47.4%</text>
+        <text class="b4bL" x="133" y="144">work1 · 4.01x · caught 9.5%</text>
+        <text class="b4bL" x="129" y="189">star1 · 3.35x · caught 7.4%</text>
+        <text class="b4bL" x="640" y="176">vol3 · 2.93x · caught 71.4%</text>
+        <text class="b4bL" x="590" y="222">push7 · 2.84x · caught 64.6%</text>
+        <text class="b4bL" x="576" y="270">push1 · 1.74x · caught 46.5%</text>
+        <text class="b4bL" x="116" y="316">burst10 · 0.88x · caught 1.2% · 117 rows, small</text>
+        <text class="b4bS" x="806" y="282">shuffled lifts</text>
+        <text class="b4bS" x="806" y="296">0.85x to 1.33x</text>
+
+        <text class="b4bN" x="30" y="400">Up and left is the frontier: few called activated, high lift. Right is breadth: most returners caught, less signal per head.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - no point wins on all three numbers; the choice between days2 and vol3 is a decision about what the definition is for</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading four canon rows<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>push1, pushed on day one.</strong> 2,779 activated, 33.3 percent. 151 came back, 5.4 percent, against 174 of 5,569, 3.1 percent. Lift 1.74x, difference 2.3 points, 46.5 percent of returners caught. The definition most teams write first, and it is barely better than the base rate.</p>
+        <p><strong>push7, pushed in week one.</strong> 3,268 activated, 39.1 percent. 210 came back, 6.4 percent, against 115 of 5,080, 2.3 percent. Lift 2.84x, difference 4.2 points, 64.6 percent caught. A wider window catches more returners and separates them better, because a push on day four is a return before the return window opens.</p>
+        <p><strong>days2, seen on two or more days in week one.</strong> 1,186 activated, 14.2 percent. 154 came back, 13.0 percent, against 171 of 7,162, 2.4 percent. Lift 5.44x, difference 10.6 points, 47.4 percent caught. Far better per head than either push rule, at the cost of missing half the returners.</p>
+        <p><strong>ppl2, a second person in week one.</strong> 288 activated, 3.4 percent, a small group. 53 came back, 18.4 percent, against 272 of 8,060, 3.4 percent. Lift 5.45x, difference 15.0 points, 16.3 percent caught. The highest return rate in the table and the smallest reach; with 288 rows the lift is real but the second decimal is not worth arguing over.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why a sweep, not a pick<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The three numbers pull in different directions. Raising a threshold makes the activated group smaller and usually purer, so lift rises and returners caught falls. Lowering it does the opposite. "Three or more events in week one" calls 46.0 percent of the cohort activated and catches 71.4 percent of returners at 2.93x; "seen on two days" calls 14.2 percent and catches 47.4 percent at 5.44x. Neither is wrong. A definition meant to trigger an onboarding nudge wants reach, so the broad one; a definition meant to flag which new projects are worth a human's attention wants purity, so the narrow one.</p>
+        <p>The sweep also shows you what the data does not do. The brief for the bench expected "total events" to reverse at every window, a pure volume trap. The rows do not agree: volume reverses only in the birth hour. Ten or more events in the birth hour, 117 repositories, has a lift of 0.88x with 4 returners, while 2 or more in the same hour is 1.49x and 5 or more is 1.58x. A sweep prints what is there, and what is there is the lesson.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Facebook's 7 friends in 10 days, and what it hides.</strong> The famous line is reported: a transcript of Chamath Palihapitiya's 2012 talk has him saying the biggest thing the growth team realised was to get any individual to 7 friends in 10 days. Nothing about the analysis behind it was ever published. Andrew Chen is reported, via Mixpanel's write-up, to have said the number could as easily have been 10 in 12 or 5 in 1, and Benn Stancil at Mode called it a rally cry rather than a threshold. Tonight's scatter is the reason those caveats matter: on this cohort, the neighbouring thresholds of one behaviour sit at 1.74x and 2.84x. A single cell quoted without its neighbours is a slogan, and a slogan is not a definition.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers correlation is not cause</span>
+      <h2>The best predictor is usually the outcome arriving early</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Look at what won. "Seen on two or more days" is 5.44x because being seen on a second day in week one is a small return, measured before the return window opens. "A second person showed up" is 5.45x because a project two people touch is already a different kind of project. "Received a star" is 3.35x and the owner did not do it; someone else did. None of these is a button. A lift tells you which early rows look like the late rows. It does not tell you that making a quiet project look like a busy one will make it come back.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Before and after, two panels. Before, marked as the wrong way in red: the row seen on 2 or more days, lift 5.44x, is read as a lever; an arrow leads to nudge every new project back on day two, and then to the expectation of 5.44x more returns, which the data never promised. After: a timeline from birth at day 0, to seen again on day 2, to came back in weeks 5 and 6, with a bracket saying the predictor is a small early copy of the outcome; a star drawn as given by someone else, not the owner; and a gold box saying that proving a lever takes an experiment, with a one-line pointer to the experimentation course.">
+        <defs>
+          <filter id="b4cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="47" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b4cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b4cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b4cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b4cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b4cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b4cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b4cR { font: 800 12px Inter, sans-serif; fill: #991B1B; }
+          .b4cA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b4cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b4cR" x="30" y="26">BEFORE · a predictor read as a lever</text>
+        <text class="b4cH" x="450" y="26">AFTER · a predictor read as a signal</text>
+
+        <g filter="url(#b4cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- wrong-way panel -->
+          <rect x="30" y="40" width="400" height="240" rx="10" transform="rotate(-0.3 230 160)" fill="#FEF2F2" stroke="#991B1B"/>
+          <rect x="50" y="64" width="170" height="36" rx="6" transform="rotate(-1 135 82)" fill="#FFFFFF"/>
+          <path d="M136 106 L136 130" marker-end="url(#b4cAr)"/>
+          <rect x="50" y="136" width="260" height="36" rx="6" transform="rotate(0.8 180 154)" fill="#FFFFFF"/>
+          <path d="M180 178 L180 202" marker-end="url(#b4cAr)"/>
+          <rect x="50" y="208" width="300" height="36" rx="6" transform="rotate(-0.6 200 226)" fill="#FFFFFF" stroke="#991B1B" stroke-dasharray="5 4"/>
+          <!-- right panel -->
+          <rect x="450" y="40" width="400" height="240" rx="10" transform="rotate(0.3 650 160)" fill="#FFFFFF"/>
+          <!-- timeline -->
+          <path d="M470 100 L826 100" marker-end="url(#b4cAr)"/>
+          <path d="M478 92 L478 108 M560 92 L560 108 M770 92 L770 108"/>
+          <circle cx="560" cy="100" r="6" fill="#EEF1FF"/>
+          <circle cx="770" cy="100" r="6" fill="url(#b4cHc)"/>
+          <path d="M556 122 C556 134 566 134 660 134 C754 134 764 134 764 122" stroke="#3558F0"/>
+          <!-- doodle anchor: a star drawn by another hand -->
+          <path d="M498 178 L502 190 L514 190 L504 197 L508 209 L498 202 L488 209 L492 197 L482 190 L494 190 Z" fill="#EEF1FF"/>
+          <path d="M540 176 C530 184 522 190 518 194" marker-end="url(#b4cAr)"/>
+          <!-- experiment box -->
+          <rect x="600" y="222" width="230" height="36" rx="8" transform="rotate(-0.5 715 240)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="b4cL" x="62" y="86">days2 · lift 5.44x</text>
+        <text class="b4cL" x="62" y="158">nudge every new project back on day 2</text>
+        <text class="b4cR" x="62" y="230">expect 5.44x more returns?  never promised</text>
+        <text class="b4cS" x="50" y="266">the lift compares rows that already differed</text>
+
+        <text class="b4cS" x="478" y="80" text-anchor="middle">day 0 · born</text>
+        <text class="b4cS" x="560" y="80" text-anchor="middle">day 2 · seen again</text>
+        <text class="b4cS" x="770" y="80" text-anchor="middle">weeks 5-6 · came back</text>
+        <text class="b4cA" x="660" y="152" text-anchor="middle">the predictor is a small early copy of the outcome</text>
+        <text class="b4cL" x="548" y="182">star1 · given by someone else</text>
+        <text class="b4cS" x="548" y="198">the owner cannot do it; 3.35x is about</text>
+        <text class="b4cS" x="548" y="214">the project, not a step to prescribe</text>
+        <text class="b4cB" x="715" y="244" text-anchor="middle">to prove a lever: run an experiment</text>
+
+        <text class="b4cN" x="30" y="312">A lift is a correlation on one cohort. The claim "pushing people into X raises return" needs a random assignment, which is another course.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the left panel is the sentence a product review will say out loud; the right panel is what the rows actually support</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three ways a strong predictor fools you<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>It is the outcome, early.</strong> Coming back on a second day and coming back in week five are the same behaviour at two distances. Of course they correlate. The right reading is "the projects that will return start returning immediately", which is useful for forecasting and useless as an instruction.</p>
+        <p><strong>Someone else did it.</strong> A star is given by another account. A second person showing up is, by definition, not the owner. Both say "this project matters to more than one person", a property of the project, not an action you can ask the owner to take.</p>
+        <p><strong>The group is small.</strong> 288 repositories for ppl2, 214 for work1, 194 for star1, 117 for burst10. The bench's break button shuffles each definition across the cohort with a fixed seed so the group keeps its size and loses its link to the repository; the shuffled lifts land between 0.85x and 1.33x, and the small groups wander furthest from 1. A 3.35x on 194 rows is a real signal; a 1.3x on 117 rows is indistinguishable from nothing.</p>
+        <p>To move from "predicts" to "causes", assign the behaviour at random and measure return in both arms. That is the whole topic of <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">Experimentation</a>, and it is the only route.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What you can honestly do with a predictor<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A predictor without a cause is still worth having. It scores new projects on day seven so a team can look at the ones likely to stay, it gives a leading indicator that moves weeks before the retention number does, and it names a candidate for the experiment. What it cannot do is set the target: "get 40 percent of new projects to a second day" turns a measurement into a quota, and a quota changes the behaviour it measures. Write the definition down with its lift, its reach and its group size, and label it a signal until an experiment says otherwise.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The busy birth hour.</strong> Ten or more events in the first hour looks like enthusiasm. In this cohort it is 117 repositories, 4 of which came back, lift 0.88x. The count is noise-sized, so the honest claim is "no signal", never "harm". What the row is showing is setup: a template pushed, branches created, a workflow firing, a lot of activity that is all one act. A common pattern in workspace products is the same: an import that creates fifty objects in a minute reads as a power user on any volume metric and is one click. Setup activity is not engagement, and a sweep that includes the birth hour is how you find out where your product's setup burst ends.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Score the cohort, reproduce the canon, then sweep</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Standard-library Python and one file, the same cohort the bench in session 8 runs in the browser. The file is real GH Archive rows, one entry per repository, already reduced to the six behaviours in three windows plus the outcome; it is 285,995 bytes. Every number in the comments below is what this code prints. The sweep at the end prints far more rows than fit on a page, so it carries no comments: compare your printout with the bench.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline in five steps: download pa-sample.js, strip the JavaScript wrapper to leave JSON, load it as one dictionary of arrays, write evaluate of feature, window and threshold, then print the eight canon rows and run the sweep over every cell and threshold. Counts under the boxes: 8,348 rows, 17 arrays, 325 returners, 8 rows agreed by two engines.">
+        <defs>
+          <filter id="b4dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="59" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b4dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b4dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b4dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b4dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b4dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b4dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b4dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b4dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b4dH" x="30" y="26">FIVE STEPS, ONE FILE, TWO ENGINES THAT AGREE</text>
+
+        <g filter="url(#b4dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b4dHc)"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#FFFFFF"/>
+          <rect x="362" y="70" width="130" height="60" rx="8" transform="rotate(-0.5 427 100)" fill="#EEF1FF"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L188 100" marker-end="url(#b4dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b4dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b4dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b4dAr)"/>
+          <!-- doodle anchor: a tick where the two engines meet -->
+          <path d="M760 160 L768 168 L784 150" stroke="#3558F0"/>
+        </g>
+
+        <text class="b4dL" x="44" y="96">1 · download</text>
+        <text class="b4dS" x="44" y="114">pa-sample.js</text>
+        <text class="b4dL" x="210" y="96">2 · strip</text>
+        <text class="b4dS" x="210" y="114">the JS wrapper</text>
+        <text class="b4dL" x="376" y="96">3 · json.loads</text>
+        <text class="b4dS" x="376" y="114">17 arrays, 1 meta</text>
+        <text class="b4dW" x="542" y="96">4 · evaluate</text>
+        <text class="b4dW" x="542" y="114">(feature, window, k)</text>
+        <text class="b4dB" x="708" y="96">5 · canon, then sweep</text>
+        <text class="b4dB" x="708" y="114">compare with the bench</text>
+
+        <text class="b4dS" x="30" y="160">285,995 bytes</text>
+        <text class="b4dS" x="362" y="160">8,348 rows · 325 back</text>
+        <text class="b4dS" x="528" y="160">one function, any cell</text>
+        <text class="b4dS" x="694" y="164">8 rows agreed</text>
+
+        <text class="b4dN" x="30" y="206">materials/pa_reference.py and assets/pa-bench.js agree on every count of the eight presets. Your printout should match both.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - step 4 is the whole method; steps 1 to 3 are plumbing and step 5 is where you learn something</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Download the cohort and strip the wrapper.</strong> The file is JavaScript that assigns one object to <code>window.PA_SAMPLE</code>. Cut the assignment and the trailing semicolon and what is left is JSON.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · one file, then JSON</span>import json, urllib.request
+
+URL = "https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/pa-sample.js"
+raw = urllib.request.urlopen(URL).read().decode("utf-8")
+head = "window.PA_SAMPLE = "
+body = raw[raw.index(head) + len(head):].rstrip().rstrip(";")
+S = json.loads(body)
+
+N, RET = S["meta"]["n"], S["ret"]
+print(sorted(S))
+# ['days_w7', 'ev_w0', 'ev_w1', 'ev_w7', 'meta', 'ppl_w0', 'ppl_w1', 'ppl_w7',
+#  'push_w0', 'push_w1', 'push_w7', 'ret', 'star_w0', 'star_w1', 'star_w7',
+#  'work_w0', 'work_w1', 'work_w7']
+print(N, sum(RET), round(100 * sum(RET) / N, 1))      # 8348 325 3.9</div>
+      </div>
+      <div class="step">
+        <p><strong>Write evaluate.</strong> One function scores any cell of the grid at any threshold: flag the rows at or above <code>k</code>, count who came back on each side, divide. "Separate days" only exists as an array for the seven-day window; in the shorter windows it is 1 for any row with an event, which the helper derives so the sweep can still ask.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · evaluate(feature, window, k)</span>def column(f, w):
+    if f == "days" and w != "w7":
+        return [1 if x &gt; 0 else 0 for x in S["ev_" + w]]
+    return S[f + "_" + w]
+
+def evaluate(f, w, k):
+    flag = [x &gt;= k for x in column(f, w)]
+    a = sum(flag)                                   # called activated
+    back_a = sum(r for r, g in zip(RET, flag) if g)  # of those, came back
+    back_r = sum(RET) - back_a                       # of the rest, came back
+    lift = (back_a / a) / (back_r / (N - a))
+    return a, back_a, N - a, back_r, lift</div>
+      </div>
+      <div class="step">
+        <p><strong>Print the eight canon rows.</strong> These are the bench presets, and the comments are what the code prints. The same eight counts come out of the browser engine.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · the canon, reproduced</span>PRESETS = [("push1", "push", "w1", 1), ("push7", "push", "w7", 1),
+           ("days2", "days", "w7", 2), ("ppl2", "ppl", "w7", 2),
+           ("work1", "work", "w7", 1), ("star1", "star", "w7", 1),
+           ("vol3", "ev", "w7", 3), ("burst10", "ev", "w0", 10)]
+
+for pid, f, w, k in PRESETS:
+    a, ba, r, br, lift = evaluate(f, w, k)
+    print(f"{pid:8}activated {a:5} ({100*a/N:4.1f}%)  back {ba:3} = {100*ba/a:4.1f}%"
+          f"  rest {br:3}/{r} = {100*br/r:3.1f}%  lift {lift:.2f}x  caught {100*ba/sum(RET):4.1f}%")
+# push1   activated  2779 (33.3%)  back 151 =  5.4%  rest 174/5569 = 3.1%  lift 1.74x  caught 46.5%
+# push7   activated  3268 (39.1%)  back 210 =  6.4%  rest 115/5080 = 2.3%  lift 2.84x  caught 64.6%
+# days2   activated  1186 (14.2%)  back 154 = 13.0%  rest 171/7162 = 2.4%  lift 5.44x  caught 47.4%
+# ppl2    activated   288 ( 3.4%)  back  53 = 18.4%  rest 272/8060 = 3.4%  lift 5.45x  caught 16.3%
+# work1   activated   214 ( 2.6%)  back  31 = 14.5%  rest 294/8134 = 3.6%  lift 4.01x  caught  9.5%
+# star1   activated   194 ( 2.3%)  back  24 = 12.4%  rest 301/8154 = 3.7%  lift 3.35x  caught  7.4%
+# vol3    activated  3839 (46.0%)  back 232 =  6.0%  rest  93/4509 = 2.1%  lift 2.93x  caught 71.4%
+# burst10 activated   117 ( 1.4%)  back   4 =  3.4%  rest 321/8231 = 3.9%  lift 0.88x  caught  1.2%</div>
+      </div>
+      <div class="step">
+        <p><strong>Check the birth-hour neighbours.</strong> The two thresholds either side of burst10 show that volume reverses only at the top of the birth hour, not across it.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · the neighbours of the anti-preset</span>for k in (2, 5):
+    a, ba, r, br, lift = evaluate("ev", "w0", k)
+    print(k, round(100 * a / N, 1), round(lift, 2))
+# 2 69.5 1.49
+# 5 10.8 1.58</div>
+      </div>
+      <div class="step">
+        <p><strong>Sweep every cell.</strong> Six behaviours, three windows, thresholds 1 to 10, skipping a cell once nobody is left in it. This prints well over a hundred rows and none of them is quoted here: compare your printout with the bench, and bring the row you would defend to session 8.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · the sweep - compare your printout with the bench</span>FEATURES = ["ev", "push", "days", "work", "ppl", "star"]
+WINDOWS = ["w0", "w1", "w7"]
+
+for f in FEATURES:
+    for w in WINDOWS:
+        if f == "days" and w != "w7":
+            continue                                 # always 1, not a candidate
+        for k in range(1, 11):
+            a = sum(x &gt;= k for x in column(f, w))
+            if a == 0:
+                break                                # nobody left in the cell
+            if a == N:
+                continue                             # everybody qualifies, no rest to compare
+            a, ba, r, br, lift = evaluate(f, w, k)
+            if br == 0:
+                continue                             # every returner is inside; no rate for the rest
+            small = "  (small)" if a &lt; 300 else ""
+            print(f"{f:5}{w}  k&gt;={k:2}  activated {a:5}  lift {lift:.2f}x"
+                  f"  caught {100*ba/sum(RET):4.1f}%{small}")
+# compare your printout with the bench: the eight canon rows must match it exactly,
+# every other row is yours; flag any group under 300 as small before quoting its lift</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Print the group size next to every lift.</strong> A sweep hands you a hundred lifts and the highest one is nearly always on the smallest group. The bench flags groups under 300 as small; do the same in your own printout, and read the shuffled band in Part 2 before you get excited about a 1.3x.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 5</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Pick the row you would defend.</strong> From your sweep, choose one definition for "this new project is worth a human's attention" and one for "this new project should get the onboarding nudge". Write each as a sentence with its activated share, lift, returners caught and group size. Bring both to session 8; the bench will score them.</li>
+      <li><strong>Find the setup burst.</strong> In the birth-hour column, print lift for every threshold from 1 to 10 of events of any kind and write down where it stops rising. That is where setup ends in this cohort; describe what the same boundary would look like in a product you know.</li>
+      <li><strong>Argue the other side.</strong> For your strongest row, write three sentences: one explaining it as the outcome arriving early, one as something someone other than the owner did, one as a real lever. Say which you believe and what experiment would settle it.</li>
+      <li><strong>Keep the file.</strong> Session 5 goes back to accounts rather than repositories and builds the power-user curve from real rows; the same standard-library pattern loads that data too.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 4 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · "Pushed code in week one" catches 64.6 percent of returners at 2.84x; "seen on two or more days" catches 47.4 percent at 5.44x. Which is the better activation definition?</p>
+      <button class="qopt" type="button">A · Seen on two days; the higher lift always wins</button>
+      <button class="qopt" type="button">B · Pushed in week one; catching more returners always wins</button>
+      <button class="qopt" type="button">C · It depends on what the definition is for: reach for a nudge that should go to most future returners, purity for a flag a human will act on; both rows are honest and neither is complete without its group size</button>
+      <button class="qopt" type="button">D · Neither; a definition needs a lift above 10x to be useful</button>
+      <p class="qwhy">Lift, difference and returners caught pull in different directions, and a threshold moves all three at once. The sweep exists so the choice is made with all three numbers in view and named for the decision it serves.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · "Seen on two or more days in week one" has a lift of 5.44x on this cohort. What does that support?</p>
+      <button class="qopt" type="button">A · Nudging every new project back on day two will raise returns by about 5.44x</button>
+      <button class="qopt" type="button">B · Projects that will return tend to start returning immediately; the behaviour is a small early copy of the outcome, so it forecasts well and prescribes nothing until an experiment assigns it</button>
+      <button class="qopt" type="button">C · The second day is when the product's value becomes clear to the owner</button>
+      <button class="qopt" type="button">D · The number is too high to be real and should be discarded</button>
+      <p class="qwhy">A lift compares rows that already differed. Coming back on day two and coming back in week five are the same behaviour at two distances; proving that pushing people into the first changes the second needs random assignment.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · Ten or more events in the birth hour: 117 repositories, 4 came back, lift 0.88x. Its shuffled version reads 1.32x. What is the honest sentence?</p>
+      <button class="qopt" type="button">A · A busy first hour harms retention</button>
+      <button class="qopt" type="button">B · A busy first hour has a 32 percent lift once you correct for chance</button>
+      <button class="qopt" type="button">C · The row proves that volume metrics are always wrong</button>
+      <button class="qopt" type="button">D · No signal: with 117 rows the lift wanders this far by chance in either direction, so the row says setup activity is not engagement and nothing stronger</button>
+      <p class="qwhy">The shuffle keeps the group size and removes the link, and small groups land furthest from 1.0x. A 0.88x and a 1.32x on 117 rows are the same finding: nothing measurable. "Harm" would need a group large enough to be sure, and this one is not.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The cohort: 8,348 new repositories, 325 came back</span><span class="note">Measured from GH Archive hourly files (https://www.gharchive.org/), cohort hour 2024-03-04 15:00 UTC, by build-activation-sample.py; the bench page explains the cohort decision</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every count in the eight canon rows</span><span class="note">Measured; pa_reference.py and the browser engine agree on every count, 8 presets x 2</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Birth-hour neighbours: 2+ events 69.5 percent at 1.49x, 5+ 10.8 percent at 1.58x</span><span class="note">Measured with the same rules, exploration log 2026-09-29</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Shuffled lifts 0.85x to 1.33x</span><span class="note">Measured; seeded shuffle, mulberry32 and Fisher-Yates, seed 20240304, the bench's break button</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Slack's 2,000 messages and 93 percent</span><span class="note">Butterfield, S., interviewed in First Round Review (2015). "From 0 to $1B - Slack's Founder Shares Their Epic Launch Strategy." Read at source; taught with its survivorship problem</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Facebook's 7 friends in 10 days</span><span class="note">Reported: Palihapitiya, C. (2012), "How we put Facebook on the path to 1 billion users" (talk), via transcript excerpts; Stancil, B. (2015), Mode; Andrew Chen's "10 in 12" reported via Mixpanel. Video not watched; the analysis behind it was never published</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 4 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Fix the outcome first</b><span>One later window, one denominator. 325 of 8,348 came back, 3.9 percent.</span></div>
+      <div class="cheat-item"><b>Six behaviours x three windows</b><span>Every cell plus a threshold is a candidate. Score them all with one function.</span></div>
+      <div class="cheat-item"><b>Three numbers per row</b><span>Lift, difference in points, returners caught. A threshold moves all three.</span></div>
+      <div class="cheat-item"><b>Sweep, never pick</b><span>push1 1.74x and push7 2.84x are neighbours; a single cell quoted alone is a slogan.</span></div>
+      <div class="cheat-item"><b>Predictor is not lever</b><span>days2 5.44x is the outcome arriving early; star1 3.35x is done by others. An experiment proves a lever.</span></div>
+      <div class="cheat-item"><b>Print the group size</b><span>Under 300 is small. Shuffled lifts land 0.85x to 1.33x; burst10 at 0.88x on 117 rows is no signal.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Tonight scored projects in their first week. Session 5 goes back to people and asks how often they show up: the power-user curve built from real rows, a 5 percent sample of GitHub accounts across 28 days, where 66.7 percent of active accounts were seen on a single day, DAU/MAU lands at 6.4 percent, and the right tail of the histogram turns out to be partly automation that no bot suffix admits to.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 4 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b3-defining-active.html">← Prev: Defining "active"</a> &nbsp;·&nbsp; <a href="b5-the-power-user-curve.html">Next: The power-user curve from real rows →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

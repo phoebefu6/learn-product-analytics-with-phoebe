@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 8 of 8. 8,348 real GitHub repositories born in one hour, followed for six weeks through GH Archive. Pick an activation definition and the bench counts, in your browser, who it calls activated, who came back, and the lift. A break button shuffles the behaviour to show what no signal looks like.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The activation bench - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 8 of 8. Coming back on a second day in week one: 5.44x the later return. A busy first hour: 0.88x. Same 8,348 real repositories, counted live.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b8-the-activation-bench.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The activation bench - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 8 of 8. Eight activation definitions on 8,348 real repositories, counted live.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 8 · The activation bench - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 8 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 8 of 8</div>
+    <h1>The activation <span class="accent">bench</span></h1>
+    <p class="sub">Every product team eventually writes one sentence that decides its onboarding roadmap: "a user is activated when they have done X within N days". Tonight that sentence gets tested instead of argued. In this page sit 8,348 real public GitHub repositories, every one born in the same hour, followed through GH Archive for six weeks. Choose a definition and the bench counts, in your browser, how many it calls activated, how many of those came back in weeks 5 and 6 against how many of the rest, and the lift between them. Then press the break button, which shuffles the behaviour across the cohort, and watch what a definition with no link to the outcome looks like.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Bench night</span>
+      <span class="chip audience">Bring your session 4 candidates</span>
+      <span class="chip audience">No code tonight, all clicking</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-14 · How the cohort was built</span>
+      <span class="a3" style="flex:6">14-40 · Eight definitions, then yours</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">A bench is a fixed set of rows and a fixed question, so that when two definitions give two answers the only thing that differed was the definition. The rows are real: every public repository whose creation event appears in GH Archive between 15:00 and 15:59 UTC on 4 March 2024, one per account, bots excluded. The question is the one activation is supposed to answer: does doing this early predict coming back later? Every number on the bench is a count. Nothing is modelled, so there is no tag to read before the number except one: the counts are of what the public stream saw in the hours that were sampled.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">measured = counted from the 8,348 rows</span>
+      <span class="pill">the break button = the same group sizes, the link removed</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> Measured lifts for eight activation definitions on real rows, the habit of reading "share activated" and "returners caught" beside the lift, a shuffled floor to judge every lift against, and the honest sentence a strong correlation earns, which is not "this causes staying".</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers how the cohort was built</span>
+      <h2>A birth the diary can see</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Activation is measured from a start. GH Archive cannot see an account being created, and "the first time an account appears in the window" mostly finds old accounts that were quiet before it opened, so that heuristic is out. What it does see, exactly once, is a repository being born: a CreateEvent whose payload says <code>repository</code>. So the unit is a new repository, the way a SaaS product counts a new workspace.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top: a funnel from 10,384 public repositories born in the hour 2024-03-04 15:00 UTC, minus 127 created by bot logins, keeping the first repository of each account, down to 8,348 repositories; 325 of them, 3.9 percent, came back. Bottom: the sampling rail. The birth hour, then week one sampled every second hour, 84 hours, where behaviour is counted; a gap from day 7 to day 27 that is not used; then days 28 to 41 sampled every second hour, 168 hours, where came back is measured.">
+        <defs>
+          <filter id="b8aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b8aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b8aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b8aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b8aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b8aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b8aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b8aV { font: 800 17px Inter, sans-serif; fill: #1030B0; }
+          .b8aW { font: 800 12px Inter, sans-serif; fill: #FFFFFF; }
+          .b8aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b8aH" x="30" y="26">FROM ONE HOUR OF BIRTHS TO A COHORT</text>
+
+        <g filter="url(#b8aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="44" width="180" height="56" rx="8" transform="rotate(-0.6 120 72)" fill="url(#b8aHc)"/>
+          <rect x="250" y="44" width="180" height="56" rx="8" transform="rotate(0.5 340 72)" fill="#FFFFFF"/>
+          <rect x="470" y="44" width="180" height="56" rx="8" transform="rotate(-0.4 560 72)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="690" y="44" width="160" height="56" rx="8" transform="rotate(0.6 770 72)" fill="#F7B928" stroke="#614300"/>
+          <path d="M214 72 L242 72" marker-end="url(#b8aAr)"/>
+          <path d="M434 72 L462 72" marker-end="url(#b8aAr)"/>
+          <path d="M654 72 L682 72" marker-end="url(#b8aAr)"/>
+          <!-- sampling rail -->
+          <path d="M40 230 L840 230"/>
+          <rect x="40" y="214" width="14" height="32" fill="#F7B928" stroke="#614300"/>
+          <rect x="60" y="214" width="190" height="32" rx="4" fill="url(#b8aHc)"/>
+          <path d="M256 230 L470 230" stroke="#C8CFEA" stroke-dasharray="6 6"/>
+          <rect x="476" y="214" width="364" height="32" rx="4" fill="#EEF1FF" stroke="#1D4AFF"/>
+        </g>
+
+        <text class="b8aV" x="46" y="72">10,384</text>
+        <text class="b8aS" x="46" y="90">repositories born</text>
+        <text class="b8aV" x="266" y="72">-127</text>
+        <text class="b8aS" x="266" y="90">made by [bot] logins</text>
+        <text class="b8aW" x="486" y="72">8,348</text>
+        <text class="b8aW" x="486" y="90">first repo per account</text>
+        <text class="b8aV" x="704" y="72">325</text>
+        <text class="b8aB" x="704" y="90">came back, 3.9%</text>
+        <text class="b8aS" x="30" y="128">One account made 115 repositories in the hour. That is automation, not 115 customers, so each account keeps its first.</text>
+
+        <text class="b8aH" x="30" y="190">WHEN EACH REPOSITORY IS LOOKED AT</text>
+        <text class="b8aB" x="40" y="266">birth hour</text>
+        <text class="b8aL" x="60" y="284">week one: behaviour</text>
+        <text class="b8aS" x="60" y="300">every 2nd hour, 84 hours</text>
+        <text class="b8aS" x="300" y="266">days 7 to 27, not used</text>
+        <text class="b8aL" x="476" y="284">days 28 to 41: came back?</text>
+        <text class="b8aS" x="476" y="300">every 2nd hour, 168 hours, any non-bot event</text>
+
+        <text class="b8aN" x="30" y="328">Every count is "seen in the sampled hours". The same rule applies to both ends, so definitions stay comparable.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold box is the headline most dashboards leave out: 96 in 100 new repositories show no sign of life in weeks 5 and 6</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Four decisions, stated once<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The unit is a new public repository,</strong> because its birth is the only start the public stream records. The bench says projects, never people, and only public ones.</p>
+        <p><strong>One repository per account, bots out.</strong> Accounts whose login ends in <code>[bot]</code> made 127 of the hour's 10,384 repositories, and a few human-named accounts made dozens each. Keeping each account's first repository gives 8,348 independent starts. Bot events are dropped from every count. Automation without the suffix cannot be recognised from a name and stays in; session 5 shows how much of it there is.</p>
+        <p><strong>Came back means weeks 5 and 6.</strong> Any event by a non-bot account on the repository in the sampled hours of days 28 to 41. 325 of 8,348 did, 3.9 percent. That low base rate is a finding, not a flaw: most new repositories are a one-afternoon experiment.</p>
+        <p><strong>Every second hour is sampled.</strong> 252 hourly files, about 37 GB, streamed and filtered down to the cohort's 44,573 events. A repository active only in odd hours is invisible, at both ends equally.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the bench is not<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It is not a retention analysis: there is one outcome window, not a curve, and cohort curves belong to the <a href="https://phoebefu6.github.io/learn-customer-retention-with-phoebe/">customer retention course</a>. It is not an experiment: nobody was nudged toward any behaviour, so no lift here says what would happen if you pushed users to do the thing. And it is not GitHub's own activation metric, which is not public. It is a fixed, real cohort on which definitions can be compared honestly, and that is exactly the job of a bench.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="bench">
+    <div class="section-kicker">
+      <span class="klabel">Build-along · the bench</span>
+      <h2>Eight definitions, computed in front of you</h2>
+      <span class="tag demo">★ 26 min · the main event</span>
+    </div>
+    <p class="lede">Work down the eight in order, then write your own in the row under them. For each, read the verdict, then the five readouts. Say out loud how many repositories the definition calls activated before you look at the lift, because a lift on 3 percent of the cohort and a lift on 40 percent are different claims. The last two are the volume trap. After all eight, press the break button on two of them.</p>
+
+    <div id="pa-activation-bench"></div>
+
+    <div class="callout tip">
+      <p><strong>Read it in this order.</strong> Activated share, then the two came-back rates with their counts, then the lift, then returners caught. The first definition is the one most teams write first, one push on day one, and it is worth sitting with its 1.74x before moving on.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers what the eight definitions find</span>
+      <h2>Same repositories, eight answers</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">The bench above computes these live; the numbers here are the ones it prints on the 8,348 rows, written down so they can be argued with after class. An independent Python run reproduces every count exactly.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eight hand-drawn bars, one per activation definition, showing lift in later return. Pushed code on day one 1.74x on 33.3 percent of the cohort; pushed code in week one 2.84x on 39.1 percent; came back on a second day 5.44x on 14.2 percent; a second person showed up 5.45x on 3.4 percent; opened an issue or pull request 4.01x on 2.6 percent; got a star 3.35x on 2.3 percent; 3 or more events in week one 2.93x on 46.0 percent; 10 or more events in the birth hour 0.88x on 1.4 percent. A dashed line marks a lift of 1, no signal.">
+        <defs>
+          <filter id="b8bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b8bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+        </defs>
+        <style>
+          .b8bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b8bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b8bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b8bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b8bV { font: 800 13px Inter, sans-serif; fill: #1030B0; }
+          .b8bR { font: 800 13px Inter, sans-serif; fill: #991B1B; }
+          .b8bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b8bH" x="30" y="26">LIFT IN LATER RETURN, BY DEFINITION</text>
+        <text class="b8bS" x="300" y="26">bar = lift (80px per 1x) · right column = share of the cohort the definition calls activated</text>
+
+        <g filter="url(#b8bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M270 44 L270 420" stroke="#C8CFEA"/>
+          <path d="M350 44 L350 420" stroke="#4B5372" stroke-dasharray="5 4"/>
+          <rect x="270" y="56" width="139" height="28" rx="3" fill="url(#b8bHc)"/>
+          <rect x="270" y="102" width="227" height="28" rx="3" fill="url(#b8bHc)"/>
+          <rect x="270" y="148" width="435" height="28" rx="3" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="270" y="194" width="436" height="28" rx="3" fill="url(#b8bHc)"/>
+          <rect x="270" y="240" width="321" height="28" rx="3" fill="url(#b8bHc)"/>
+          <rect x="270" y="286" width="268" height="28" rx="3" fill="url(#b8bHc)"/>
+          <rect x="270" y="332" width="234" height="28" rx="3" fill="#F7B928" stroke="#614300"/>
+          <rect x="270" y="378" width="70" height="28" rx="3" fill="#FEF2F2" stroke="#991B1B"/>
+        </g>
+
+        <text class="b8bL" x="260" y="75" text-anchor="end">Pushed code on day one</text>
+        <text class="b8bV" x="417" y="75">1.74x</text>
+        <text class="b8bS" x="790" y="75">33.3%</text>
+        <text class="b8bL" x="260" y="121" text-anchor="end">Pushed code in week one</text>
+        <text class="b8bV" x="505" y="121">2.84x</text>
+        <text class="b8bS" x="790" y="121">39.1%</text>
+        <text class="b8bL" x="260" y="167" text-anchor="end">Came back on a second day</text>
+        <text class="b8bV" x="713" y="167">5.44x</text>
+        <text class="b8bS" x="790" y="167">14.2%</text>
+        <text class="b8bL" x="260" y="213" text-anchor="end">A second person showed up</text>
+        <text class="b8bV" x="714" y="213">5.45x</text>
+        <text class="b8bS" x="790" y="213">3.4%</text>
+        <text class="b8bL" x="260" y="259" text-anchor="end">Opened an issue or PR</text>
+        <text class="b8bV" x="599" y="259">4.01x</text>
+        <text class="b8bS" x="790" y="259">2.6%</text>
+        <text class="b8bL" x="260" y="305" text-anchor="end">Got a star</text>
+        <text class="b8bV" x="546" y="305">3.35x</text>
+        <text class="b8bS" x="790" y="305">2.3%</text>
+        <text class="b8bL" x="260" y="351" text-anchor="end">3+ events in week one</text>
+        <text class="b8bV" x="512" y="351">2.93x</text>
+        <text class="b8bB" x="790" y="351">46.0%</text>
+        <text class="b8bL" x="260" y="397" text-anchor="end">10+ events, birth hour</text>
+        <text class="b8bR" x="348" y="397">0.88x</text>
+        <text class="b8bS" x="790" y="397">1.4%</text>
+        <text class="b8bS" x="354" y="438">1x = no signal</text>
+
+        <text class="b8bN" x="30" y="458">The two widest definitions are the two volume rules and the day-one push. The strongest per head activate one in seven or fewer.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the blue bar is the definition to take into the product review, and the gold one is the dashboard default it usually loses to</figcaption>
+    </figure>
+
+    <table class="clean">
+      <tr><th>Definition</th><th>Activated</th><th>Came back, activated</th><th>Came back, the rest</th><th>Lift</th><th>Difference</th><th>Returners caught</th></tr>
+      <tr><td>Pushed code on day one</td><td>2,779 · 33.3%</td><td>151 · 5.4%</td><td>174 of 5,569 · 3.1%</td><td>1.74x</td><td>+2.3 pts</td><td>46.5%</td></tr>
+      <tr><td>Pushed code in week one</td><td>3,268 · 39.1%</td><td>210 · 6.4%</td><td>115 of 5,080 · 2.3%</td><td>2.84x</td><td>+4.2 pts</td><td>64.6%</td></tr>
+      <tr><td><strong>Came back on a second day</strong></td><td>1,186 · 14.2%</td><td>154 · 13.0%</td><td>171 of 7,162 · 2.4%</td><td><strong>5.44x</strong></td><td>+10.6 pts</td><td>47.4%</td></tr>
+      <tr><td>A second person showed up</td><td>288 · 3.4%</td><td>53 · 18.4%</td><td>272 of 8,060 · 3.4%</td><td>5.45x</td><td>+15.0 pts</td><td>16.3%</td></tr>
+      <tr><td>Opened an issue or pull request</td><td>214 · 2.6%</td><td>31 · 14.5%</td><td>294 of 8,134 · 3.6%</td><td>4.01x</td><td>+10.9 pts</td><td>9.5%</td></tr>
+      <tr><td>Got a star</td><td>194 · 2.3%</td><td>24 · 12.4%</td><td>301 of 8,154 · 3.7%</td><td>3.35x</td><td>+8.7 pts</td><td>7.4%</td></tr>
+      <tr><td>3 or more events in week one</td><td><strong>3,839 · 46.0%</strong></td><td>232 · 6.0%</td><td>93 of 4,509 · 2.1%</td><td>2.93x</td><td>+4.0 pts</td><td><strong>71.4%</strong></td></tr>
+      <tr><td>10 or more events in the birth hour</td><td>117 · 1.4%</td><td>4 · 3.4%</td><td>321 of 8,231 · 3.9%</td><td><strong>0.88x</strong></td><td>-0.5 pts</td><td>1.2%</td></tr>
+    </table>
+    <p class="mono" style="margin-top:6px">Every cell is a count or a ratio of counts from the 8,348 rows. Python and the in-browser engine agree on every count.</p>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Finding 1: the definition most teams write first is the weakest real one<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>One push on day one calls a third of the cohort activated, and those repositories came back at 5.4 percent against 3.1 percent: a lift of 1.74x. Giving the same behaviour a week raises it to 2.84x, because most repositories that are going to be worked on again get pushed to again. Coming back on a second day, a much narrower rule, reaches 5.44x on 14.2 percent. The behaviour a team can see in the onboarding funnel is not the behaviour that separates projects that live from projects that do not.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Finding 2: breadth and lift trade against each other, so read both<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A second person showing up has the same lift as a second day, 5.45x against 5.44x, on a quarter of the size: 288 repositories rather than 1,186, and it catches 16.3 percent of everyone who came back rather than 47.4. An activation metric the team will steer by needs enough of the cohort in it to move. The last column is the one that says whether a definition describes the product or a niche of it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Finding 3: the strongest predictors are the least like levers<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Coming back on a second day is an early version of the outcome itself: a repository that is worked on twice in week one is, unsurprisingly, likely to be worked on in week five. A star is something other people do. Neither is a button a product team can press. That is not a reason to reject them as activation metrics; a leading indicator is useful for knowing early whether a cohort is healthy. It is a reason never to present one as the cause of staying. Proving that pushing users toward a behaviour changes their return needs an experiment, which the <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">experimentation course</a> covers.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the volume trap and the break button</span>
+      <h2>Volume is broad, and a shuffle is the floor</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">"Count everything, set a bar" is the default activation metric of many dashboards. On this cohort it is not useless, but it is broad, and in its sharpest form, a busy first hour, it carries no signal at all. The break button shows what "no signal" looks like at every group size, which is what every real lift should be judged against.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A paired dot plot. For each of the eight definitions, a solid dot shows the real lift and a hollow dot shows the lift after the behaviour is shuffled across the cohort. Real lifts run from 0.88 to 5.45; shuffled lifts all fall between 0.85 and 1.33, clustered around the dashed line at 1. The busy birth hour is the one definition whose real dot, 0.88, sits below its shuffled dot, 1.32.">
+        <defs>
+          <filter id="b8cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+        </defs>
+        <style>
+          .b8cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b8cL { font: 600 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b8cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b8cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b8cA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b8cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b8cH" x="30" y="26">REAL LIFT AGAINST SHUFFLED LIFT</text>
+        <text class="b8cS" x="280" y="26">solid = real behaviour · hollow = the same group size, behaviour shuffled (seed 20240304)</text>
+
+        <g filter="url(#b8cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axis: x = 250 + lift * 100 -->
+          <path d="M250 272 L820 272"/>
+          <path d="M350 44 L350 272" stroke="#4B5372" stroke-dasharray="5 4"/>
+          <!-- rows y = 58 + 28*i -->
+          <path d="M354 58 L424 58 M347 86 L534 86 M335 114 L794 114 M357 142 L795 142 M383 170 L651 170 M383 198 L585 198 M347 226 L543 226 M338 254 L382 254" stroke="#C8CFEA"/>
+          <circle cx="424" cy="58" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="354" cy="58" r="6" fill="#FFFFFF"/>
+          <circle cx="534" cy="86" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="347" cy="86" r="6" fill="#FFFFFF"/>
+          <circle cx="794" cy="114" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="335" cy="114" r="6" fill="#FFFFFF"/>
+          <circle cx="795" cy="142" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="357" cy="142" r="6" fill="#FFFFFF"/>
+          <circle cx="651" cy="170" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="383" cy="170" r="6" fill="#FFFFFF"/>
+          <circle cx="585" cy="198" r="6" fill="#1D4AFF" stroke="#1D4AFF"/><circle cx="383" cy="198" r="6" fill="#FFFFFF"/>
+          <circle cx="543" cy="226" r="6" fill="#F7B928" stroke="#614300"/><circle cx="347" cy="226" r="6" fill="#FFFFFF"/>
+          <circle cx="338" cy="254" r="6" fill="#991B1B" stroke="#991B1B"/><circle cx="382" cy="254" r="6" fill="#FFFFFF"/>
+        </g>
+
+        <text class="b8cL" x="236" y="62" text-anchor="end">Day-one push · 1.74 / 1.04</text>
+        <text class="b8cL" x="236" y="90" text-anchor="end">Week-one push · 2.84 / 0.97</text>
+        <text class="b8cL" x="236" y="118" text-anchor="end">Second day · 5.44 / 0.85</text>
+        <text class="b8cL" x="236" y="146" text-anchor="end">Second person · 5.45 / 1.07</text>
+        <text class="b8cL" x="236" y="174" text-anchor="end">Issue or PR · 4.01 / 1.33</text>
+        <text class="b8cL" x="236" y="202" text-anchor="end">A star · 3.35 / 1.33</text>
+        <text class="b8cB" x="236" y="230" text-anchor="end">3+ events, week · 2.93 / 0.97</text>
+        <text class="b8cL" x="236" y="258" text-anchor="end">Busy birth hour · 0.88 / 1.32</text>
+
+        <text class="b8cA" x="350" y="290" text-anchor="middle">1x</text>
+        <text class="b8cA" x="550" y="290" text-anchor="middle">3x</text>
+        <text class="b8cA" x="750" y="290" text-anchor="middle">5x</text>
+
+        <text class="b8cN" x="30" y="318">Every hollow dot lands between 0.85 and 1.33. A real lift inside that band has not shown it is more than chance.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the bottom row is the one where the shuffle beats the real behaviour, which is what a definition with no signal does</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The volume trap, stated with its nuance<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>"3 or more events in week one" calls 46.0 percent of the cohort activated and catches 71.4 percent of everyone who came back, at a lift of 2.93x. It is not worthless: busier repositories do come back more. But it separates little more than half as well per head as "came back on a second day", and it activates so many repositories that almost any onboarding change will move it. That is what makes volume attractive on a dashboard, and what makes it a weak steering metric.</p>
+        <p>The sharpest form is a busy birth hour. Ten or more events in the first hour is setup activity: creating the repository, the default branch, a flurry of initial pushes. 117 repositories qualify and 4 came back, 3.4 percent against 3.9 for the rest: a lift of 0.88x. Four is a noise-sized count, so the honest reading is <strong>no signal</strong>, not harm. The shuffled version of the same definition reads 1.32x, which is the size of the wobble a group of 117 has by chance alone.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What the break button proves<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The shuffle keeps the number of activated repositories exactly the same and deals those activated slots to random repositories, with a fixed seed so everyone sees the same result. Any link between the behaviour and the repository is gone; only the group size remains. Across the eight definitions the shuffled lift lands between 0.85 and 1.33 and the difference between -0.6 and +1.3 points. Small groups wander furthest: the three smallest, 117 to 214 repositories, give the three shuffled lifts furthest from 1.</p>
+        <p>That band is the practical floor. A definition whose real lift sits inside it has not shown it is more than chance on a cohort this size; one whose real lift sits at 5x has. It is a quick check, not a significance test, and it is honest about what it does: it asks whether the bench is measuring the behaviour or measuring an accident of group size.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The onboarding checklist that raised activation and nothing else.</strong> A team defines activation as "completed 5 onboarding steps", ships a checklist that nudges users through them, and watches activation jump. Retention does not move. The five steps were setup activity, the equivalent of the busy birth hour: a definition whose volume the product can raise at will and whose link to staying was never tested. The bench's move is the fix: compare the definition's lift against its shuffled floor before building a roadmap on it, and prove causation with an experiment after.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before the product review</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find a definition that beats 5.44x</strong> with your own row on the bench, and write down its activated share and returners caught next to the lift. Decide whether you would steer a team by it.</li>
+      <li><strong>Break your best definition</strong> and record its shuffled lift. Is the real lift outside the 0.85 to 1.33 band?</li>
+      <li><strong>Write the honest sentence</strong> for your product's current activation metric in the form the bench uses: "X percent are activated; they come back at A against B; lift L; it catches C of returners; nobody has tested whether it causes anything."</li>
+      <li><strong>Take that sentence to leader session 6,</strong> the product review, where it is the first slide.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 8 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · Why does the bench use new repositories instead of accounts first seen in the window?</p>
+      <button class="qopt" type="button">A · Because repositories have more events than accounts</button>
+      <button class="qopt" type="button">B · Because GH Archive records a repository's birth exactly once but never an account's signup, so "first seen" would mostly find old accounts that were quiet before the window</button>
+      <button class="qopt" type="button">C · Because account data is not in GH Archive at all</button>
+      <button class="qopt" type="button">D · Because it gives a higher return rate</button>
+      <p class="qwhy">A cohort must start at a moment the data actually records. When the birth you want is invisible, use a birth that is visible and say plainly what it stands for: here, projects rather than people.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">2 · "3 or more events in week one" catches 71.4 percent of returners at 2.93x. "Came back on a second day" catches 47.4 percent at 5.44x. What is the fair reading?</p>
+      <button class="qopt" type="button">A · Volume is the better activation metric because it catches more returners</button>
+      <button class="qopt" type="button">B · The second-day rule is useless because it misses half the returners</button>
+      <button class="qopt" type="button">C · They are the same metric</button>
+      <button class="qopt" type="button">D · Volume is broad and weaker per head: it calls 46.0 percent activated; the second-day rule separates nearly twice as well on 14.2 percent. Read share, lift and returners caught together, and remember neither is proven to cause staying</button>
+      <p class="qwhy">A lift is a claim about a group of a certain size. The three readouts together say whether a definition describes the product or a niche, and whether it separates or merely counts.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · After shuffling, the eight lifts fall between 0.85 and 1.33. The busy birth hour's real lift is 0.88x on 117 repositories. What should you conclude?</p>
+      <button class="qopt" type="button">A · That it carries no signal: its real lift sits inside the shuffled band, 4 returners is noise-sized, and its own shuffled version reads 1.32x; "harmful" would overstate it</button>
+      <button class="qopt" type="button">B · That setup activity causes projects to die</button>
+      <button class="qopt" type="button">C · That the shuffle is broken</button>
+      <button class="qopt" type="button">D · That the bench should drop small groups</button>
+      <p class="qwhy">An anti-lever must carry its honest nuance. The shuffle shows how far a group of 117 wanders by chance, and the real value sits inside that wander. The claim it earns is "no signal", which is already enough to keep it off a roadmap.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every count, rate and lift on the bench</span><span class="note">Computed in the browser from 8,348 real repositories in GH Archive, cohort hour 2024-03-04 15:00 UTC; an independent Python reference agrees on every count, real and shuffled</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">CreateEvent with ref_type repository as a birth; WatchEvent as a star</span><span class="note">GitHub Docs, "GitHub event types"</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The cohort decisions: unit, one per account, bots out, sampling, came back</span><span class="note">Made in this build and stated on the widget; the reasoning for rejecting "first seen" is in Part 1</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Whether any of these behaviours causes return</span><span class="note">Not claimed. Observational counts only; causal proof needs an experiment</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">How these lifts transfer to other products</span><span class="note">Not claimed. The mechanism transfers; the numbers belong to public GitHub repositories in March 2024</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 8 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Start at a visible birth</b><span>First seen is not new. The bench counts repositories born in one hour.</span></div>
+      <div class="cheat-item"><b>Three readouts, always</b><span>Share activated, lift, returners caught. A lift alone is half a claim.</span></div>
+      <div class="cheat-item"><b>Second day beats first push</b><span>5.44x on 14.2 percent against 1.74x on 33.3 percent.</span></div>
+      <div class="cheat-item"><b>Volume is broad</b><span>3+ events: 46.0 percent activated at 2.93x. Busy birth hour: 0.88x, no signal.</span></div>
+      <div class="cheat-item"><b>Shuffle for the floor</b><span>Shuffled lifts 0.85 to 1.33. Judge every real lift against that band.</span></div>
+      <div class="cheat-item"><b>Predictor is not lever</b><span>Strong correlations are often early outcomes. Causation needs an experiment.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>That is the end of the analyst track. The natural next step is leader session 6, the product review, which takes the honest sentence from your homework and asks the six questions every product dashboard should survive: which definition, which cohort, which denominator, what the diary cannot see, where the bots are, and what has actually been shown to cause what.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 8 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b7-ai-feature-metrics.html">← Prev: AI feature metrics</a> &nbsp;·&nbsp; <a href="../index.html">Course home</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/pa-sample.js?v=1"></script>
+<script src="../assets/pa-bench.js?v=3"></script>
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

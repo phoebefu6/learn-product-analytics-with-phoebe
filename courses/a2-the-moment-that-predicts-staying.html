@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 2 of 6. Activation versus the aha moment, why Facebook's 7 friends in 10 days is reported folklore and Slack's 2,000 messages has a survivorship problem, and what a 5.44x lift on 8,348 real new repositories does and does not prove.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The moment that predicts staying - learn product analytics with phoebe">
+<meta property="og:description" content="Leader session 2 of 6. Activation is a definition you choose because it predicts return. Two famous magic numbers traced to their earliest readable source, and eight candidate definitions measured on real rows.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/a2-the-moment-that-predicts-staying.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The moment that predicts staying - learn product analytics with phoebe">
+<meta name="twitter:description" content="Leader session 2 of 6. Activation, aha, two magic numbers, and a lift that predicts but does not cause.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 2 · The moment that predicts staying - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Leader session 2 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Leader track · Session 2 of 6</div>
+    <h1>The moment that <span class="accent">predicts staying</span></h1>
+    <p class="sub">Every product team has heard the two stories. Facebook's growth team is reported to have chased "7 friends in 10 days"; Slack's founder said a team that has sent 2,000 messages has really tried Slack. Both are told as if a number was discovered in the data and the product was rebuilt around it. Tonight we trace each one to the earliest source that can actually be read, look at what it can and cannot prove, and then do the honest version ourselves: eight candidate definitions of "activated", side by side, on 8,348 real new GitHub repositories, with the return rate weeks later for each. The best one separates 13.0 percent from 2.4 percent. It also predicts without causing anything, and that distinction is the whole session.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product managers and product leaders</span>
+      <span class="chip audience">No code</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Activation, the folklore, predictor vs lever</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: your activation hypothesis sheet</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Session 1 left you with a one-page tracking plan: five moments your product writes down. One of those moments, or a small count of one of them inside a short window, is going to become your activation metric, the early behaviour you watch because people who do it tend to come back and people who do not tend to vanish. The trap is that the two most famous activation metrics in the industry are quoted as laws when one is a second-hand transcript and the other is a founder's rule of thumb with a built-in survivorship problem. The second trap is subtler: even a real, measured lift tells you who is likely to stay, not what to do about it. We take both traps apart, then you write your own candidates in a form that can be checked.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = you make the artifact</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> An activation hypothesis sheet: three candidate definitions from your own tracking plan, each written as "at least k X within N days", each with your predicted share activated, your predicted lift, and the experiment that would show whether it is a lever or only a signal. Plus the two sentences that end most magic-number arguments: "what tier is that claim?" and "predicts, or causes?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers activation vs the aha moment</span>
+      <h2>Activation is a definition you choose</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Two words get used as if they were one. The <strong>aha moment</strong> is something a person feels: the instant the product made sense and became worth coming back to. <strong>Activation</strong> is something a team counts: an early, measurable behaviour, chosen because the people who do it come back at a much higher rate than the people who do not. The metric is a proxy for the feeling. Nobody can log a feeling, so we log the nearest behaviour and check, weeks later, whether it earned its place.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cohort of 8,348 new public GitHub repositories, born in one hour, splits at one early behaviour: seen on at least two separate days in the first seven. 1,186 repositories, 14.2 percent, pass; 7,162 do not. Weeks five and six later, 13.0 percent of the first group had a non-bot event, 154 of 1,186, against 2.4 percent of the second, 171 of 7,162. The ratio is a lift of 5.44 times. In total 325 of 8,348 came back, 3.9 percent.">
+        <defs>
+          <filter id="a2aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="52" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a2aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a2aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a2aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a2aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a2aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a2aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a2aV { font: 800 20px Inter, sans-serif; fill: #1030B0; }
+          .a2aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a2aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a2aH" x="30" y="26">ONE COHORT, ONE EARLY BEHAVIOUR, TWO RETURN RATES</text>
+        <text class="a2aS" x="420" y="26">8,348 new repositories, one birth hour, measured in this build</text>
+
+        <g filter="url(#a2aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the cohort pile -->
+          <rect x="30" y="106" width="200" height="110" rx="10" transform="rotate(-0.7 130 161)" fill="url(#a2aHc)"/>
+          <!-- the split -->
+          <path d="M232 150 C290 150 300 92 332 92" marker-end="url(#a2aAr)"/>
+          <path d="M232 172 C290 172 300 232 332 232" marker-end="url(#a2aAr)"/>
+          <!-- activated: the one thing the figure is about -->
+          <rect x="340" y="52" width="230" height="80" rx="8" transform="rotate(-0.8 455 92)" fill="#F7B928" stroke="#614300"/>
+          <!-- the rest -->
+          <rect x="340" y="192" width="230" height="80" rx="8" transform="rotate(0.6 455 232)" fill="#FFFFFF"/>
+          <!-- to the return windows -->
+          <path d="M572 92 L652 92" marker-end="url(#a2aAr)"/>
+          <path d="M572 232 L652 232" marker-end="url(#a2aAr)"/>
+          <rect x="660" y="52" width="190" height="80" rx="8" transform="rotate(0.5 755 92)" fill="#EEF1FF"/>
+          <rect x="660" y="192" width="190" height="80" rx="8" transform="rotate(-0.5 755 232)" fill="#EEF1FF"/>
+          <!-- doodle: two day-marks on a tiny calendar strip -->
+          <path d="M356 118 L556 118" stroke="#614300"/>
+          <path d="M376 112 L376 124 M406 112 L406 124 M436 112 L436 124 M466 112 L466 124 M496 112 L496 124 M526 112 L526 124" stroke="#614300"/>
+          <circle cx="391" cy="118" r="5" fill="#614300" stroke="#614300"/>
+          <circle cx="481" cy="118" r="5" fill="#614300" stroke="#614300"/>
+          <!-- lift bracket -->
+          <path d="M755 140 L755 184" stroke="#1030B0" stroke-dasharray="4 3"/>
+        </g>
+
+        <text class="a2aL" x="46" y="150">8,348 new repositories</text>
+        <text class="a2aS" x="46" y="168">first public repository of each</text>
+        <text class="a2aS" x="46" y="184">non-bot account in the hour</text>
+
+        <text class="a2aB" x="356" y="76">SEEN ON 2+ SEPARATE DAYS</text>
+        <text class="a2aB" x="356" y="92">in the first 7 days</text>
+        <text class="a2aL" x="356" y="108">1,186 · 14.2%</text>
+
+        <text class="a2aL" x="356" y="220">Not seen on a second day</text>
+        <text class="a2aS" x="356" y="238">everyone else</text>
+        <text class="a2aL" x="356" y="258">7,162 · 85.8%</text>
+
+        <text class="a2aS" x="676" y="74">came back, weeks 5-6</text>
+        <text class="a2aV" x="676" y="102">13.0%</text>
+        <text class="a2aS" x="748" y="102">154 of 1,186</text>
+        <text class="a2aS" x="676" y="214">came back, weeks 5-6</text>
+        <text class="a2aV" x="676" y="242">2.4%</text>
+        <text class="a2aS" x="740" y="242">171 of 7,162</text>
+        <text class="a2aA" x="770" y="166">lift 5.44x</text>
+
+        <text class="a2aN" x="30" y="304">One behaviour, one window, two rates. In all 325 of 8,348 came back, 3.9 percent: most are never touched again.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold box is a definition somebody chose; the two percentages on the right are the only reason it deserves to stay chosen</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Activation is a definition you choose<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>An activation metric has three parts and every one of them is a decision. <strong>A behaviour</strong> from the tracking plan: a push, a second day of activity, a second person joining. <strong>A count</strong>: at least one, at least three. <strong>A window</strong> from the birth of the thing: the first day, the first seven days. Write it as "at least k X within N days" and it stops being a slogan and becomes something an analyst can run.</p>
+        <p>The figure is that sentence run for real. The cohort is 8,348 public repositories created in one hour on 4 March 2024, the first one of each non-bot account, because GH Archive records a repository's birth and never records an account's. The behaviour is "seen on at least two separate days in the first seven". 1,186 repositories pass, 14.2 percent. Weeks 5 and 6 later, 13.0 percent of them had somebody touch them again, against 2.4 percent of the other 7,162. That gap, 5.44 times, is what earns a definition its place. A definition with no gap is just a thing people do.</p>
+        <p>Notice the base rate first. Only 325 of 8,348 came back at all, 3.9 percent. Most new repositories are created and abandoned, the way most trial workspaces are. Any activation story starts from that floor, and a definition is judged by how far above the floor it lifts the people it selects.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Aha is felt, activation is counted<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Keep the two words apart in meetings. When a designer says "the aha moment is when they see their first report", that is a hypothesis about a feeling, and it is useful: it tells you where to look. When an analyst says "activation is Report Viewed at least once within 3 days", that is a measurable proxy, and the only test of it is the later return gap. The feeling can be real and the proxy can still be wrong: perhaps the people who view a report early were already committed, and the report did nothing. The proxy can also be right for the wrong reason, which is Part 3.</p>
+        <p>A good working rule: the product team owns the aha hypothesis, the analytics team owns the activation definition, and the two meet once a quarter to check that the definition still separates stayers from leavers. Definitions drift as the product changes. Slack's founder said theirs was based on experience of which companies stuck and which did not; that is a definition earned from data and it would need re-earning as the product grew.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Activated, by whose definition?</strong> A common pattern, no numbers attached: a growth team reports activation at 60 percent and a product team reports it at 20 percent for the same month. Neither is lying. One counts "completed onboarding" (a behaviour the product forces) and the other counts "returned on a second day" (a behaviour the user chooses). Forced behaviours are nearly universal and predict almost nothing; chosen behaviours are rarer and predict more. The fix is the sentence form: write both as "at least k X within N days", put the later return rate next to each, and let the gap decide which one is the activation metric.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the folklore: 7 friends and 2,000 messages</span>
+      <h2>Two magic numbers, traced to their source</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Both stories are told the same way: the team found a threshold in the data, made it the whole company's goal, and growth followed. Trace each to the earliest thing you can actually read and they come apart differently. One survives only as a transcript on somebody else's website. The other is a founder speaking on the record, with a number that quietly proves less than it seems to.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 336" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A timeline of two famous activation claims. October 2012: Chamath Palihapitiya's talk on getting any individual to 7 friends in 10 days, reported through a transcript on Startup Archive, tier reported. January 2015: Benn Stancil at Mode calls it a memorable rally cry, and Mixpanel reports Andrew Chen saying 10 in 12 or 5 in 1 would have done as well. February 2015: Stewart Butterfield tells First Round Review that a team with 2,000 messages has really tried Slack and 93 percent of those customers are still using it, tier read at source. Each card lists what the claim can and cannot prove.">
+        <defs>
+          <filter id="a2bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="63" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a2bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a2bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a2bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a2bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a2bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a2bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a2bP { font: 800 11px Inter, sans-serif; fill: #1030B0; }
+          .a2bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a2bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a2bH" x="30" y="26">TWO CLAIMS, THREE DATES, TWO EVIDENCE TIERS</text>
+
+        <g filter="url(#a2bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 80 L840 80" marker-end="url(#a2bAr)"/>
+          <circle cx="180" cy="80" r="9" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="4 3"/>
+          <circle cx="500" cy="80" r="9" fill="#FFFFFF"/>
+          <circle cx="720" cy="80" r="9" fill="#F7B928" stroke="#614300"/>
+          <!-- cards -->
+          <rect x="40" y="120" width="300" height="160" rx="10" transform="rotate(-0.5 190 200)" fill="#FFFFFF"/>
+          <rect x="370" y="120" width="230" height="160" rx="10" transform="rotate(0.6 485 200)" fill="#FFFFFF"/>
+          <rect x="620" y="120" width="230" height="160" rx="10" transform="rotate(-0.4 735 200)" fill="#EEF1FF"/>
+          <!-- tier badges -->
+          <rect x="56" y="160" width="96" height="22" rx="6" transform="rotate(-1.5 104 171)" fill="url(#a2bHc)"/>
+          <rect x="636" y="160" width="128" height="22" rx="6" transform="rotate(1.2 700 171)" fill="#F7B928" stroke="#614300"/>
+          <!-- doodle: a stack of survivors, only the tall one reaches the line -->
+          <path d="M770 226 L770 262 M786 240 L786 262 M802 250 L802 262 M818 256 L818 262" stroke="#1030B0"/>
+          <path d="M764 226 L826 226" stroke="#1030B0" stroke-dasharray="3 3"/>
+        </g>
+
+        <text class="a2bL" x="180" y="60" text-anchor="middle">Oct 2012 · a talk</text>
+        <text class="a2bL" x="500" y="60" text-anchor="middle">Jan 2015 · the commentary</text>
+        <text class="a2bL" x="720" y="60" text-anchor="middle">Feb 2015 · an interview</text>
+        <text class="a2bS" x="180" y="106" text-anchor="middle">video not watched</text>
+        <text class="a2bS" x="500" y="106" text-anchor="middle">two blog posts</text>
+        <text class="a2bS" x="720" y="106" text-anchor="middle">First Round Review</text>
+
+        <text class="a2bH" x="56" y="146">Facebook: "7 friends in 10 days"</text>
+        <text class="a2bP" x="66" y="176">REPORTED</text>
+        <text class="a2bS" x="56" y="204">via a transcript on Startup Archive</text>
+        <text class="a2bS" x="56" y="222">proves: the growth team had a rally cry</text>
+        <text class="a2bS" x="56" y="240">cannot prove: why 7, why 10, what it lifted</text>
+        <text class="a2bS" x="56" y="258">the analysis behind it was never published</text>
+
+        <text class="a2bH" x="386" y="146">What others said of it</text>
+        <text class="a2bS" x="386" y="176">Stancil, Mode: a memorable</text>
+        <text class="a2bS" x="386" y="192">rally cry, not a threshold</text>
+        <text class="a2bS" x="386" y="218">Chen, via Mixpanel, reported:</text>
+        <text class="a2bS" x="386" y="234">10 in 12 or 5 in 1 could have</text>
+        <text class="a2bS" x="386" y="250">served as easily</text>
+
+        <text class="a2bH" x="636" y="146">Slack: 2,000 messages</text>
+        <text class="a2bB" x="646" y="176">READ AT SOURCE</text>
+        <text class="a2bS" x="636" y="204">Butterfield: 93% still using</text>
+        <text class="a2bS" x="636" y="220">Slack after 2,000 messages</text>
+        <text class="a2bA" x="636" y="244">cannot prove it is a cause:</text>
+        <text class="a2bS" x="636" y="260">reaching 2,000 takes staying</text>
+
+        <text class="a2bN" x="30" y="322">A claim's tier decides what you may repeat as fact. Neither company published the analysis behind its number.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold badge is the only claim here that can be read in the speaker's own words; the little stack on the right is the survivorship problem</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Rally cry versus evidence<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The Facebook line is reported. Chamath Palihapitiya gave a talk in October 2012, "How we put Facebook on the path to 1 billion users", and a transcript excerpt quoted by Startup Archive has him saying "The single biggest thing we realized was to get any individual to 7 friends in 10 days". The video was not watched for this build, so the words are second-hand, the tier is reported, and the honest way to teach it is as a claim about what the team believed and organised around, not as a threshold found in data. Benn Stancil at Mode wrote in January 2015 that it reads as a memorable rally cry rather than a threshold, and Mixpanel's blog reports Andrew Chen saying it could as easily have been 10 friends in 12 days or 5 in 1. Nobody outside the company has seen the analysis, so nobody outside the company can say the number was special.</p>
+        <p>The Slack line is read at source. Stewart Butterfield told First Round Review in February 2015: "we decided that any team that has exchanged 2,000 messages in its history has tried Slack - really tried it", and "after 2,000 messages, 93% of those customers are still using Slack today". Notice his own framing: "we decided". It is a definition chosen from experience of which companies stuck, which is exactly what Part 1 said an activation metric is. That is a stronger claim than Facebook's, because you can read it. It still proves less than the 93 percent suggests.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The survivorship problem<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A team cannot send 2,000 messages in an afternoon. To reach that count a team has already used Slack for a while, which means the group "teams with 2,000 messages" is selected from teams that had already stayed. Of course most of them are still there: the definition filtered out the early leavers before it counted anyone. The 93 percent tells you that teams who stayed long enough to reach 2,000 tended to keep staying. It does not tell you that the 2,000th message did anything, and it does not tell you what share of all new teams ever got there.</p>
+        <p>The same shape is in the figure from Part 1. "Seen on 2+ separate days in the first 7" is, very nearly, "came back once already". A repository that came back on day 3 is more likely to come back in week 5 for the plain reason that it has shown it comes back. The lift is real and useful for prediction; it is partly the outcome measuring itself early. Every activation metric built from a repeat behaviour carries this, and the page should say so rather than hide it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Reading a claim's tier before you repeat it<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three questions to ask of any famous number before it goes on a slide. <strong>Can I read it?</strong> A quote on the speaker's own page or in a published interview is read; a transcript on a third-party site is reported; a number in a conference deck photographed from the audience is barely that. <strong>Was the analysis published?</strong> For both Facebook and Slack the answer is no; only the conclusion travelled. <strong>Would the speaker have said it if the number had been different?</strong> Butterfield chose 2,000 as a round threshold from experience; Chen's point, as reported, is that 7 and 10 were one defensible pair among several. A number that could have been several other numbers is a rally cry, and rally cries are fine as long as nobody mistakes them for measurement.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Copying 7 friends into a product that has no friends.</strong> A common pattern: a team building a B2B analytics tool decides its activation metric is "7 dashboards viewed in 10 days" because the shape of the Facebook line felt right. Nobody checks whether users who view 7 dashboards return at a higher rate than users who view 3, and nobody checks what share of new accounts ever reach 7. Six months later the metric sits at a single-digit percentage, the team is discouraged, and the honest analyst finally runs the comparison and finds that "invited a second teammate within a week" separates stayers far more cleanly. The borrowed number cost two quarters. The sentence form, "at least k X within N days", with the return gap next to it, would have cost an afternoon.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers predictor vs lever</span>
+      <h2>A lift predicts; it does not pull</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Put eight candidate definitions on the same 8,348 repositories and the lifts range from 0.88x to 5.45x. Every one of them is a correlation: repositories that did X early came back at some multiple of the rate of repositories that did not. None of them says that making a repository do X would change anything. The strongest predictors are usually early versions of the outcome itself, or things the owner cannot control at all, which is exactly why they predict so well and lever so badly.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 306" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Before and after. Left, the wrong reading: 3+ events of any kind in the first 7 days has a lift of 2.93x, so the team decides to nudge every new repository to 3 events and expects return to triple; but the busiest birth hours, 10+ events, return at 0.88x, 4 of 117, a noise-sized group whose shuffled version reads 1.32x. Right, the right reading: seen on 2+ days in the first 7 has a lift of 5.44x, so it flags likely stayers; whether it is a lever is unknown until a random half of new repositories is nudged toward a second day and the two halves' return rates are compared.">
+        <defs>
+          <filter id="a2cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="74" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a2cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a2cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a2cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a2cR { font: 800 12px Inter, sans-serif; fill: #991B1B; }
+          .a2cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a2cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a2cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a2cV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .a2cX { font: 800 18px Inter, sans-serif; fill: #991B1B; }
+          .a2cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a2cH" x="30" y="26">READING A LIFT: THE WRONG WAY AND THE RIGHT WAY</text>
+        <text class="a2cS" x="420" y="26">same 8,348 repositories, bench canon measured in this build</text>
+
+        <g filter="url(#a2cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="40" y="46" width="390" height="210" rx="12" fill="#FEF2F2" stroke="#FCA5A5"/>
+          <rect x="450" y="46" width="390" height="210" rx="12" fill="#EEF1FF" stroke="#1D4AFF"/>
+          <!-- left: the leap from lift to lever -->
+          <path d="M150 112 C200 112 220 112 262 112" marker-end="url(#a2cAr)" stroke="#991B1B"/>
+          <rect x="60" y="176" width="350" height="60" rx="8" transform="rotate(-0.6 235 206)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <!-- right: predictor, then the test -->
+          <path d="M560 112 C610 112 630 112 672 112" marker-end="url(#a2cAr)"/>
+          <rect x="470" y="176" width="350" height="60" rx="8" transform="rotate(0.5 645 206)" fill="#F7B928" stroke="#614300"/>
+          <!-- doodle: a coin toss splitting the cohort in the gold box -->
+          <path d="M792 190 L792 224" stroke="#614300"/>
+          <path d="M780 198 L792 190 L804 198" stroke="#614300"/>
+        </g>
+
+        <text class="a2cR" x="58" y="72">✗ "It causes staying"</text>
+        <text class="a2cL" x="58" y="98">3+ events, first 7 days</text>
+        <text class="a2cX" x="58" y="122">2.93x</text>
+        <text class="a2cS" x="118" y="122">46.0% activated</text>
+        <text class="a2cL" x="270" y="98">so: nudge everyone</text>
+        <text class="a2cL" x="270" y="116">to 3 events, and</text>
+        <text class="a2cL" x="270" y="134">return will triple</text>
+        <text class="a2cS" x="58" y="156">the same logic, sharper: 10+ events in the birth hour</text>
+        <text class="a2cR" x="74" y="200">0.88x · 4 of 117 came back · noise-sized</text>
+        <text class="a2cS" x="74" y="214">its shuffled twin reads 1.32x: 117 rows wander</text>
+        <text class="a2cS" x="74" y="228">that far by chance; setup activity is not engagement</text>
+
+        <text class="a2cH" x="468" y="72">✓ "It predicts staying; is it a lever? test it"</text>
+        <text class="a2cL" x="468" y="98">seen on 2+ days, first 7</text>
+        <text class="a2cV" x="468" y="122">5.44x</text>
+        <text class="a2cS" x="528" y="122">14.2% activated</text>
+        <text class="a2cL" x="680" y="98">so: flags likely</text>
+        <text class="a2cL" x="680" y="116">stayers; nothing</text>
+        <text class="a2cL" x="680" y="134">yet about cause</text>
+        <text class="a2cS" x="468" y="156">the only thing that can turn a predictor into a lever:</text>
+        <text class="a2cB" x="484" y="198">an experiment: a random half is nudged toward</text>
+        <text class="a2cB" x="484" y="214">a second day, the other half is not,</text>
+        <text class="a2cB" x="484" y="230">and the two return rates are compared</text>
+
+        <text class="a2cN" x="30" y="292">Eight definitions, lifts 0.88x to 5.45x, all correlations. The gap between the panels is one experiment.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the left panel is the sentence most product reviews actually say out loud; the gold box is the only honest next step</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Predictor versus lever<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Read the bench the way it was measured. "1+ push on the first day" calls 33.3 percent of repositories activated and lifts return 1.74x. "3+ events of any kind in the first 7 days" calls 46.0 percent activated at 2.93x and catches 71.4 percent of everything that eventually came back, because it is broad. "Seen on 2+ separate days in the first 7" calls 14.2 percent activated at 5.44x. Same repositories, same return window; the repeat-day rule separates far better per head, the volume rule catches more of the returners by naming almost half the cohort. Which one you want depends on whether you are trying to predict or to target, and that is a decision, not a discovery.</p>
+        <p>Then the trap. "10+ events in the birth hour" sounds like the most engaged repositories of all. Their lift is 0.88x: 4 of 117 came back, against 3.9 percent for the rest. The group is small enough that the honest claim is "no signal", never "harm"; a seeded shuffle of the same 117 rows, keeping the group size and breaking the link, reads 1.32x, which is how far a group that size wanders by chance. Setup activity is not engagement. Ten events in the first hour is somebody unpacking boxes.</p>
+        <p>Every one of these is a correlation. Repositories that did X came back more often. Nothing here says that causing a repository to do X would change its odds. The gap between "predicts" and "causes" is closed by one thing only: an experiment, where a random half of new users is nudged toward the behaviour and the other half is not. The design of that experiment is its own subject: <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">learn-experimentation-with-phoebe</a>.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The strongest predictors are early versions of the outcome<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Look at what tops the table. "Seen on 2+ days" at 5.44x is coming back, measured early. "2+ distinct people in the first 7 days" at 5.45x, 288 repositories, is a project that already has a team, and a team is the thing that keeps a project alive. "1+ star in the first 7 days" at 3.35x, 194 repositories, is something the owner does not do at all: a stranger did it. These predict well because they are downstream of the thing you care about, or outside your control entirely. Neither kind is a button you can press.</p>
+        <p>The behaviours you can actually cause, a push on day one, some events in week one, sit lower, at 1.74x and 2.93x. This is the usual shape and it is worth expecting: the more a behaviour is something the product can force, the less it tends to separate stayers from leavers, because everyone gets forced through it. The activation metric you can defend is often not the one you can most easily move, and knowing that before the roadmap is written saves a quarter.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Small groups wander<span class="mini">1 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three of the eight definitions select fewer than 300 repositories: 2+ people (288), 1+ issue or PR opened (214), 1+ star (194), and the birth-hour burst (117). Their lifts should be read with a wide margin. The shuffle results say how wide: with the link deliberately broken, those small groups still read 1.07x, 1.33x, 1.33x and 1.32x, while the big groups sit near 1.0. A lift of 1.3x on 200 rows is indistinguishable from nothing. Ask for the group size next to every lift, every time.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The roadmap that chased its own tail.</strong> A common pattern, no numbers attached: an analyst finds that customers who use the export feature in week one renew at several times the rate of those who do not. The next quarter's roadmap becomes "get everyone to export in week one": a banner, an onboarding step, an email. Export-in-week-one rises. Renewal does not move, because the people who exported early were the ones who already had a real job for the product; the export was a symptom of commitment, not a source of it. One holdout experiment before the roadmap, half the new accounts seeing the banner and half not, would have shown the flat line in a month instead of a year.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Your activation hypothesis sheet</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">No tools and no data access. Your session 1 tracking plan, a blank sheet, and three rows. Each row is one candidate activation definition written so that an analyst can run it and an experiment can test it. The example row below is constructed for a fictional workspace product; your numbers will differ, and the two "predicted" columns are guesses you write down now so that the real numbers can embarrass you later. That embarrassment is the point.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn one-page activation hypothesis sheet with five columns: the candidate written as at least k X within N days, why it might predict return, the predicted share activated, the predicted lift, and the experiment that would test it as a lever. One constructed example row is filled in: at least 1 Invite Sent within 7 days; a second person means the workspace is real; guess 20 percent; guess 3x; show an invite prompt on day one to a random half and compare return. A gold tab says the example is constructed and your numbers will differ.">
+        <defs>
+          <filter id="a2dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="85" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a2dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a2dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a2dH { font: 800 11px Inter, sans-serif; fill: #0F1535; letter-spacing: .04em; }
+          .a2dL { font: 600 11px Inter, sans-serif; fill: #0F1535; }
+          .a2dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a2dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a2dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a2dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="30" width="820" height="170" rx="8" transform="rotate(0.3 440 115)" fill="#FFFFFF"/>
+          <path d="M30 62 L850 62"/>
+          <path d="M230 30 L230 200 M400 30 L400 200 M520 30 L520 200 M620 30 L620 200" stroke="#C8CFEA"/>
+          <rect x="36" y="68" width="808" height="56" rx="4" fill="#EEF1FF" stroke="#EEF1FF"/>
+          <path d="M40 150 L840 150 M40 176 L840 176" stroke="#E0E4F5"/>
+          <!-- doodle: the predicted columns are hachured, they are guesses -->
+          <rect x="404" y="130" width="112" height="16" rx="3" transform="rotate(-1 460 138)" fill="url(#a2dHc)" stroke="#C8CFEA"/>
+          <rect x="524" y="130" width="92" height="16" rx="3" transform="rotate(1 570 138)" fill="url(#a2dHc)" stroke="#C8CFEA"/>
+          <rect x="30" y="212" width="330" height="28" rx="6" transform="rotate(-0.8 195 226)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="a2dH" x="44" y="51">CANDIDATE: k X IN N DAYS</text>
+        <text class="a2dH" x="242" y="51">WHY IT MIGHT PREDICT</text>
+        <text class="a2dH" x="412" y="51">SHARE, GUESS</text>
+        <text class="a2dH" x="532" y="51">GUESS: LIFT</text>
+        <text class="a2dH" x="632" y="51">EXPERIMENT THAT TESTS IT</text>
+
+        <text class="a2dL" x="44" y="88">1+ Invite Sent, 7 days</text>
+        <text class="a2dS" x="44" y="104">from the Invite Sent row</text>
+        <text class="a2dS" x="44" y="118">of the tracking plan</text>
+        <text class="a2dS" x="242" y="88">a second person means</text>
+        <text class="a2dS" x="242" y="104">the workspace is real,</text>
+        <text class="a2dS" x="242" y="118">not a solo look around</text>
+        <text class="a2dL" x="412" y="92">about 20%</text>
+        <text class="a2dS" x="412" y="108">a guess, written down</text>
+        <text class="a2dL" x="532" y="92">about 3x</text>
+        <text class="a2dS" x="532" y="108">a guess too</text>
+        <text class="a2dS" x="632" y="88">invite prompt on day one</text>
+        <text class="a2dS" x="632" y="104">for a random half; compare</text>
+        <text class="a2dS" x="632" y="118">week-6 return of both halves</text>
+        <text class="a2dS" x="44" y="168">two more rows, yours</text>
+        <text class="a2dB" x="44" y="231">Constructed example: your numbers will differ</text>
+
+        <text class="a2dN" x="380" y="231">Three rows, five columns. Hachured cells are guesses on purpose.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the example row is constructed; the five columns, and especially the last one, are the part to copy</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Pick three candidates from your session 1 tracking plan.</strong> One should be a chosen behaviour (the user did it without being forced), one should involve a second person or a second day, and one may be the obvious volume rule your team already uses, so that it can be compared honestly. Do not pick "completed onboarding"; forced steps predict almost nothing because everyone passes through them.</p>
+      </div>
+      <div class="step">
+        <p><strong>Write each one as "at least k X within N days".</strong> X is an event name from the plan, k is a count, N is a window from the birth of the account, workspace or project. If a candidate cannot be written this way it is an aha hypothesis, not an activation definition, and it goes in the "why" column of a different row.</p>
+        <div class="prompt-box good"><span class="label">★ Three candidates, in the runnable form (constructed, yours will differ)</span>at least 1 Invite Sent within 7 days
+at least 2 separate active days within 7 days
+at least 3 Report Viewed within 3 days      &lt;- the volume rule the team uses today</div>
+      </div>
+      <div class="step">
+        <p><strong>Write why it might predict return, in one line, and be suspicious of your own answer.</strong> If the line says "because people who do this have already decided to stay", you have written a survivorship problem, like 2,000 messages. That does not disqualify the row; it means the row will predict well and lever badly, and you should say so now.</p>
+      </div>
+      <div class="step">
+        <p><strong>Guess the share activated and the lift, and write the guesses down before anyone runs anything.</strong> A guess on paper is the only thing that lets the real number teach you. The shapes to expect from the bench: broad rules call 30 to 50 percent activated at lifts under 3x; narrow repeat or second-person rules call under 15 percent at lifts around 5x; a busy first hour can read under 1x. Your product will differ, which is why the column exists.</p>
+        <div class="prompt-box good"><span class="label">★ One row, complete (constructed example)</span>Candidate:   at least 1 Invite Sent within 7 days
+Why:         a second person means the workspace is real, not a solo look around
+Guess:       about 20% activated, about 3x lift on week-6 return
+Experiment:  show an invite prompt on day one to a random half of new workspaces;
+             hold the other half back; compare week-6 return of the two halves
+Caveat:      teams that invite may already be committed; the lift is a signal until the test runs</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the experiment that would test it as a lever.</strong> Always the same shape: a random half is nudged toward the behaviour, the other half is not, and the later return rates of the two halves are compared. If nobody can name a nudge, the candidate is a pure predictor, which is still useful for forecasting and for targeting help, and you should label it as one. Hand the sheet to your analyst; session 4 of the analyst track runs exactly this sweep on real rows.</p>
+      </div>
+    </div>
+
+    <div class="prompt-box bad"><span class="label">✗ The sheet that becomes a roadmap chasing a symptom</span>activation = 7 dashboards in 10 days (worked for Facebook)
+users who export in week one renew 3x more, so make everyone export
+no experiment needed, the correlation is obvious</div>
+
+    <div class="callout tip">
+      <p><strong>Keep the guesses.</strong> When the real numbers arrive, the gap between your guess and the measurement is the most useful thing on the sheet. A team that guessed 3x and measured 1.2x has learned that its favourite behaviour is nearly universal and nearly meaningless. A team that guessed 20 percent activated and measured 2 percent has learned that its aha moment is real but rare, which is a different roadmap entirely.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 3</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find your product's current activation definition,</strong> if it has one, and rewrite it as "at least k X within N days". If it cannot be written that way, or nobody can say who chose it, you have found the first thing to fix.</li>
+      <li><strong>Ask for the return gap.</strong> For that definition, ask the analyst for two numbers: the share of new accounts that met it, and the later return rate of those who did against those who did not. If the answer is "we have never checked", say so in the next product review.</li>
+      <li><strong>Trace one borrowed number.</strong> Pick a magic number your team quotes, from any company, and find the earliest source you can read. Write down its tier: read at source, reported, or nowhere. Bring the tier, not the number.</li>
+      <li><strong>Bring the hypothesis sheet.</strong> Session 3 turns from the first week to the long run: how often people come back, why one ratio hides most of it, and which of your "active" users are actually automation.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and leader session 2 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · Slack's founder said that after 2,000 messages, 93 percent of those customers were still using Slack. Why does that number prove less than it seems to?</p>
+      <button class="qopt" type="button">A · Because 93 percent is too high to be believable</button>
+      <button class="qopt" type="button">B · Because messages are not a real product behaviour</button>
+      <button class="qopt" type="button">C · Because a team must already have stayed a while to send 2,000 messages, so the group was selected from teams that had already not left</button>
+      <button class="qopt" type="button">D · Because the interview was given in 2015 and Slack has changed since</button>
+      <p class="qwhy">Survivorship. The definition filters out early leavers before anyone is counted, so of course the survivors mostly survive. The 93 percent says teams who stayed long enough to reach 2,000 tended to keep staying; it says nothing about what the 2,000th message did.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · What evidence tier does Facebook's "7 friends in 10 days" have, and how should it be taught?</p>
+      <button class="qopt" type="button">A · Read at source: the analysis was published by Facebook, so it is a proven threshold</button>
+      <button class="qopt" type="button">B · Reported: it survives as a transcript of a 2012 talk on a third-party site, so it is taught as a rally cry the team organised around, not as a measured threshold</button>
+      <button class="qopt" type="button">C · Measured: it was reproduced on the GitHub cohort in this build</button>
+      <button class="qopt" type="button">D · Constructed: the number was invented for teaching purposes</button>
+      <p class="qwhy">The words reach us through a transcript excerpt quoted by Startup Archive; the video was not watched and the analysis was never published. Stancil calls it a memorable rally cry, and Chen is reported as saying 10 in 12 or 5 in 1 would have done as well. Repeat the tier with the number.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · "Seen on 2+ separate days in the first 7" has a lift of 5.44x on 8,348 real new repositories. What does that prove, and what does it not?</p>
+      <button class="qopt" type="button">A · It proves that nudging every new repository to a second day would raise return 5.44 times</button>
+      <button class="qopt" type="button">B · It proves nothing, because 8,348 is too small a cohort</button>
+      <button class="qopt" type="button">C · It proves the second day causes staying, because the window comes before the return window</button>
+      <button class="qopt" type="button">D · It shows that repositories which came back once early are far likelier to come back later, a prediction; whether pushing people toward a second day changes anything needs an experiment</button>
+      <p class="qwhy">A lift is a correlation, and this one is partly the outcome measuring itself early: coming back on day 3 is a small version of coming back in week 5. Useful for forecasting and targeting; silent about cause. Only a random-half experiment turns a predictor into a lever.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Slack's 2,000 messages and the 93 percent, with its survivorship problem</span><span class="note">Butterfield, S., interviewed in First Round Review (2015). "From 0 to $1B - Slack's Founder Shares Their Epic Launch Strategy." Read at source</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Facebook's 7 friends in 10 days</span><span class="note">Palihapitiya, C. (2012). "How we put Facebook on the path to 1 billion users" (talk). Reported via transcript excerpts quoted by Startup Archive; video not watched</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The rally-cry reading, and the 10 in 12 or 5 in 1 remark</span><span class="note">Stancil, B. (2015). "Facebook's aha moment was simpler than you think." Mode, read at source; Andrew Chen's remark reported via Mixpanel's blog</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Bench canon: eight definitions, lifts 0.88x to 5.45x, the shuffle baseline</span><span class="note">Measured in this build on 8,348 new public repositories from GH Archive, hour 2024-03-04 15:00 UTC; return read in weeks 5-6 from sampled hours</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The Invite Sent example row and both Real world patterns</span><span class="note">Constructed for the build-along and described as common patterns; no numbers from any real product</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Experiment design</span><span class="note">Named in one line only; owned by learn-experimentation-with-phoebe</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Leader session 2 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Aha is felt, activation is counted</b><span>The metric is a proxy for the feeling. Check it against later return.</span></div>
+      <div class="cheat-item"><b>Write it runnable</b><span>"At least k X within N days." If it cannot be written that way, it is a hypothesis.</span></div>
+      <div class="cheat-item"><b>Ask the tier</b><span>7 friends: reported, a rally cry. 2,000 messages: read, with a survivorship problem.</span></div>
+      <div class="cheat-item"><b>Repeat behaviours measure the outcome early</b><span>Seen on 2+ days: 5.44x. Partly "came back already".</span></div>
+      <div class="cheat-item"><b>A lift predicts, it does not pull</b><span>Eight definitions, 0.88x to 5.45x, all correlations. A lever needs an experiment.</span></div>
+      <div class="cheat-item"><b>Group size next to every lift</b><span>Under 300 rows, shuffled data reads up to 1.33x. Busy birth hour: 4 of 117, no signal.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Activation is the first week. Session 3 is everything after it: how many of your "active" users are active on one day a month, why DAU over MAU hides that, and how the power-user curve from Li Jin and Andrew Chen shows the shape in one picture. On a 5 percent sample of GitHub accounts across 28 days, three definitions of "active" give three different monthly totals, 79,555 against 48,946 against 8,993, and the right tail turns out to hold a surprising amount of automation. Bring your hypothesis sheet.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Leader session 2 of 6 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="a1-events-are-the-diary.html">← Prev: Events are the product's diary</a> &nbsp;·&nbsp; <a href="a3-engagement-you-can-defend.html">Next: Engagement you can defend →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

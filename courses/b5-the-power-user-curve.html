@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 5 of 8. The power-user curve built from real rows: an L28 histogram of 79,555 sampled GitHub accounts, where 66.7 percent were seen on one day, a tenth hold a third of the account-days, and the right tail hides automation.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The power-user curve from real rows - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 5 of 8. Build the L28 histogram in Python and matplotlib from 56 GH Archive hours, read its concentration, and find the accounts on 22 or more days that are not people.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b5-the-power-user-curve.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The power-user curve from real rows - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 5 of 8. L28 histogram, concentration and the right tail, on real GitHub rows.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 5 · The power-user curve from real rows - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 5 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 5 of 8</div>
+    <h1>The power-user curve <span class="accent">from real rows</span></h1>
+    <p class="sub">Session 3 gave the same accounts three MAUs and one ratio each. A ratio is one number, and one number cannot say whether your monthly actives are 79,000 people who each dropped by once or 5,000 people who live in the product. The power-user curve answers that by counting, per account, how many of the 28 days it was seen, and drawing the histogram. Tonight we build that histogram from real GH Archive rows in Python and matplotlib, read where the account-days concentrate, and then walk into the right tail, where the accounts seen on 22 or more days turn out not all to be people.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Hands-on</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python + matplotlib</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Histogram, concentration, the tail</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: the L28 from 56 hours</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">The rows are the ones session 3 built: every GitHub account whose id is divisible by 20, a deterministic 5 percent sample, watched in two sampled hours a day (03:00 and 15:00 UTC) for the 28 days from 2024-03-04 to 2024-03-31. That is 56 hourly files from GH Archive, 79,555 accounts seen at least once, 98 accounts with a <code>[bot]</code> suffix dropped. An account is "active on a day" if it did anything in either sampled hour of that UTC day. Two hours out of 24 is a thin slice, and the slice matters for everything on this page: it pushes every account to the left of the curve, and it is why the curve is taught as what the sample can see, never as GitHub's real stickiness.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A Python script that turns 56 GH Archive hours into a days-per-account count, an L28 histogram saved as a 300 DPI PNG and an SVG, the six band shares it prints (66.7, 24.0, 7.5, 1.6, 0.2 and 0.1 percent), two concentration numbers (a tenth of accounts hold 33.5 percent of account-days; a hundredth hold 30.1 percent of events), and a name check that finds 17 of the 105 accounts on 22 or more days wearing bot-like names without the suffix.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the L28 as a histogram</span>
+      <h2>Count the days, then draw the count</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Li Jin and Andrew Chen (a16z, 2018) define the power-user curve as "a histogram of users' engagement by the total number of days they were active in a month", and note it is "also commonly called the activity histogram or the 'L30' (coined by the Facebook growth team)". Ours is an L28 because the sample covers 28 days. The x axis is days active, 1 to 28; the y axis is how many accounts landed on each day count. Every account contributes exactly one mark. That is the whole construction, and it is why the curve is more honest than DAU/MAU, which the same post says "is a single number and so blurs this variance".</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 344" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn L28 histogram for any event, grouped into six bands, from 79,555 sampled GitHub accounts over 28 days in March 2024. One day: 53,046 accounts, 66.7 percent. Two to three days: 19,081, 24.0 percent. Four to seven days: 5,946, 7.5 percent. Eight to fourteen: 1,257, 1.6 percent. Fifteen to twenty-one: 120, 0.2 percent. Twenty-two to twenty-eight: 105, 0.1 percent. A dashed ghost line shows where a smile-shaped curve would rise again at the right; this one does not. A small calendar doodle shows how one account's score is counted: the days it was seen, ticked.">
+        <defs>
+          <filter id="b5aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b5aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b5aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b5aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b5aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b5aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b5aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b5aV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b5aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b5aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b5aH" x="30" y="26">L28, ANY EVENT</text>
+        <text class="b5aS" x="150" y="26">79,555 sampled accounts · 28 days · two sampled hours a day · [bot] logins dropped</text>
+
+        <g filter="url(#b5aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- baseline -->
+          <path d="M40 270 L770 270"/>
+          <!-- six band bars, 3 px per percent, tails drawn at a 3 px floor -->
+          <rect x="60" y="70" width="90" height="200" rx="3" transform="rotate(-0.4 105 170)" fill="url(#b5aHc)"/>
+          <rect x="180" y="198" width="90" height="72" rx="3" transform="rotate(0.5 225 234)" fill="#EEF1FF"/>
+          <rect x="300" y="247" width="90" height="23" rx="3" transform="rotate(-0.5 345 258)" fill="#EEF1FF"/>
+          <rect x="420" y="265" width="90" height="5" rx="2" fill="#EEF1FF"/>
+          <rect x="540" y="267" width="90" height="3" rx="1" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="660" y="267" width="90" height="3" rx="1" fill="#F7B928" stroke="#614300"/>
+          <!-- ghost smile -->
+          <path d="M110 92 C250 250 450 278 640 150" stroke="#C8CFEA" stroke-dasharray="6 5"/>
+          <!-- calendar doodle: one account, 28 cells, 3 ticks -->
+          <rect x="690" y="46" width="140" height="84" rx="4" transform="rotate(1.2 760 88)" fill="#FFFFFF"/>
+          <path d="M710 46 L710 130 M730 46 L730 130 M750 46 L750 130 M770 46 L770 130 M790 46 L790 130 M810 46 L810 130 M690 67 L830 67 M690 88 L830 88 M690 109 L830 109" stroke="#C8CFEA" stroke-width="1.2"/>
+          <path d="M714 52 L726 63 M752 73 L764 84 M794 115 L806 126" stroke="#1D4AFF" stroke-width="2.4"/>
+        </g>
+
+        <text class="b5aV" x="105" y="62" text-anchor="middle">66.7%</text>
+        <text class="b5aV" x="225" y="190" text-anchor="middle">24.0%</text>
+        <text class="b5aV" x="345" y="239" text-anchor="middle">7.5%</text>
+        <text class="b5aV" x="465" y="257" text-anchor="middle">1.6%</text>
+        <text class="b5aV" x="585" y="259" text-anchor="middle">0.2%</text>
+        <text class="b5aV" x="705" y="259" text-anchor="middle">0.1%</text>
+
+        <text class="b5aS" x="105" y="288" text-anchor="middle">53,046 accounts</text>
+        <text class="b5aS" x="225" y="288" text-anchor="middle">19,081</text>
+        <text class="b5aS" x="345" y="288" text-anchor="middle">5,946</text>
+        <text class="b5aS" x="465" y="288" text-anchor="middle">1,257</text>
+        <text class="b5aS" x="585" y="288" text-anchor="middle">120</text>
+        <text class="b5aB" x="705" y="288" text-anchor="middle">105</text>
+        <text class="b5aL" x="105" y="304" text-anchor="middle">1 day</text>
+        <text class="b5aL" x="225" y="304" text-anchor="middle">2-3 days</text>
+        <text class="b5aL" x="345" y="304" text-anchor="middle">4-7</text>
+        <text class="b5aL" x="465" y="304" text-anchor="middle">8-14</text>
+        <text class="b5aL" x="585" y="304" text-anchor="middle">15-21</text>
+        <text class="b5aL" x="705" y="304" text-anchor="middle">22-28</text>
+
+        <text class="b5aS" x="330" y="130">the "smile" Jin and Chen describe would rise again on the right</text>
+        <text class="b5aA" x="330" y="146">this one keeps falling</text>
+        <text class="b5aS" x="690" y="146">one account, seen on 3 of 28 days</text>
+
+        <text class="b5aN" x="30" y="332">Every account is one mark on this axis. The two right-hand bands are drawn at a 3 px floor; to scale they would be invisible.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - two thirds of the sampled accounts were seen on exactly one day, and the curve never turns back up</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>From day-marks to a histogram<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The construction has two steps and no statistics. First, per account, collect the set of UTC days on which it was seen; the size of that set is its score, 1 to 28. Second, count how many accounts landed on each score. That gives a list of 28 counts, and the histogram is that list drawn as bars. For the sample under "any event" the first count is 53,046 and the last is 62: 53,046 accounts seen on exactly one day, 62 seen on all 28.</p>
+        <p>Grouping into bands is a presentation choice, and the one on the figure (1, 2-3, 4-7, 8-14, 15-21, 22-28) is the one the script prints. Bands make the shape readable across the room; the 28-bar version is what you inspect at your desk. Keep both. The band shares under "any event" are 66.7, 24.0, 7.5, 1.6, 0.2 and 0.1 percent, and they sum to the MAU of 79,555 because every active account is in exactly one band.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Three definitions, three curves<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Session 3's three definitions of active each produce their own L28, and the shape moves with the definition. Under "pushed code" (MAU 48,946) the bands read 64.2, 26.0, 8.0, 1.5, 0.1 and 0.2 percent, with 57 accounts on all 28 days. Under "opened an issue or pull request" (MAU 8,993) they read 77.5, 18.3, 3.7 and 0.4 percent for the first four bands, then almost nothing: 1 account on all 28 days, 4 on 22 or more. The rarer the behaviour, the further left the curve leans. Publish the definition with the curve, every time, because the curve is unreadable without it.</p>
+        <p>Jin and Chen's post says Facebook "would have a very right-leaning smile, with 60%+ of its MAUs coming back daily". That is their description, not a number anyone outside Facebook has checked, so hold it as a claim about what a social product can look like, not as a benchmark to hit.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The ratio that hid two products.</strong> A common pattern, no numbers attached: a B2B tool reports a healthy DAU/MAU and a flat MAU, so nobody looks. The L28 shows a spike at one day and a second bump at 20-plus days, with almost nothing between. Two populations are sharing one ratio: people who evaluated it once and left, and a core team that lives in it. The average of those two groups describes nobody, and the histogram is the cheapest way to find out you have two products wearing one name.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers concentration</span>
+      <h2>Who owns the account-days</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">A left-leaning curve says most accounts are occasional. Concentration asks the complementary question: of all the activity, how much sits with the few? The unit for the L28 is the account-day, one account seen on one day. Rank the sampled accounts by days and the top 10 percent hold 33.5 percent of all account-days. Rank them by events and the top 1 percent hold 30.1 percent of all sampled events. The median account was seen on one day. Half of your monthly actives, in this sample, are one-day visitors.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two stacked share bars and a card doodle. Top bar, account-days under any event: the top 10 percent of accounts ranked by days hold 33.5 percent, drawn in gold; the other 90 percent hold 66.5 percent, drawn as hachure. Second bar, events: the top 1 percent of accounts ranked by events hold 30.1 percent, gold; the other 99 percent hold 69.9 percent. At the right, a tall deck of 28 day-cards for an account seen every day beside a single day-card for the median account, which was seen on 1 day of 28.">
+        <defs>
+          <filter id="b5bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b5bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b5bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b5bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b5bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b5bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b5bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b5bV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .b5bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b5bH" x="30" y="26">WHERE THE ACTIVITY SITS</text>
+        <text class="b5bS" x="220" y="26">same 79,555 accounts, any event, ranked two ways</text>
+
+        <text class="b5bH" x="40" y="62">ACCOUNT-DAYS (one account seen on one day)</text>
+        <text class="b5bH" x="40" y="162">EVENTS (everything a sampled account did)</text>
+        <text class="b5bH" x="690" y="62">THE MEDIAN ACCOUNT</text>
+
+        <g filter="url(#b5bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- bar 1: account-days -->
+          <rect x="40" y="72" width="201" height="44" rx="4" transform="rotate(-0.3 140 94)" fill="#F7B928" stroke="#614300"/>
+          <rect x="241" y="72" width="399" height="44" rx="4" fill="url(#b5bHc)"/>
+          <!-- bar 2: events -->
+          <rect x="40" y="172" width="181" height="44" rx="4" transform="rotate(0.3 130 194)" fill="#F7B928" stroke="#614300"/>
+          <rect x="221" y="172" width="419" height="44" rx="4" fill="#FFFFFF"/>
+          <!-- card doodle: a 28-card deck and a single card -->
+          <rect x="690" y="78" width="60" height="112" rx="3" transform="rotate(-2 720 134)" fill="#EEF1FF"/>
+          <path d="M690 86 L750 86 M690 94 L750 94 M690 102 L750 102 M690 110 L750 110 M690 118 L750 118 M690 126 L750 126 M690 134 L750 134 M690 142 L750 142 M690 150 L750 150 M690 158 L750 158 M690 166 L750 166 M690 174 L750 174 M690 182 L750 182" stroke="#C8CFEA" stroke-width="1.2" transform="rotate(-2 720 134)"/>
+          <rect x="786" y="182" width="60" height="8" rx="2" transform="rotate(3 816 186)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <path d="M770 210 L770 250" marker-end="url(#b5bAr)"/>
+        </g>
+
+        <text class="b5bB" x="140" y="99" text-anchor="middle">33.5%</text>
+        <text class="b5bL" x="440" y="99" text-anchor="middle">66.5%</text>
+        <text class="b5bS" x="40" y="134">top 10 percent of accounts, ranked by days</text>
+        <text class="b5bS" x="360" y="134">the other 90 percent of accounts</text>
+
+        <text class="b5bB" x="130" y="199" text-anchor="middle">30.1%</text>
+        <text class="b5bL" x="430" y="199" text-anchor="middle">69.9%</text>
+        <text class="b5bS" x="40" y="234">top 1 percent of accounts, ranked by events</text>
+        <text class="b5bS" x="360" y="234">the other 99 percent of accounts</text>
+
+        <text class="b5bS" x="720" y="206" text-anchor="middle">28 day-cards</text>
+        <text class="b5bS" x="816" y="206" text-anchor="middle">1 day-card</text>
+        <text class="b5bV" x="770" y="268" text-anchor="middle">median: 1 of 28</text>
+
+        <text class="b5bN" x="30" y="290">Median is 1 day of 28. Half the accounts are one-day visitors, and a tenth of them hold a third of the account-days.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold slices are the accounts a "monthly active" headline is silently describing</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Two rankings, two shares<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Rank by days and you measure breadth of presence: how many of the 28 days an account showed up. Rank by events and you measure volume: how much it did. They point the same way here (33.5 percent of account-days with the top tenth; 30.1 percent of events with the top hundredth) but they are different questions, and a product team should choose the one that matches what it sells. A daily habit product cares about days. A tool billed on usage cares about events.</p>
+        <p>Concentration is also a warning about denominators. When a tenth of accounts hold a third of the account-days, any per-account average is being pulled toward that tenth, and the median (1 day) is the number that describes the typical account. Session 2 met the same shape inside one hour, where the top 1 percent of actors produced 38.7 percent of the events. It is the normal shape of a public event stream, and the reason the median is printed next to every mean.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>A share is not a segment<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>"The top 10 percent" is a slice of a ranking, not a list of named people you can act on. The cut point moves every month as the population changes, and an account that was in the top tenth in March may drop out in April without changing its own behaviour at all, simply because others moved. Segments that a team acts on (a mailing list, a feature flag) need a fixed rule in absolute terms, such as "seen on 8 or more days", so that membership is stable and comparable across months. Ranked shares are for describing the shape; absolute thresholds are for building lists.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The average customer who did not exist.</strong> A common pattern, no numbers attached: a usage-billed API reports the average calls per customer to a pricing review, and the new tier is designed around that average. The histogram, drawn later, shows the median customer far below it and a handful of accounts far above. The tier priced for the average is too expensive for almost everyone and too cheap for the few. A concentration line, "the top 1 percent of accounts make X percent of calls", printed next to the average would have stopped the review in its first minute.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers where automation hides and what sampling does</span>
+      <h2>The right tail is not all people</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">The 22-28 band holds 105 accounts, and on a power-user curve those are the accounts a team would call its core. Run a crude name check over their logins (bot, -ci, ci-, sync, deploy, commenter, assistant) and 17 of the 105 match, without any <code>[bot]</code> suffix to give them away. The suffix filter from session 2 removed 98 accounts; it did not remove these. A name check is a weak instrument, it misses bots with plain names and it can flag a person whose login happens to contain "sync", so the honest reading is that some unknown share of the tail is automation, and the 17 is a floor for how many we can see.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Left: the right tail of the any-event L28 zoomed to days 22 to 28, with account counts 7, 6, 8, 3, 5, 14 and 62. Beside it a column for the 105 accounts on 22 or more days, with a gold slice of 17 whose logins match a bot-like name pattern and 88 that do not match. Right: a 24-hour ring with only two hours filled, 03:00 and 15:00 UTC; the other 22 hours are unseen, so any account active only at other hours is never counted as active that day.">
+        <defs>
+          <filter id="b5cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b5cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b5cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b5cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b5cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b5cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b5cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b5cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b5cW { font: 800 12px Inter, sans-serif; fill: #FFFFFF; }
+          .b5cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b5cH" x="30" y="26">THE TAIL, ZOOMED: DAYS 22 TO 28</text>
+        <text class="b5cH" x="600" y="26">TWO SAMPLED HOURS OF 24</text>
+
+        <g filter="url(#b5cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- baseline and seven bars, 2.4 px per account -->
+          <path d="M50 230 L470 230"/>
+          <rect x="60" y="213" width="40" height="17" rx="2" transform="rotate(-1 80 221)" fill="#EEF1FF"/>
+          <rect x="120" y="216" width="40" height="14" rx="2" transform="rotate(1 140 223)" fill="#EEF1FF"/>
+          <rect x="180" y="211" width="40" height="19" rx="2" transform="rotate(-0.8 200 220)" fill="#EEF1FF"/>
+          <rect x="240" y="223" width="40" height="7" rx="2" fill="#EEF1FF"/>
+          <rect x="300" y="218" width="40" height="12" rx="2" transform="rotate(0.8 320 224)" fill="#EEF1FF"/>
+          <rect x="360" y="196" width="40" height="34" rx="2" transform="rotate(-0.6 380 213)" fill="#EEF1FF"/>
+          <rect x="420" y="81" width="40" height="149" rx="3" transform="rotate(0.5 440 155)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- the 105 column, 1.4 px per account: 17 gold on top of 88 hachure -->
+          <rect x="510" y="83" width="50" height="24" rx="2" transform="rotate(-1.5 535 95)" fill="#F7B928" stroke="#614300"/>
+          <rect x="510" y="107" width="50" height="123" rx="2" fill="url(#b5cHc)"/>
+          <!-- 24 hour ring -->
+          <circle cx="730" cy="140" r="70" fill="#FFFFFF"/>
+          <circle cx="730" cy="140" r="52" fill="#FFFFFF" stroke="#C8CFEA" stroke-width="1.2"/>
+          <path d="M730 140 L779.5 90.5 A70 70 0 0 1 790.6 105 Z" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <path d="M730 140 L680.5 189.5 A70 70 0 0 1 669.4 175 Z" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <path d="M730 70 L730 78 M800 140 L792 140 M730 210 L730 202 M660 140 L668 140" stroke="#4B5372"/>
+          <path d="M796 84 L812 72" marker-end="url(#b5cAr)"/>
+          <path d="M664 196 L648 208" marker-end="url(#b5cAr)"/>
+        </g>
+
+        <text class="b5cL" x="80" y="207" text-anchor="middle">7</text>
+        <text class="b5cL" x="140" y="210" text-anchor="middle">6</text>
+        <text class="b5cL" x="200" y="205" text-anchor="middle">8</text>
+        <text class="b5cL" x="260" y="217" text-anchor="middle">3</text>
+        <text class="b5cL" x="320" y="212" text-anchor="middle">5</text>
+        <text class="b5cL" x="380" y="190" text-anchor="middle">14</text>
+        <text class="b5cV" x="440" y="72" text-anchor="middle">62</text>
+        <text class="b5cS" x="80" y="248" text-anchor="middle">22</text>
+        <text class="b5cS" x="140" y="248" text-anchor="middle">23</text>
+        <text class="b5cS" x="200" y="248" text-anchor="middle">24</text>
+        <text class="b5cS" x="260" y="248" text-anchor="middle">25</text>
+        <text class="b5cS" x="320" y="248" text-anchor="middle">26</text>
+        <text class="b5cS" x="380" y="248" text-anchor="middle">27</text>
+        <text class="b5cS" x="440" y="248" text-anchor="middle">28 days</text>
+
+        <text class="b5cH" x="535" y="72" text-anchor="middle">105</text>
+        <text class="b5cB" x="570" y="99">17 bot-like names</text>
+        <text class="b5cS" x="570" y="115">no [bot] suffix</text>
+        <text class="b5cS" x="570" y="176">88 not matched</text>
+        <text class="b5cS" x="570" y="192">by the name check</text>
+        <text class="b5cS" x="535" y="248" text-anchor="middle">on 22+ days</text>
+
+        <text class="b5cL" x="816" y="66">03:00</text>
+        <text class="b5cL" x="614" y="220">15:00</text>
+        <text class="b5cS" x="730" y="136" text-anchor="middle">22 hours</text>
+        <text class="b5cS" x="730" y="150" text-anchor="middle">unseen</text>
+        <text class="b5cS" x="660" y="248">an account active only at other hours</text>
+        <text class="b5cS" x="660" y="262">is never counted as active that day</text>
+
+        <text class="b5cN" x="30" y="290">Two hours a day shift every account left. This is what the sample can see, never GitHub's true stickiness.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the tallest bar in the tail is the one a team would celebrate, and a sixth of the band has a machine's name</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Two ways the tail lies<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Automation looks like devotion.</strong> A scheduled job runs every day, so it lands on day 28 of the L28 and sits at the very top of the curve. The 62 accounts seen on all 28 days are exactly where a scheduled job lands, and the crude check cannot say how many of them are scripts with ordinary logins. Under "pushed code" the same tail reads 92 accounts on 22 or more days, 11 of them bot-like; under "opened an issue or pull request" it is 4 accounts, 1 bot-like. The narrower the definition, the fewer machines survive it, which is one more argument for choosing "active" as a behaviour that requires a person.</p>
+        <p><strong>Sampling looks like disengagement.</strong> The other direction is just as important. A real daily user who works from 06:00 to 14:00 UTC touches neither sampled hour and scores zero days in the month; a user who overlaps one sampled hour on some days scores a handful. Two hours of 24 is 1/12 of the day, and the curve is left-leaning partly because of that. Part of the shape is real (most public GitHub accounts are occasional) and part is the instrument, and the rows cannot tell you the split. Say both when you present it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What to do about names<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Do not silently drop the 17. Print them, with their day counts and event counts, and read the list. A name check is a hypothesis generator; the confirmation comes from behaviour: an account that acts at the same minute every day, only ever pushes, and never opens, stars or comments is behaving like a schedule. Keep the rule you settle on in code next to the <code>[bot]</code> suffix filter, so that the next person sees both filters and the reasoning, and report the curve with and without the flagged accounts. When the two curves disagree materially, the automation share is a finding, not a footnote.</p>
+        <p>In a product you run, the same problem appears as internal accounts, QA users, monitoring probes and integrations, and it appears first in the right tail, because that is where anything that never sleeps ends up.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The core users who were a monitor.</strong> A common pattern, no numbers attached: a team celebrates its most engaged accounts in a quarterly review and, when someone finally pulls the list, the top of it is an uptime probe hitting the login page every few minutes, a QA account exercising every feature nightly, and an integration that syncs a calendar on a schedule. None of them will ever churn, and none of them will ever pay. The fix was one line in the definition of active, and a printed list of the top accounts by days that somebody reads before every review.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Build the L28 from 56 GH Archive hours</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Standard-library Python for the counting, matplotlib for the drawing. The sample is deterministic (account id divisible by 20), so the numbers printed as comments below are what this code prints on the 56 files, and yours should match them exactly. Step 1 is the slow part: 56 files, each about the size of the session 1 hour (150,807,371 bytes), streamed once. Start it before class, or download the first few files and confirm the shape of <code>actor-days.json</code> before letting it run.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline: 56 GH Archive hourly files at 03:00 and 15:00 UTC for 28 days; one JSON file keeping only accounts whose id divides by 20; a set of days per account; a 29-slot histogram grouped into six bands; a matplotlib figure saved as a 300 DPI PNG and an SVG. Counts under the boxes: 79,555 accounts; 53,046 on one day, 62 on all 28; bands 66.7, 24.0, 7.5, 1.6, 0.2, 0.1 percent.">
+        <defs>
+          <filter id="b5dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="109" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b5dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b5dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b5dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b5dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b5dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b5dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b5dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b5dH" x="30" y="26">FIVE STEPS, FIFTY-SIX FILES</text>
+
+        <g filter="url(#b5dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b5dHc)"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#FFFFFF"/>
+          <rect x="362" y="70" width="130" height="60" rx="8" transform="rotate(-0.5 427 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#EEF1FF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L188 100" marker-end="url(#b5dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b5dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b5dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b5dAr)"/>
+        </g>
+
+        <text class="b5dL" x="44" y="96">1 · 56 files</text>
+        <text class="b5dS" x="44" y="114">03:00 + 15:00 UTC</text>
+        <text class="b5dL" x="210" y="96">2 · one JSON</text>
+        <text class="b5dS" x="210" y="114">id % 20 == 0 only</text>
+        <text class="b5dW" x="376" y="96">3 · days seen</text>
+        <text class="b5dW" x="376" y="114">a set per account</text>
+        <text class="b5dL" x="542" y="96">4 · histogram</text>
+        <text class="b5dS" x="542" y="114">hist[29], 6 bands</text>
+        <text class="b5dL" x="708" y="96">5 · plot + save</text>
+        <text class="b5dS" x="708" y="114">PNG 300 DPI + SVG</text>
+
+        <text class="b5dS" x="30" y="160">28 days of March 2024</text>
+        <text class="b5dS" x="362" y="160">79,555 accounts</text>
+        <text class="b5dS" x="528" y="160">53,046 on 1 day, 62 on 28</text>
+        <text class="b5dS" x="694" y="160">two files on disk</text>
+
+        <text class="b5dN" x="30" y="206">Steps 3 to 5 work unchanged on your product's export. Only step 1 and the definition of a "day active" are yours.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the histogram is a 29-slot list; everything after step 3 is arithmetic and drawing</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Fetch the 56 sampled hours and keep the 5 percent.</strong> GH Archive names hourly files by UTC date and hour with no zero padding, so 03:00 is <code>-3</code> and 15:00 is <code>-15</code>. For each sampled account the file keeps its login, its event count, its push count and how many issues or pull requests it opened, per hour. This is the only step that touches the network.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · actor-days.json from 56 GH Archive files (slow: run it ahead)</span>import gzip, json, urllib.request
+
+DAYS = ["2024-03-%02d" % d for d in range(4, 32)]                 # 28 days
+hours = {}
+for day in DAYS:
+    for h in (3, 15):
+        name = "%s-%d.json.gz" % (day, h)
+        urllib.request.urlretrieve("https://data.gharchive.org/" + name, name)
+        actors = {}
+        for line in gzip.open(name, "rt"):
+            e = json.loads(line)
+            aid = e["actor"]["id"]
+            if aid % 20:
+                continue                                             # the 5 percent sample
+            v = actors.setdefault(str(aid), [e["actor"]["login"], 0, 0, 0])
+            v[1] += 1
+            v[2] += int(e["type"] == "PushEvent")
+            p = e.get("payload") or {}
+            v[3] += int(e["type"] in ("IssuesEvent", "PullRequestEvent") and p.get("action") == "opened")
+        hours["%s-%d" % (day, h)] = {"actors": actors}
+json.dump(hours, open("actor-days.json", "w"))</div>
+      </div>
+      <div class="step">
+        <p><strong>Days seen per account.</strong> One set of UTC days per account, under "any event". The <code>[bot]</code> suffix filter from session 2 rides along, and the counts it prints are the ones to check first.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · a set of days per account</span>import json, re
+from collections import defaultdict
+
+hours = json.load(open("actor-days.json"))
+days = sorted({h.rsplit("-", 1)[0] for h in hours})
+assert len(days) == 28
+seen, events, logins, bots = defaultdict(set), defaultdict(int), {}, set()
+for h, blob in hours.items():
+    day = h.rsplit("-", 1)[0]
+    for aid, v in blob["actors"].items():
+        if v[0].endswith("[bot]"):
+            bots.add(aid); continue
+        logins[aid] = v[0]
+        events[aid] += v[1]
+        if v[1] &gt; 0:                       # any event: swap for v[2] (push) or v[3] (open)
+            seen[aid].add(day)
+print(len(seen), len(bots))                # 79555 98</div>
+      </div>
+      <div class="step">
+        <p><strong>The histogram and its bands.</strong> A 29-slot list so that index equals days; slot 0 stays empty because every account in <code>seen</code> has at least one day.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · hist[29] and six band shares</span>ldays = [len(s) for s in seen.values()]
+mau = len(ldays)
+hist = [0] * 29
+for x in ldays:
+    hist[x] += 1
+BANDS = ((1, 1), (2, 3), (4, 7), (8, 14), (15, 21), (22, 28))
+share = [100 * sum(hist[a:b + 1]) / mau for a, b in BANDS]
+print(mau, hist[1], hist[28])              # 79555 53046 62
+print(" ".join("%.1f" % s for s in share))  # 66.7 24.0 7.5 1.6 0.2 0.1
+print(sorted(ldays)[mau // 2])             # 1   (median days)</div>
+      </div>
+      <div class="step">
+        <p><strong>Concentration and the tail.</strong> Two rankings, then the crude name check over the accounts on 22 or more days. Print the flagged logins and read them; the number alone is not the finding.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · two shares and the name check</span>top = sorted(ldays, reverse=True)[: mau // 10]
+print("%.1f" % (100 * sum(top) / sum(ldays)))                    # 33.5  (account-days, top 10 percent)
+ev = sorted(events.values(), reverse=True)
+print("%.1f" % (100 * sum(ev[: len(ev) // 100]) / sum(ev)))       # 30.1  (events, top 1 percent)
+tail = [a for a, s in seen.items() if len(s) &gt;= 22]
+botish = [a for a in tail if re.search(r"bot|-ci\b|ci-|sync|deploy|commenter|assistant", logins[a], re.I)]
+print(len(tail), len(botish))                                    # 105 17
+for a in botish:
+    print(logins[a], len(seen[a]), events[a])                    # read this list</div>
+      </div>
+      <div class="step">
+        <p><strong>Draw it and save both formats.</strong> Bars for all 28 days, band shares annotated above the first bar of each band, a title that names the definition and the sample. The PNG at 300 DPI is for a slide; the SVG is for anything that will be edited later.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · matplotlib, PNG 300 DPI and SVG</span>import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(9, 4.5))
+ax.bar(range(1, 29), hist[1:], color="#1D4AFF", width=0.8)
+for (a, b), s in zip(BANDS, share):
+    ax.annotate("%.1f%%" % s, ((a + b) / 2, hist[a]), ha="center", va="bottom", fontsize=8)
+ax.set_xticks(range(1, 29))
+ax.set_xlabel("days active out of 28 (two sampled hours a day)")
+ax.set_ylabel("accounts")
+ax.set_title("L28, any event, 5 percent GitHub account sample, March 2024")
+fig.tight_layout()
+fig.savefig("l28-any.png", dpi=300)
+fig.savefig("l28-any.svg")
+# two files written; 53,046 in the first bar, 62 in the last</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Then draw it again on a log axis.</strong> Add <code>ax.set_yscale("log")</code> and save a second pair of files. On the linear axis the 62 accounts on day 28 are a sliver next to 53,046, which is the truth about their share; on the log axis you can see the tail's shape, which is where the automation question lives. Show the linear one to the room and keep the log one for yourself.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 6</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Draw the other two curves.</strong> Swap <code>v[1]</code> for <code>v[2]</code> (pushed code) and then <code>v[3]</code> (opened an issue or pull request) in step 2, re-run steps 3 and 5, and check your band shares against the ones in Part 1's self-study card. Write one sentence on which way the curve moved and why.</li>
+      <li><strong>Read the 17.</strong> Print the flagged logins with their day and event counts, then print the 28-day accounts that the name check did not flag. Decide a behavioural rule (for example: pushes only, never opens or stars) and report how the 22-28 band changes with it. Your rule will differ from your neighbour's; the point is to write it down.</li>
+      <li><strong>Save the log-axis pair.</strong> Produce <code>l28-any-log.png</code> and <code>.svg</code>, and note which single day count is the first one you can read on the log axis but not on the linear one.</li>
+      <li><strong>Self-study, no numbers to check:</strong> split the sampled accounts by the first sampled day they were seen and draw one L28 per first-seen week. This is a cohort view, and it has the trap session 8's cohort decision names: first seen is not sign-up. Cohort curves proper belong to <a href="https://phoebefu6.github.io/learn-customer-retention-with-phoebe/">customer retention</a>.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 5 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · Under "any event", 66.7 percent of the sampled accounts sit in the one-day band. What may you conclude about GitHub's real stickiness?</p>
+      <button class="qopt" type="button">A · That two thirds of GitHub users visit once a month</button>
+      <button class="qopt" type="button">B · That GitHub's DAU/MAU is 6.4 percent</button>
+      <button class="qopt" type="button">C · Very little on its own: the sample sees two hours of 24, so a daily user active at other hours scores zero days, and the curve mixes real occasional use with what the instrument cannot see</button>
+      <button class="qopt" type="button">D · That the curve would become a smile if bots were removed</button>
+      <p class="qwhy">Part of the left lean is real and part is sampling, and the rows cannot split the two. The honest sentence is "this is what two sampled hours a day can see", and the ratio in B is also the sample's, not GitHub's.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">2 · The top 10 percent of accounts by days hold 33.5 percent of account-days, and the median account was seen on 1 day. Which number should sit next to "average days active" in a report?</p>
+      <button class="qopt" type="button">A · The median, 1 day, because a tenth of accounts holding a third of the account-days pulls any per-account average toward that tenth, and the median describes the typical account</button>
+      <button class="qopt" type="button">B · The maximum, 28 days, to show what is possible</button>
+      <button class="qopt" type="button">C · The DAU/MAU ratio, which already summarises the distribution</button>
+      <button class="qopt" type="button">D · No second number; the average is sufficient when the sample is large</button>
+      <p class="qwhy">Concentration is a warning about denominators. Session 2 met the same shape inside one hour (the top 1 percent of actors making 38.7 percent of events), and the rule is the same: print the median beside every mean.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · 17 of the 105 accounts on 22 or more days match a crude bot-name pattern and carry no <code>[bot]</code> suffix. What is the right next step?</p>
+      <button class="qopt" type="button">A · Drop the 17 and report the curve as clean</button>
+      <button class="qopt" type="button">B · Keep them; the suffix filter already removed the bots</button>
+      <button class="qopt" type="button">C · Report that 17 of 105 core users are bots</button>
+      <button class="qopt" type="button">D · Print the 17 with their day and event counts, confirm from behaviour, and report the curve with and without them; the name check is a floor, not a count</button>
+      <p class="qwhy">A name check misses scripts with plain logins and can flag a person; behaviour confirms it. Two curves, side by side, turn the automation share into a finding the reader can weigh instead of a footnote they cannot check.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Power-user curve definition, the L30 name, and the DAU/MAU critique</span><span class="note">Jin, L. and Chen, A. (2018). "The Power User Curve: The best way to understand your most engaged users." a16z, 6 August 2018. Read at source; quoted exactly</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every L28 count, band share, concentration figure and tail count</span><span class="note">Measured on GH Archive, 56 sampled hours (03:00 and 15:00 UTC, 2024-03-04 to 2024-03-31), 5 percent account sample, by the code on this page</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">GH Archive file naming and contents</span><span class="note">GH Archive. https://www.gharchive.org/ (hourly archives, data.gharchive.org); GitHub Docs. "GitHub event types."</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Facebook as a "right-leaning smile" with 60 percent or more of MAUs daily</span><span class="note">The same a16z post; their description, not verified against any published Facebook number, and taught as a claim</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Which tail accounts are automation</span><span class="note">A crude name pattern only; 17 of 105 is a floor and the true share is unknown</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 5 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>L28 = days per account, then count</b><span>One mark per account; hist[29], index equals days.</span></div>
+      <div class="cheat-item"><b>Six bands, any event</b><span>66.7 · 24.0 · 7.5 · 1.6 · 0.2 · 0.1 percent of 79,555.</span></div>
+      <div class="cheat-item"><b>Median 1 day, mean beside it</b><span>Top tenth holds 33.5 percent of account-days; top hundredth 30.1 percent of events.</span></div>
+      <div class="cheat-item"><b>Publish the definition with the curve</b><span>Pushed and opened lean further left; the curve is unreadable without it.</span></div>
+      <div class="cheat-item"><b>The tail is not all people</b><span>105 on 22+ days, 17 bot-like names, no suffix. Print, confirm, report both curves.</span></div>
+      <div class="cheat-item"><b>Sampling shifts everyone left</b><span>Two hours of 24. What the sample sees, never GitHub's real stickiness.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>The L28 counts days. Session 6 counts features: for each of the 8,348 new repositories in the activation cohort, a funnel of saw, tried, used again per feature, with breadth, depth and time to first use. "Branch created" reaches 68.8 percent of repositories and "issue opened" 0.5 percent, and the widest-adopted feature turns out to be the weakest signal, because most of it is a setup artefact. Then the breadth gradient, from zero features to four or more.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 5 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b4-hunting-the-activation-moment.html">← Prev: Hunting the activation moment</a> &nbsp;·&nbsp; <a href="b6-adoption-funnels.html">Next: Adoption funnels and time to adopt →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

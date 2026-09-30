@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 4 of 6. Adoption is three questions, not one: how many used it, how much, and how soon. Measured on 8,348 real new GitHub repositories: the most adopted feature is a setup artefact, the rarest one travels with a far higher return rate, and using more features goes with coming back, which is not the same as causing it.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Adopted is not valued - learn product analytics with phoebe">
+<meta property="og:description" content="Leader session 4 of 6. Breadth, depth, time to adopt, and the value signal that none of them is. Six real features of a new GitHub repository, and a scorecard you build for one feature of your own.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/a4-adopted-is-not-valued.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Adopted is not valued - learn product analytics with phoebe">
+<meta name="twitter:description" content="Leader session 4 of 6. Breadth, depth, time to adopt, and the setup artefact that looks like adoption.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 4 · Adopted is not valued - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Leader session 4 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Leader track · Session 4 of 6</div>
+    <h1>Adopted is <span class="accent">not valued</span></h1>
+    <p class="sub">"Adoption is at 68 percent" is the sentence a feature team most wants to say in a review, and it is the sentence a product leader should trust least. Tonight we take the word apart into three questions that have three different answers, how many used it, how much they used it, and how soon, then ask the fourth question that none of them answers: did the people who used it get anything out of it? The data is 8,348 real new GitHub repositories and six things a repository can do in its first week. The most adopted of the six is a setup artefact nobody chose.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product managers and product leaders</span>
+      <span class="chip audience">No code</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Breadth, depth, time, and the setup artefact</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: the adoption scorecard</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Sessions 2 and 3 were about the whole product: the moment that predicts staying, and the engagement curve you can defend. Tonight narrows to one feature at a time, which is how most product decisions are actually made. A team ships a thing, a number called "adoption" appears on a slide, and a decision about the next quarter follows from it. The trouble is that "adoption" is not one measurement. It is a family of at least three, they routinely disagree, and the easiest one to make go up is the one that says least about whether anyone got value. The same cohort of 8,348 new repositories from session 2 gives us six features to practise on, and the practice is the point: by the end you will read any adoption slide and know which of the three questions it answered and which two it skipped.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = you make the artifact</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> An adoption scorecard for one feature of your own product, five rows on one page: breadth, depth, time to adopt, the value signal you would accept, and an honest column saying which of those rows the team could push up without a single user getting anything. Plus the one question that deflates a celebratory adoption slide in a sentence: "was that first use a choice, or did the product do it for them?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers breadth, depth and time to adopt as three separate questions</span>
+      <h2>Three questions hiding inside one word</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Take the most ordinary thing a new GitHub repository can do: receive a push of code. Ask "was pushing adopted?" and three honest answers come back that do not resemble each other. 39.1 percent of the 8,348 new repositories received at least one push in their first week. Those that did received a median of 2 pushes, mean 3.6. And the median time from the repository's birth to its first push was 0 hours: it happened in the same hour the repository was created. Same feature, same week, same repositories. One word, three measurements.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three hand-drawn panels for one feature, pushing code, in 8,348 new GitHub repositories over their first week. Breadth: a bar filled to 39.1 percent, 3,268 repositories pushed at least once. Depth: among those that pushed, median 2 pushes and mean 3.6, drawn as two tally marks beside a longer mean bar. Time to adopt: a timeline from the birth hour to day 7 with a heavy dot at 0 hours, the median, and a thin tail noting 489 of 3,268 first pushed after day one.">
+        <defs>
+          <filter id="a4aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="52" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a4aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a4aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a4aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a4aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a4aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a4aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a4aV { font: 800 20px Inter, sans-serif; fill: #1030B0; }
+          .a4aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a4aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a4aH" x="30" y="26">ONE FEATURE, PUSHING CODE. THREE ANSWERS TO "WAS IT ADOPTED?"</text>
+        <text class="a4aS" x="520" y="26">8,348 new repositories, first 7 days, sampled hours</text>
+
+        <g filter="url(#a4aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three panels -->
+          <rect x="30" y="46" width="260" height="194" rx="10" transform="rotate(-0.5 160 143)" fill="#FFFFFF"/>
+          <rect x="310" y="46" width="260" height="194" rx="10" transform="rotate(0.4 440 143)" fill="#FFFFFF"/>
+          <rect x="590" y="46" width="260" height="194" rx="10" transform="rotate(-0.3 720 143)" fill="#FFFFFF"/>
+          <!-- breadth bar: track and fill -->
+          <rect x="50" y="120" width="220" height="30" rx="5" fill="#EEF1FF"/>
+          <rect x="50" y="120" width="86" height="30" rx="5" transform="rotate(-0.8 93 135)" fill="#1D4AFF" stroke="#1030B0"/>
+          <!-- depth: median tally, mean bar -->
+          <path d="M340 150 L340 178 M352 150 L352 178" stroke="#1030B0" stroke-width="3"/>
+          <rect x="400" y="140" width="130" height="30" rx="5" transform="rotate(0.6 465 155)" fill="url(#a4aHc)"/>
+          <!-- time rail -->
+          <path d="M610 160 L830 160" marker-end="url(#a4aAr)"/>
+          <path d="M610 152 L610 168 M665 155 L665 165 M720 155 L720 165 M775 155 L775 165" stroke="#4B5372"/>
+          <circle cx="612" cy="160" r="11" fill="#F7B928" stroke="#614300"/>
+          <path d="M665 128 C700 118 760 118 810 130" stroke="#4B5372" stroke-dasharray="4 3" marker-end="url(#a4aAr)"/>
+        </g>
+
+        <text class="a4aH" x="50" y="74">BREADTH · how many</text>
+        <text class="a4aV" x="50" y="106">39.1%</text>
+        <text class="a4aS" x="122" y="106">3,268 of 8,348 pushed</text>
+        <text class="a4aS" x="50" y="176">at least once in week one</text>
+        <text class="a4aS" x="50" y="196">the rest: 5,080, never pushed</text>
+        <text class="a4aA" x="50" y="228">the question most slides answer</text>
+
+        <text class="a4aH" x="330" y="74">DEPTH · how much</text>
+        <text class="a4aV" x="330" y="106">median 2</text>
+        <text class="a4aS" x="430" y="106">mean 3.6 pushes</text>
+        <text class="a4aL" x="330" y="200">2 pushes</text>
+        <text class="a4aL" x="400" y="200">a long tail pulls the mean up</text>
+        <text class="a4aA" x="330" y="228">among the 3,268 who pushed at all</text>
+
+        <text class="a4aH" x="610" y="74">TIME TO ADOPT · how soon</text>
+        <text class="a4aV" x="610" y="106">0 hours</text>
+        <text class="a4aS" x="700" y="106">median, birth to first push</text>
+        <text class="a4aS" x="606" y="188">birth</text>
+        <text class="a4aS" x="655" y="188">day 1</text>
+        <text class="a4aS" x="710" y="188">day 3</text>
+        <text class="a4aS" x="765" y="188">day 5</text>
+        <text class="a4aB" x="690" y="146">489 first pushed after day one</text>
+        <text class="a4aA" x="610" y="228">the gold dot is the same hour it was born</text>
+
+        <text class="a4aN" x="30" y="272">Three numbers, none of them wrong, none of them the same. A slide that says "adoption: 39%" answered breadth and skipped the other two.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - breadth, depth and time are three questions; the gold dot warns that "adopted at 0 hours" may not have been a choice</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Breadth, depth, time: define each before you compare any<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Breadth</strong> is the share of eligible units that used the feature at least once in a window. Three words in that sentence need a decision: eligible (who could have used it), once (or a higher bar), and window (a week, a month, ever). Change any one and the number moves. For pushing, breadth in week one is 39.1 percent of 8,348 new repositories.</p>
+        <p><strong>Depth</strong> is how much the adopters used it, and it is only ever measured among adopters. Median 2 pushes and mean 3.6 tells you the typical adopter pushed twice and a few pushed a great deal. Quote the median first; a mean over a long tail describes the tail.</p>
+        <p><strong>Time to adopt</strong> is the gap between becoming eligible and first use, and the median is the honest summary because the tail is long: half of pushing repositories pushed within their birth hour, and 489 of the 3,268 waited past day one. A time to adopt of 0 hours is not automatically good news. It can mean the feature is irresistible, or it can mean the product did it as part of setup and the user never chose anything.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why the three disagree, and why that is the point<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Breadth rises with anything that puts the feature in front of people: a default, a prompt, an onboarding step. Depth rises only when the feature keeps earning its place in a workflow. Time to adopt falls when the feature is near the start of the journey or is triggered for the user. So a team optimising a single "adoption" number will, without meaning to, optimise breadth, because breadth is the one that responds to placement. That is not dishonesty; it is what happens when a family of measurements is reported as one. A review that asks for all three, every time, removes the incentive.</p>
+        <p>The analyst track builds this table for all six features in session 6, from the same real rows, as a feature funnel: saw the feature, tried it, used it again. The leader version of that funnel is the three questions above, asked in order.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The 90 percent feature nobody used twice.</strong> A common pattern, no numbers claimed: a collaboration feature is placed in the new-account flow, and within a quarter its adoption reads above 90 percent because nearly every new account passes through it. Depth, when someone finally asks, is one use per adopter, and time to adopt is the same minute as signup. The feature was not adopted; the onboarding was completed. The scorecard you build tonight makes that visible on one page instead of three quarters later.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the setup artefact and the value signal</span>
+      <h2>The most adopted feature is the one nobody chose</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Now widen to all six things a new repository can do in its first week and put the fourth question beside breadth: of the repositories that used the feature, how many came back in weeks five and six, compared with those that did not? "Branch created" is the widest-adopted feature of the six, 5,744 repositories, 68.8 percent. Its adopters came back at 4.3 percent against 3.0 percent for the rest. "Issue opened" is the rarest, 44 repositories, 0.5 percent. Its adopters came back at 29.5 percent against 3.8 percent. The broadest feature carries almost no signal, and the narrowest carries the strongest, and 44 is a small group, so hold the second number loosely.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn scatter of six features of a new GitHub repository. Horizontal axis is breadth on a log scale from 0.1 to 100 percent of 8,348 repositories; vertical axis is the share of adopters that came back in weeks five and six. Branch created sits far right and low: 68.8 percent breadth, 4.3 percent came back, barely above the hachured band showing non-adopters at 2.3 to 3.9 percent. Push sits at 39.1 percent breadth, 6.4 percent came back. Pull request opened at 2.2 percent, 12.0. Release at 0.4 percent, 11.1. Wiki edit at 0.1 percent, 9.1. Issue opened, drawn in gold, sits far left and highest: 0.5 percent breadth, 29.5 percent came back, flagged as 44 repositories, small.">
+        <defs>
+          <filter id="a4bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="63" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a4bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a4bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a4bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a4bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a4bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a4bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a4bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a4bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a4bH" x="30" y="26">SIX FEATURES: HOW MANY USED IT (ACROSS) AGAINST HOW MANY OF THOSE CAME BACK (UP)</text>
+
+        <g filter="url(#a4bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes -->
+          <path d="M100 300 L830 300" marker-end="url(#a4bAr)"/>
+          <path d="M100 300 L100 60" marker-end="url(#a4bAr)"/>
+          <path d="M120 300 L120 306 M347 300 L347 306 M573 300 L573 306 M800 300 L800 306" stroke="#4B5372"/>
+          <path d="M94 227 L100 227 M94 153 L100 153 M94 80 L100 80" stroke="#4B5372"/>
+          <!-- the rest: non-adopters came back 2.3 to 3.9 percent -->
+          <rect x="102" y="271" width="712" height="12" rx="2" fill="url(#a4bHc)" stroke="#BFCBFF"/>
+          <!-- points -->
+          <circle cx="764" cy="268" r="7" fill="#EEF1FF" stroke="#4B5372"/>
+          <circle cx="707" cy="253" r="7" fill="#1D4AFF" stroke="#1030B0"/>
+          <circle cx="424" cy="212" r="7" fill="#1D4AFF" stroke="#1030B0"/>
+          <circle cx="256" cy="219" r="7" fill="#FFFFFF" stroke="#1D4AFF"/>
+          <circle cx="120" cy="233" r="7" fill="#FFFFFF" stroke="#1D4AFF"/>
+          <circle cx="279" cy="84" r="9" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="a4bA" x="110" y="322">0.1%</text>
+        <text class="a4bA" x="338" y="322">1%</text>
+        <text class="a4bA" x="561" y="322">10%</text>
+        <text class="a4bA" x="786" y="322">100%</text>
+        <text class="a4bA" x="60" y="304">0%</text>
+        <text class="a4bA" x="54" y="231">10%</text>
+        <text class="a4bA" x="54" y="157">20%</text>
+        <text class="a4bA" x="54" y="84">30%</text>
+
+        <text class="a4bL" x="778" y="255">branch created</text>
+        <text class="a4bS" x="778" y="269">68.8% · 4.3%</text>
+        <text class="a4bL" x="612" y="240">push 39.1% · 6.4%</text>
+        <text class="a4bL" x="438" y="216">PR opened 2.2% · 12.0% · 183 repos</text>
+        <text class="a4bL" x="268" y="240">release 0.4% · 11.1% · 36, small</text>
+        <text class="a4bL" x="100" y="258">wiki edit 0.1% · 9.1% · 11, small</text>
+        <text class="a4bB" x="296" y="88">issue opened · 0.5% breadth · 29.5% came back · 44 repos, small</text>
+        <text class="a4bS" x="110" y="293">the rest: repositories that did not use each feature came back at 2.3% to 3.9%</text>
+
+        <text class="a4bN" x="30" y="348">Wide and low is a setup artefact. Narrow and high is a signal, and a small one. Adoption slides usually show only the "across" axis.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold point is the one worth asking about, and it is 44 repositories; the grey point is 5,744 and says almost nothing</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why "branch created" is 68.8 percent and means nothing<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>When a repository receives its first push, GitHub records the default branch coming into existence. So most "branch created" events in a new repository's first week are not someone deciding to branch; they are the by-product of the first push. The feature's depth confirms it: median 1, mean 1.4, one branch per repository and rarely another. Its time to adopt confirms it again: median 0 hours, and only 87 of 5,744 first happened after day one. And its value signal is close to nothing: adopters came back at 4.3 percent, the rest at 3.0.</p>
+        <p>That is what a setup artefact looks like from the outside. Breadth high, depth at one, time at zero, value flat. Any feature the product performs on the user's behalf during setup will produce this exact shape, and it will top every adoption chart in the company. The chart is not lying. It is answering a question nobody meant to ask.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The value signal, and its two warnings<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The fourth row on tonight's scorecard is a value signal: some later outcome that the feature is supposed to serve, compared between adopters and non-adopters. Here it is coming back in weeks five and six, the same outcome the activation bench uses. Repositories that opened an issue in week one came back at 29.5 percent against 3.8 percent for the rest; repositories that opened a pull request, 12.0 against 3.7; a release, 11.1 against 3.9; a wiki edit, 9.1 against 3.9.</p>
+        <p>Two warnings travel with every one of those pairs. First, they are correlations. A repository where someone opened an issue is a repository that already had a second person or a plan; the issue did not make it come back, it marked a project that was already alive. Proving that nudging people to open issues changes return needs an experiment, which is the <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">experimentation course's</a> job. Second, the groups are small: 44 issue repositories, 36 releases, 11 wiki edits. A rate on 11 repositories is one repository away from a different story. Quote the count with the rate, always.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Choosing the value signal for your own feature<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The value signal must be an outcome the feature was built to serve, measured later than the feature use, and available for non-adopters too so there is something to compare against. Coming back is the general-purpose choice; a feature-specific one is better when it exists, a report feature judged by reports shared, an integration judged by data flowing through it a month later. Two traps: choosing an outcome that is the feature use itself restated (adopters of export "exported more"), and choosing one so far downstream that everything in the product correlates with it. Write the signal down before you look at the number, because after you look, every signal that favours the feature will seem like the obvious choice.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Five thousand repositories that "adopted branching".</strong> Read straight off the real rows: 5,744 new GitHub repositories created a branch in their first week, which would be a triumphant adoption number for any feature team. Nearly all of it is the default branch appearing when the first code arrived. Nobody chose it, nobody used it twice, and the repositories that did it came back at 4.3 percent against 3.0 for those that did not. If your product creates anything automatically during setup, a default project, a sample dashboard, a starter template, that thing is currently the most adopted feature you have, and the chart cannot tell you.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the breadth gradient and why it is a correlation</span>
+      <h2>More features, more return, and why that proves less than it looks</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Count how many of the six features each repository touched in its first week, then look at who came back. Repositories that used none, 2,171 of them, 26.0 percent, came back at 2.0 percent. One feature, 3.0 percent. Two, 5.7. Three, 11.8. Four or more, 37.5 percent, on 16 repositories. The staircase is real and it is the most seductive chart in feature analytics, because it seems to say "get people to use more features and they will stay". It does not say that. It says busy projects use more features, and busy projects come back.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five hand-drawn bars, one per count of distinct features used in the first week, zero to four or more. Bar heights are the share that came back in weeks five and six: 2.0 percent for zero features on 2,171 repositories, 3.0 for one on 3,289, 5.7 for two on 2,685, 11.8 for three on 187, flagged small, and 37.5 for four or more, drawn in gold, on 16 repositories, flagged small. A dashed arrow above reads: busy projects use more features and busy projects come back; the bars show a correlation, not a lever.">
+        <defs>
+          <filter id="a4cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="74" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a4cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a4cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a4cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a4cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a4cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a4cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a4cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .a4cA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a4cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a4cH" x="30" y="26">DISTINCT FEATURES USED IN WEEK ONE, AND THE SHARE THAT CAME BACK IN WEEKS FIVE AND SIX</text>
+
+        <g filter="url(#a4cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M60 250 L840 250"/>
+          <rect x="80" y="241" width="120" height="9" rx="2" transform="rotate(-0.6 140 245)" fill="url(#a4cHc)"/>
+          <rect x="230" y="236" width="120" height="14" rx="2" transform="rotate(0.5 290 243)" fill="url(#a4cHc)"/>
+          <rect x="380" y="224" width="120" height="26" rx="2" transform="rotate(-0.4 440 237)" fill="#EEF1FF"/>
+          <rect x="530" y="197" width="120" height="53" rx="2" transform="rotate(0.5 590 223)" fill="#1D4AFF" stroke="#1030B0"/>
+          <rect x="680" y="80" width="120" height="170" rx="2" transform="rotate(-0.4 740 165)" fill="#F7B928" stroke="#614300"/>
+          <!-- the story the eye wants to read -->
+          <path d="M150 190 C300 170 480 150 640 96" stroke="#4B5372" stroke-dasharray="5 4" marker-end="url(#a4cAr)"/>
+        </g>
+
+        <text class="a4cV" x="118" y="232">2.0%</text>
+        <text class="a4cV" x="268" y="226">3.0%</text>
+        <text class="a4cV" x="418" y="214">5.7%</text>
+        <text class="a4cV" x="566" y="187">11.8%</text>
+        <text class="a4cV" x="714" y="70">37.5%</text>
+
+        <text class="a4cL" x="106" y="272">0 features</text>
+        <text class="a4cS" x="94" y="290">2,171 repos · 26.0%</text>
+        <text class="a4cL" x="262" y="272">1 feature</text>
+        <text class="a4cS" x="244" y="290">3,289 repos · 39.4%</text>
+        <text class="a4cL" x="404" y="272">2 features</text>
+        <text class="a4cS" x="394" y="290">2,685 repos · 32.2%</text>
+        <text class="a4cL" x="554" y="272">3 features</text>
+        <text class="a4cB" x="548" y="290">187 repos · 2.2% · small</text>
+        <text class="a4cL" x="700" y="272">4+ features</text>
+        <text class="a4cB" x="700" y="290">16 repos · 0.2% · small</text>
+
+        <text class="a4cS" x="150" y="118">the story the eye reads: "more features, more return"</text>
+        <text class="a4cA" x="150" y="134">the story the data supports: busy projects use more, and busy projects come back</text>
+
+        <text class="a4cN" x="30" y="320">A gradient this steep on 16 repositories is a gradient to check, not a strategy. The repositories in the first three bars are the product.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the staircase is real, the causal arrow the eye draws over it is not in the data, and the tallest bar stands on 16 repositories</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading the staircase without falling down it<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three things are true at once. The gradient is real: at every step, repositories that touched more features came back more often. It is a correlation: a repository with two contributors, a plan and some code will open issues, open pull requests and cut a release, and it will also come back, and no part of that says the features did it. And the top of the stairs is tiny: 187 repositories used three features and 16 used four or more: 2.2 percent and 0.2 percent of the cohort. Nearly every new repository used two features or fewer.</p>
+        <p>So the honest sentence for a review is: "repositories that used more of the product in week one came back more often; we cannot tell from this whether using more causes staying, and the top two steps are too small to quote as rates." That sentence is less exciting than the chart and it is the one that survives the next quarter.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The "adopt three features" target and what it does to a team<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The gradient tempts leaders into a target: get every new account to three features in week one. What follows is predictable. Teams put features into onboarding, trigger some automatically, and the count of features touched rises for everyone. Breadth goes up, depth stays at one, time to adopt falls to zero, and the value signal does not move, because the accounts that were going to stay were already the ones touching three features, and forcing the other accounts through the same motions does not give them the same project. The gradient has been pushed into the setup-artefact shape from Part 2. Whether a nudge toward a feature changes staying is a causal question, and the only tool that answers it is a controlled experiment, which the <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">experimentation course</a> covers. Everything on this page is what you can know before you run one.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The launch that was celebrated for automatic first use.</strong> A common pattern, no numbers claimed: a team ships a feature whose first use is triggered by the product, a template applied to every new project, a summary generated on every save. Adoption in the launch review is near total and the team is congratulated. Months later someone measures depth and finds a single use per account, and the value signal is flat against accounts created before the launch. The number that was celebrated was the share of accounts the product had performed the feature for. The question that would have caught it in the launch review is one line: "was that first use a choice?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>The adoption scorecard for one feature of yours</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Pick one feature of your product, ideally one that appears on an adoption slide today. You are writing five rows on one page, plus a column that most scorecards leave out: for each row, could the team make it go up without a single user getting value? The GitHub numbers on this page are your worked example; your own rows will be definitions and, where you have them, your own numbers, which will differ.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn one-page adoption scorecard with four columns: the question, the definition written before looking, the number with its count, and whether the team could inflate it without users getting value. Five rows: breadth, depth, time to adopt, value signal, and the choice test. The worked example is the real GitHub feature branch created: 68.8 percent breadth on 5,744, depth median 1, time to adopt median 0 hours, value 4.3 versus 3.0 percent, and the choice test answered no, it is a setup artefact. A gold tab marks the inflatable column.">
+        <defs>
+          <filter id="a4dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="85" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a4dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+        </defs>
+        <style>
+          .a4dH { font: 800 11px Inter, sans-serif; fill: #0F1535; letter-spacing: .04em; }
+          .a4dL { font: 600 11px Inter, sans-serif; fill: #0F1535; }
+          .a4dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a4dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a4dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a4dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="30" width="820" height="212" rx="8" transform="rotate(-0.3 440 136)" fill="#FFFFFF"/>
+          <path d="M30 62 L850 62"/>
+          <path d="M170 30 L170 242 M450 30 L450 242 M660 30 L660 242" stroke="#C8CFEA"/>
+          <path d="M40 98 L840 98 M40 134 L840 134 M40 170 L840 170 M40 206 L840 206" stroke="#E0E4F5"/>
+          <rect x="664" y="66" width="180" height="172" rx="4" fill="#FFF4D6" stroke="#FFF4D6"/>
+          <rect x="30" y="252" width="300" height="28" rx="6" transform="rotate(0.8 180 266)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="a4dH" x="44" y="51">QUESTION</text>
+        <text class="a4dH" x="182" y="51">DEFINITION, WRITTEN FIRST</text>
+        <text class="a4dH" x="462" y="51">NUMBER · COUNT</text>
+        <text class="a4dH" x="672" y="51">INFLATABLE WITHOUT VALUE?</text>
+
+        <text class="a4dL" x="44" y="86">Breadth</text>
+        <text class="a4dS" x="182" y="86">share of new repos with 1+ in week one</text>
+        <text class="a4dS" x="462" y="86">68.8% · 5,744 of 8,348</text>
+        <text class="a4dB" x="672" y="86">yes: trigger it in setup</text>
+
+        <text class="a4dL" x="44" y="122">Depth</text>
+        <text class="a4dS" x="182" y="122">uses per adopter, median first</text>
+        <text class="a4dS" x="462" y="122">median 1 · mean 1.4</text>
+        <text class="a4dB" x="672" y="122">hard: needs a workflow</text>
+
+        <text class="a4dL" x="44" y="158">Time to adopt</text>
+        <text class="a4dS" x="182" y="158">median hours, birth to first use</text>
+        <text class="a4dS" x="462" y="158">0 h · 87 after day one</text>
+        <text class="a4dB" x="672" y="158">yes: put it first, or automate</text>
+
+        <text class="a4dL" x="44" y="194">Value signal</text>
+        <text class="a4dS" x="182" y="194">came back weeks 5-6, users vs rest</text>
+        <text class="a4dS" x="462" y="194">4.3% vs 3.0%</text>
+        <text class="a4dB" x="672" y="194">no: this is the one that counts</text>
+
+        <text class="a4dL" x="44" y="230">Choice test</text>
+        <text class="a4dS" x="182" y="230">was the first use a user's decision?</text>
+        <text class="a4dS" x="462" y="230">no: default branch, first push</text>
+        <text class="a4dB" x="672" y="230">verdict: setup artefact</text>
+
+        <text class="a4dB" x="44" y="271">Worked example: branch created, real rows</text>
+        <text class="a4dN" x="350" y="271">Your feature goes in the same five rows. Definitions first, numbers second.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold-tinted column is the one most scorecards omit, and it is the one that tells a leader which rows to distrust</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Name the feature and the eligible unit.</strong> One feature, in the Object Action name from your session 1 plan, and the unit that could have used it: an account, a workspace, a project. Write the window. Everything below is "in the first N days of eligibility", and N is a decision you make now, not after the number is in.</p>
+        <div class="prompt-box good"><span class="label">★ The header, three decisions</span>Feature:   Report Exported          (from the tracking plan, session 1)
+Unit:      workspace                 eligible from Workspace Created
+Window:    first 14 days             chosen before any number was seen</div>
+      </div>
+      <div class="step">
+        <p><strong>Define breadth, depth and time to adopt, in that order, before looking at any number.</strong> Breadth needs "at least how many uses" and the window. Depth is measured among adopters only, median first, mean second. Time to adopt is the median gap from eligibility to first use, with a note on how many first used it after day one, because that tail is where the chosen adopters live.</p>
+        <div class="prompt-box good"><span class="label">★ Three rows, defined first</span>Breadth:        share of workspaces with 1+ Report Exported in 14 days
+Depth:          exports per exporting workspace, median (then mean)
+Time to adopt:  median hours from Workspace Created to first export,
+                plus the count whose first export came after day one
+Your numbers will differ. The GitHub column reads 68.8% · median 1 · 0 h for "branch created".</div>
+      </div>
+      <div class="step">
+        <p><strong>Choose the value signal and write it down before you look.</strong> A later outcome the feature was built to serve, available for non-adopters too, compared as "adopters vs the rest". Coming back in a later window is the default; a feature-specific outcome is better when you have one. Then write the two warnings under it, so they travel with the number onto every slide.</p>
+        <div class="prompt-box good"><span class="label">★ The value row, with its warnings attached</span>Value signal:  share still active in weeks 5-6, exporters vs non-exporters
+Warning 1:     a gap is a correlation; exporters were already the busy workspaces
+Warning 2:     quote the count with the rate; under 300 adopters is small
+GitHub column: issue opened 29.5% vs 3.8%, on 44 repositories - small</div>
+      </div>
+      <div class="step">
+        <p><strong>Fill the inflatable column, honestly.</strong> For each of the four rows, ask: could the team make this go up next quarter without any user getting anything? Breadth usually yes, by placement or automation. Time to adopt usually yes, by the same means. Depth rarely. The value signal never, and if you can think of a way, your signal is too close to the feature use itself. Then write the choice test: is the first use a decision the user makes?</p>
+        <div class="prompt-box good"><span class="label">★ The column that makes the scorecard worth reading</span>Breadth        inflatable: yes, by adding export to the onboarding checklist
+Depth          inflatable: no, a second export needs a reason
+Time to adopt  inflatable: yes, by exporting a sample report automatically
+Value signal   inflatable: no
+Choice test    first export is a click on a report page: a user's decision
+Verdict        real adoption if depth and value move; breadth alone proves placement</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the one-line verdict, and date the page.</strong> "Adopted and valued", "adopted, value unproven", or "setup artefact". Bring it to session 6, where the product review reads scorecards like this one and asks the six questions that catch the rest.</p>
+      </div>
+    </div>
+
+    <div class="prompt-box bad"><span class="label">✗ The adoption slide that gets a feature funded twice</span>Adoption: 92% of new workspaces used the feature this quarter
+(no window, no depth, no time, no value signal, and the first use was a default)</div>
+
+    <div class="callout tip">
+      <p><strong>Order matters more than the numbers.</strong> Definitions before numbers, value signal before you peek, inflatable column before the verdict. A scorecard filled in the other order will always find that the feature is doing well, because every ambiguous decision gets made in its favour.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 5</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find the most adopted feature in your product</strong> according to whatever chart the company uses today, and apply the choice test: is its first use a user's decision or something the product does during setup? Write down which, and what the chart's number would be if automatic first uses were excluded, or who could tell you.</li>
+      <li><strong>Ask for depth on one celebrated feature.</strong> Uses per adopter, median first. If the answer is one, you have found a setup artefact or a one-time task; either way the adoption slide meant something other than what it said.</li>
+      <li><strong>Draw your own breadth gradient</strong> in words, no data needed: which kinds of accounts touch many features in week one, and would they have stayed anyway? Write the confounder in one sentence, the way "busy projects use more features" does for GitHub.</li>
+      <li><strong>Bring the scorecard.</strong> Session 5 builds the same five rows for an AI feature, where the first row, acceptance, is the one everyone quotes and the value row is the one almost nobody measures.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and leader session 4 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">1 · "Branch created" reaches 68.8 percent of new GitHub repositories in week one, the highest breadth of the six features. Its adopters came back at 4.3 percent against 3.0 for the rest. What is the most defensible reading?</p>
+      <button class="qopt" type="button">A · Branching is the product's most valuable feature and should be promoted further</button>
+      <button class="qopt" type="button">B · The 4.3 percent proves branching causes repositories to come back</button>
+      <button class="qopt" type="button">C · The 68.8 percent is wrong and the tracking should be fixed</button>
+      <button class="qopt" type="button">D · It is a setup artefact: the default branch appears with the first push, so breadth is high, depth is one, time to adopt is zero, and the value gap is close to nothing</button>
+      <p class="qwhy">High breadth, depth at one, time at zero and a flat value signal is the shape of something the product did for the user. The count is correct; the word "adopted" is what does not fit.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · Repositories that opened an issue in week one came back at 29.5 percent against 3.8 percent for the rest. Which sentence belongs on a review slide?</p>
+      <button class="qopt" type="button">A · Opening an issue makes a repository seven times more likely to survive; add an "open your first issue" step to onboarding</button>
+      <button class="qopt" type="button">B · Issue openers came back far more often, on 44 repositories, which is small; the gap is a correlation, and whether nudging people to open issues changes return needs an experiment</button>
+      <button class="qopt" type="button">C · The number should be dropped because 44 is too few to mention</button>
+      <button class="qopt" type="button">D · Issues are the activation moment and replace pushing as the definition</button>
+      <p class="qwhy">Quote the rate with its count, name it a correlation, and say what would prove more. A repository that opens an issue already had a second person or a plan; the issue marked the project as alive rather than making it so. Small is a flag to carry, not a reason to hide the finding.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">3 · A team is set the target "every new account touches three features in week one" because of the breadth gradient. Which outcome does the gradient itself predict?</p>
+      <button class="qopt" type="button">A · Return rates rise to the three-feature level for everyone who hits the target</button>
+      <button class="qopt" type="button">B · Depth rises because users discover more value</button>
+      <button class="qopt" type="button">C · Breadth rises and time to adopt falls through placement and automation, while depth stays at one and the value signal does not move, because the gradient reflected which projects were already busy</button>
+      <button class="qopt" type="button">D · Nothing changes, since targets have no effect on behaviour</button>
+      <p class="qwhy">The gradient says busy projects use more features and busy projects come back. Forcing the quiet ones through the motions gives them the motions, not the project. The rows a team can inflate are exactly the ones the target rewards.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Breadth, depth and time to adopt for six features of a new repository</span><span class="note">Measured in this build on the 8,348-repository cohort born 2024-03-04 15:00 UTC (GH Archive, sampled hours), first 7 days: push 39.1%, branch created 68.8%, issue opened 0.5%, PR opened 2.2%, release 0.4%, wiki edit 0.1%</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The value signal: adopters vs the rest, came back in weeks 5-6</span><span class="note">Measured; branch 4.3% vs 3.0%, issue 29.5% vs 3.8% (44 repositories, small), PR 12.0% vs 3.7%, release 11.1% vs 3.9% (36, small), wiki 9.1% vs 3.9% (11, small)</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The breadth gradient, 0 to 4+ features</span><span class="note">Measured; 2.0%, 3.0%, 5.7%, 11.8% (187 repositories), 37.5% (16 repositories); taught as a correlation with busyness, never as a lever</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The setup artefact: "branch created" as the default branch of the first push</span><span class="note">GitHub Docs, "GitHub event types" (CreateEvent ref_type branch); depth median 1, time to adopt median 0 h, 87 of 5,744 after day one, measured</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The Report Exported scorecard and the two Real world common patterns</span><span class="note">Constructed for the build-along and told as common patterns, with no numbers claimed; not from any real product</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Whether nudging feature use changes return</span><span class="note">Not answerable from this data; the causal question belongs to the experimentation course</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Leader session 4 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Adoption is three questions</b><span>Breadth: how many. Depth: how much, adopters only, median first. Time to adopt: how soon.</span></div>
+      <div class="cheat-item"><b>The setup-artefact shape</b><span>Breadth high, depth 1, time 0 h, value flat. Branch created: 68.8%, median 1, 0 h, 4.3 vs 3.0.</span></div>
+      <div class="cheat-item"><b>The choice test</b><span>Was the first use a user's decision, or did the product do it during setup?</span></div>
+      <div class="cheat-item"><b>Value signal, two warnings</b><span>Adopters vs the rest on a later outcome. It is a correlation. Quote the count: issue 29.5% on 44 is small.</span></div>
+      <div class="cheat-item"><b>The gradient is not a lever</b><span>0 to 4+ features: 2.0% to 37.5% came back. Busy projects use more and come back. 16 repos at the top.</span></div>
+      <div class="cheat-item"><b>Fill the inflatable column</b><span>Breadth and time can be pushed by placement. Depth rarely. Value never. Definitions before numbers.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Now put an AI feature through the same five rows. Code assistants report acceptance rate, the share of suggestions a developer takes, and it is the number that best tracks how productive developers feel. Whether the accepted code is still there ten minutes later is a different number, and a constructed two-version stream shows the two can point in opposite directions. Session 5 reads the one published study at source and builds the scorecard for a feature that suggests rather than waits. Bring tonight's scorecard.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Leader session 4 of 6 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="a3-engagement-you-can-defend.html">← Prev: Engagement you can defend</a> &nbsp;·&nbsp; <a href="a5-measuring-an-ai-feature.html">Next: Measuring an AI feature →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

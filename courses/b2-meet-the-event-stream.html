@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 2 of 8. One real GitHub hour in pandas: 279,130 events flattened into a frame, 409 bot logins writing 15.5 percent of it, half the actors appearing once, and the stream cut into 76,584 sessions by a 30-minute gap.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Meet the event stream - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 2 of 8. Who actually wrote the diary: bots, a long tail of one-event actors, one login with 25,458 events, and a timestamp that cannot order the rows.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b2-meet-the-event-stream.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meet the event stream - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 2 of 8. Load, flatten, find the bots, sessionize, on real GitHub events.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 2 · Meet the event stream - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 2 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 2 of 8</div>
+    <h1>Meet the <span class="accent">event stream</span></h1>
+    <p class="sub">Session 1 asked what the events should be. Tonight we ask who actually produced them. The same GitHub hour goes into pandas, gets flattened from nested JSON into a frame you can group, and then answers three questions every product stream raises before any metric is safe to report: how much of this is automation, how concentrated is the activity in a few accounts, and where does one visit end and the next begin. None of the answers is comfortable, and every one of them changes a count you would otherwise have published.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python + pandas</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Shape, actors, sessions</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: one hour in pandas</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">The file is the one you downloaded for the homework: <code>2024-03-04-15.json.gz</code>, one hour of GH Archive, 279,130 events. Last session it went through a validator line by line. Tonight it goes into a DataFrame, because the questions have changed from "is each event well formed" to "what does the whole hour look like", and those are grouping questions. Every number on this page is printed by the code in the build-along, on this file, and the ones that are sketches say so.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A flattened frame of one real hour, a written bot rule and the 15.5 percent it removes, the shape of the actor distribution (median 1, mean 3.75, max 25,458), a 30-minute sessionizer that yields 76,584 sessions from 74,082 human actors, and the reason <code>created_at</code> alone can never order this stream.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the shape of a raw hour</span>
+      <h2>What one hour looks like</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Before grouping anything, look at the raw shape: how many rows, which columns, and what mix of event types. GH Archive gives you 8 raw columns and 279,130 rows for this hour, and the mix is lopsided in a way most product streams share. One event type, PushEvent, is 56.2 percent of everything. Six types together cover more than nine tenths. The moment you see that, you know a naive "events per user" number is really "pushes per user" wearing a general name.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 284" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Six hand-drawn horizontal bars, one per GitHub event type, lengths proportional to their share of the hour: PushEvent 56.2 percent, CreateEvent 14.2, PullRequestEvent 7.1, DeleteEvent 5.4, IssueCommentEvent 4.8, WatchEvent 3.4. PushEvent is the gold bar. A side list names the 8 raw columns: id, type, actor, repo, payload, public, created_at, org. Note: 279,130 events in the hour of 2024-03-04 15:00 UTC.">
+        <defs>
+          <filter id="b2aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b2aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b2aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b2aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b2aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b2aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b2aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b2aV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b2aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b2aH" x="30" y="26">ONE HOUR BY EVENT TYPE</text>
+        <text class="b2aS" x="220" y="26">279,130 events · GH Archive 2024-03-04 15:00 UTC · share of the hour</text>
+
+        <g filter="url(#b2aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="200" y="48" width="450" height="24" rx="4" transform="rotate(-0.3 425 60)" fill="#F7B928" stroke="#614300"/>
+          <rect x="200" y="82" width="114" height="24" rx="4" transform="rotate(0.4 257 94)" fill="#EEF1FF"/>
+          <rect x="200" y="116" width="57" height="24" rx="4" transform="rotate(-0.5 228 128)" fill="#EEF1FF"/>
+          <rect x="200" y="150" width="43" height="24" rx="4" transform="rotate(0.5 221 162)" fill="#EEF1FF"/>
+          <rect x="200" y="184" width="38" height="24" rx="4" transform="rotate(-0.4 219 196)" fill="#EEF1FF"/>
+          <rect x="200" y="218" width="27" height="24" rx="4" transform="rotate(0.6 213 230)" fill="#EEF1FF"/>
+          <!-- the raw file, a hachured page -->
+          <rect x="740" y="44" width="110" height="150" rx="6" transform="rotate(-1.5 795 119)" fill="url(#b2aHc)"/>
+          <path d="M196 40 L196 250" stroke="#C8CFEA"/>
+        </g>
+
+        <text class="b2aL" x="30" y="65">PushEvent</text>
+        <text class="b2aB" x="660" y="65">56.2 percent</text>
+        <text class="b2aL" x="30" y="99">CreateEvent</text>
+        <text class="b2aS" x="324" y="99">14.2 percent · branch, tag or repository</text>
+        <text class="b2aL" x="30" y="133">PullRequestEvent</text>
+        <text class="b2aS" x="267" y="133">7.1 percent</text>
+        <text class="b2aL" x="30" y="167">DeleteEvent</text>
+        <text class="b2aS" x="253" y="167">5.4 percent</text>
+        <text class="b2aL" x="30" y="201">IssueCommentEvent</text>
+        <text class="b2aS" x="248" y="201">4.8 percent</text>
+        <text class="b2aL" x="30" y="235">WatchEvent</text>
+        <text class="b2aS" x="237" y="235">3.4 percent · a star</text>
+
+        <text class="b2aH" x="754" y="64">8 RAW COLUMNS</text>
+        <text class="b2aS" x="754" y="82">id · type</text>
+        <text class="b2aS" x="754" y="98">actor · repo</text>
+        <text class="b2aS" x="754" y="114">payload</text>
+        <text class="b2aS" x="754" y="130">public</text>
+        <text class="b2aS" x="754" y="146">created_at</text>
+        <text class="b2aS" x="754" y="162">org (sometimes)</text>
+
+        <text class="b2aN" x="30" y="272">Pushes are more than half the hour. Any "events per user" figure on this stream is mostly a "pushes per user" figure.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold bar is the reason "activity" needs a definition before it becomes a metric</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Flatten first, then look<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Each line of the file is one nested JSON object: <code>actor</code> is itself a dict with an id and a login, <code>repo</code> another, <code>payload</code> a third whose keys depend on the type. pandas reads the file in one call, but a column of dicts cannot be grouped. The first move is to pull out the handful of scalar fields you will actually group by: a UTC timestamp, the type, the actor login and id, the repository name. Five flat columns. Everything else stays in the raw frame for when a question needs it.</p>
+        <p>Then three cheap looks before any metric: the row count, the column list, and <code>value_counts</code> on type. On this hour that already tells you the stream is a push stream with other things mixed in. Your own product's frame will have the same skew somewhere, and it is worth finding before someone builds a chart on "total events".</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where the hidden moments still hide<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The type mix hides the same trap session 1 met in the validator. CreateEvent is 14.2 percent of the hour, but on the tracking-plan pass only 10,384 of its 39,497 events were repository births; the rest were branches and tags. A bar chart by raw type therefore overstates "new projects" by a factor near four. When a type's share looks surprisingly large, open its payload and count the sub-kinds before believing the bar.</p>
+        <p>The <code>org</code> column is worth a glance too: it exists only when a repository belongs to an organisation, so it is missing on most rows. pandas will show it as NaN. That is a legitimate "does not apply", not a data-quality fault, and it is the kind of absence a plan should document per property.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The frame that would not group.</strong> A common pattern: an analyst loads a product export where every row's <code>properties</code> is a dict, tries <code>groupby("properties")</code>, gets an unhashable-type error, and spends an afternoon on it. The fix is always the same as tonight's step 2: decide which three to six scalar fields the questions need, flatten only those, and leave the nested column alone. A frame is for grouping; the raw JSON is for looking things up.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers actors and bots</span>
+      <h2>Who wrote the diary</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">279,130 events came from 74,491 actors, and the split is nothing like even. The median actor has 1 event in the hour; the mean is 3.75; the maximum is 25,458. 52.1 percent of actors appear exactly once. The top 1 percent of actors, 744 accounts, produce 38.7 percent of the events. And 409 of the logins end in <code>[bot]</code>, which is GitHub's own suffix for apps, and those 409 wrote 15.5 percent of the hour. The busiest login of all does not carry the suffix.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 306" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three hand-drawn bars. Top bar: 74,491 actors, with a thin gold sliver at the left for the top 1 percent, 744 accounts, and a hachured right half for the 52.1 percent who appear once. Middle bar: 279,130 events, with a gold block covering 38.7 percent, connected by two lines to the sliver above it, showing the few carrying much of the diary. Bottom bar: the same events by login suffix, a blue block of 15.5 percent for 409 bot logins. A note says the busiest login, 25,458 events, has no bot suffix.">
+        <defs>
+          <filter id="b2bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b2bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b2bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b2bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b2bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b2bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b2bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b2bV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b2bW { font: 800 11px Inter, sans-serif; fill: #FFFFFF; }
+          .b2bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b2bH" x="30" y="26">A FEW ACTORS CARRY THE HOUR</text>
+
+        <g filter="url(#b2bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- actors bar -->
+          <rect x="120" y="60" width="700" height="30" rx="4" transform="rotate(0.2 470 75)" fill="#FFFFFF"/>
+          <rect x="455" y="60" width="365" height="30" rx="4" fill="url(#b2bHc)" stroke="none"/>
+          <rect x="120" y="60" width="8" height="30" fill="#F7B928" stroke="#614300"/>
+          <!-- events bar -->
+          <rect x="120" y="130" width="700" height="30" rx="4" transform="rotate(-0.3 470 145)" fill="#FFFFFF"/>
+          <rect x="120" y="130" width="271" height="30" rx="4" fill="#F7B928" stroke="#614300"/>
+          <!-- the few to the many: two guide lines -->
+          <path d="M121 92 L121 128" stroke="#614300" stroke-dasharray="4 3"/>
+          <path d="M128 92 L391 128" stroke="#614300" stroke-dasharray="4 3"/>
+          <!-- bots bar -->
+          <rect x="120" y="200" width="700" height="30" rx="4" transform="rotate(0.3 470 215)" fill="#FFFFFF"/>
+          <rect x="120" y="200" width="108" height="30" rx="4" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- pointer to the note -->
+          <path d="M660 236 C640 250 560 254 470 262" marker-end="url(#b2bAr)"/>
+        </g>
+
+        <text class="b2bL" x="120" y="52">74,491 ACTORS</text>
+        <text class="b2bS" x="820" y="52" text-anchor="end">hachure: 52.1 percent appear once</text>
+        <text class="b2bB" x="136" y="80">top 1 percent = 744 accounts</text>
+
+        <text class="b2bL" x="120" y="122">279,130 EVENTS</text>
+        <text class="b2bB" x="255" y="150" text-anchor="middle">38.7 percent</text>
+        <text class="b2bS" x="404" y="150">written by the other 99 percent · median actor: 1 event · mean 3.75</text>
+
+        <text class="b2bL" x="120" y="192">SAME EVENTS, BY LOGIN SUFFIX</text>
+        <text class="b2bW" x="174" y="220" text-anchor="middle">[bot] 15.5%</text>
+        <text class="b2bS" x="240" y="220">409 logins end in [bot] · the rest carry no suffix, and that is not the same as human</text>
+
+        <text class="b2bV" x="120" y="268">25,458</text>
+        <text class="b2bS" x="182" y="268">events from one login, censameesss, no [bot] suffix. A rule by name misses it.</text>
+
+        <text class="b2bN" x="30" y="296">The suffix catches the bots that declare themselves. Decide the rest by behaviour, write the rule down, and print what it removes.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold sliver and the gold block are the same 744 accounts, seen from two sides</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The bot rule is a decision, so write it down<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>GitHub makes the easy part easy: apps act under logins ending in <code>[bot]</code>, so <code>str.endswith("[bot]")</code> finds 409 actors and removes 15.5 percent of the hour in one line. The top five logins show both halves of the problem. Three are declared bots: github-actions[bot] 19,528 events, dependabot[bot] 8,962, renovate[bot] 6,769. One, SolukGece at 3,033, has no suffix and no obvious tell. And the busiest of all, censameesss at 25,458 events in sixty minutes, has no suffix either. Nobody types 25,458 actions in an hour. A login without the suffix can still be automation.</p>
+        <p>So the rule has two parts, and both belong in the code with a comment: the suffix rule, which is safe and exact, and a behaviour rule, which is a judgment. Whichever threshold you choose for the second part, print the count of actors and the share of events it removes on every run. A bot rule nobody can see is a metric nobody can audit.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Median 1, mean 3.75: which one goes in the deck<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Both, with labels, and neither alone. The mean of 3.75 is pulled up by a right tail so long that one account has 25,458 events, 25,458 times the median. The median of 1 says what a typical actor did, which is: one thing. The 52.1 percent who appear once are not a quality problem; they are what a public activity stream looks like in any single hour, since most people are not active in any given sixty minutes. The mistake is reporting "3.75 events per active user" as if it described a person. It describes a mixture of people and machines.</p>
+        <p>The top-1-percent figure is the honest summary of concentration: 744 accounts, 38.7 percent of events. When a leader asks how engaged "our users" are, this is the number that stops the conversation from being about an average that no single user resembles. Session 5 builds the full curve; tonight the one number is enough to change the question.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The monitor that became a power user.</strong> A common pattern: an uptime checker hits a product's login page every minute from a service account nobody flagged. In the weekly review it is the most engaged "customer" in the account, its sessions are perfectly regular, and it never churns. The fix is not smarter analytics; it is the sentence in the bot rule that says "service accounts are excluded, here is the list", reviewed when the list changes.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers sessionizing</span>
+      <h2>Where one visit ends</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Events are points; a visit is a stretch. The standard way to turn one into the other is an inactivity gap: sort each actor's events by time, and wherever the gap to the previous event is longer than a threshold, start a new session. Thirty minutes is the common default, inherited from web analytics, and it is a choice, not a law. On this hour, for the 74,082 human actors, the 30-minute rule yields 76,584 sessions, median 1 event per session, mean 3.08, and 2,502 actors who came back for a second session inside the same sixty minutes.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A sketch of the sessionizing rule, not measured data. One actor's events sit as dots on a time rail running from 15:00 to 16:00. Two gaps longer than 30 minutes split the dots into three groups, each boxed as a session. Gold boxes over each gap read: gap over 30 min, new session. The third session touches the 16:00 edge and is marked truncated. Measured values in the note: 74,082 human actors, 76,584 sessions, median 1 event per session, mean 3.08.">
+        <defs>
+          <filter id="b2cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="47" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b2cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b2cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b2cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b2cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b2cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b2cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b2cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b2cH" x="30" y="26">ONE ACTOR, ONE HOUR, CUT BY GAPS</text>
+        <text class="b2cS" x="290" y="26">a sketch of the rule, not a real actor</text>
+
+        <g filter="url(#b2cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the rail and its two edges -->
+          <path d="M60 120 L820 120" stroke="#C8CFEA"/>
+          <path d="M60 96 L60 144 M820 96 L820 144" stroke-dasharray="4 3"/>
+          <!-- session boxes -->
+          <rect x="94" y="100" width="88" height="40" rx="8" transform="rotate(-0.6 138 120)" fill="#EEF1FF"/>
+          <rect x="404" y="100" width="112" height="40" rx="8" transform="rotate(0.5 460 120)" fill="#EEF1FF"/>
+          <rect x="744" y="100" width="88" height="40" rx="8" transform="rotate(-0.4 788 120)" fill="url(#b2cHc)" stroke-dasharray="5 4"/>
+          <!-- events -->
+          <circle cx="110" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="140" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="165" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="420" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="455" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="470" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="500" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="760" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="790" cy="120" r="6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="816" cy="120" r="6" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <!-- the gaps, the one thing this figure is about -->
+          <rect x="232" y="56" width="120" height="26" rx="6" transform="rotate(-1 292 69)" fill="#F7B928" stroke="#614300"/>
+          <rect x="570" y="56" width="120" height="26" rx="6" transform="rotate(0.8 630 69)" fill="#F7B928" stroke="#614300"/>
+          <path d="M292 86 L292 110" marker-end="url(#b2cAr)"/>
+          <path d="M630 86 L630 110" marker-end="url(#b2cAr)"/>
+          <path d="M176 120 L410 120" stroke="#614300" stroke-dasharray="2 6"/>
+          <path d="M508 120 L750 120" stroke="#614300" stroke-dasharray="2 6"/>
+        </g>
+
+        <text class="b2cB" x="292" y="74" text-anchor="middle">gap over 30 min</text>
+        <text class="b2cB" x="630" y="74" text-anchor="middle">gap over 30 min</text>
+        <text class="b2cL" x="138" y="168" text-anchor="middle">session 1</text>
+        <text class="b2cL" x="460" y="168" text-anchor="middle">session 2</text>
+        <text class="b2cL" x="788" y="168" text-anchor="middle">session 3 · cut off</text>
+        <text class="b2cS" x="60" y="194" text-anchor="middle">15:00 UTC</text>
+        <text class="b2cS" x="820" y="194" text-anchor="middle">16:00 UTC</text>
+        <text class="b2cS" x="440" y="194" text-anchor="middle">one actor's events, sorted by time, then by id where the second is shared</text>
+
+        <text class="b2cN" x="30" y="222">Measured on the hour: 74,082 human actors, 76,584 sessions, median 1 event per session, mean 3.08.</text>
+        <text class="b2cN" x="30" y="240">Both edges cut. A session begun at 14:50, or still running at 16:00, is truncated, so these read short.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold boxes are the whole rule; change 30 to 15 and every count on this page moves</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The tie a timestamp cannot break<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>GH Archive records <code>created_at</code> to the second, and this hour has so many events that every single distinct timestamp is shared by 2 or more events. Sort by <code>created_at</code> alone and the order within a second is whatever pandas happened to leave it in, which is not stable and not meaningful. For a funnel, "did the push come before the pull request" can flip between two runs on the same data.</p>
+        <p>The fix is a second sort key that is unique and monotone. GitHub's event <code>id</code> is both, so <code>sort_values(["actor_id", "ts", "id"])</code> gives a stable order. Your own product's stream needs the same thing: a sequence number, an ingest offset, or an id that increases. If it has none, say so in the definition, because any step-order claim is then partly decided by row order.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Thirty minutes is inherited, not derived<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The 30-minute gap comes from web analytics tooling and survived because it is a round number, not because anyone measured it for your product. For a developer pushing commits, a 45-minute think between pushes is one work session; for a mobile app opened for eight seconds, 30 minutes is an eternity. Test the threshold: compute session counts at 10, 30 and 60 minutes and look at how many actors gain a second session. On this hour 2,502 actors have 2 or more sessions under the 30-minute rule; that number is what a different gap would move first.</p>
+        <p>Then remember the window. One hour of data truncates every session that started before 15:00 or was still going at 16:00, so mean length is biased short and the "2+ sessions" count is biased low. When you sessionize a day or a week, the same thing happens at the edges of the extract, only less visibly.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The funnel that changed overnight.</strong> A common pattern: a step-order funnel is rebuilt on the same day's data and the conversion moves by a point. Nothing in the product changed. The events carried second-level timestamps, hundreds shared each second, and the sort had no tie-breaker, so a fraction of "viewed then clicked" pairs became "clicked then viewed" between runs. Adding the event id as a second sort key makes the number stop wandering; it does not make the order true, only stable, and the definition should say which.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>One real hour in pandas</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">pandas and the same GH Archive file. Every number in the comments below is what this code prints on <code>2024-03-04-15.json.gz</code>. Reading 150 MB of gzipped JSON into a frame takes a minute or two and a few gigabytes of memory; if your laptop objects, read with <code>chunksize</code> and concatenate the five flat columns only.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline of five boxes: download one hourly file, load and flatten it into a five-column frame, apply the bot rule and count events per actor, sessionize humans with a 30-minute gap, and check the timestamp ties. Under the boxes the measured results: 279,130 events in, 15.5 percent by bot logins, 76,584 sessions, 100 percent of timestamps shared.">
+        <defs>
+          <filter id="b2dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="59" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b2dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b2dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b2dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b2dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b2dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b2dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b2dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b2dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b2dH" x="30" y="26">FIVE STEPS, ONE FRAME</text>
+
+        <g filter="url(#b2dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b2dHc)"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#FFFFFF"/>
+          <rect x="362" y="70" width="130" height="60" rx="8" transform="rotate(-0.5 427 100)" fill="#F7B928" stroke="#614300"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#EEF1FF"/>
+          <path d="M164 100 L188 100" marker-end="url(#b2dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b2dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b2dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b2dAr)"/>
+        </g>
+
+        <text class="b2dL" x="44" y="96">1 · one hour</text>
+        <text class="b2dS" x="44" y="114">150,807,371 bytes</text>
+        <text class="b2dL" x="210" y="96">2 · load, flatten</text>
+        <text class="b2dS" x="210" y="114">five scalar columns</text>
+        <text class="b2dB" x="376" y="96">3 · bot rule</text>
+        <text class="b2dB" x="376" y="114">then events per actor</text>
+        <text class="b2dW" x="542" y="96">4 · sessionize</text>
+        <text class="b2dW" x="542" y="114">30-minute gap</text>
+        <text class="b2dL" x="708" y="96">5 · the tie check</text>
+        <text class="b2dS" x="708" y="114">shared timestamps</text>
+
+        <text class="b2dS" x="30" y="160">279,130 events in</text>
+        <text class="b2dS" x="362" y="160">15.5 percent removed</text>
+        <text class="b2dS" x="528" y="160">76,584 sessions</text>
+        <text class="b2dS" x="694" y="160">100 percent shared</text>
+
+        <text class="b2dN" x="30" y="206">Step 3 is the only judgment call in the pipeline. Everything else is arithmetic on the frame, and step 3 decides what the arithmetic counts.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold box is the decision; the rest is grouping</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Get the hour.</strong> If you kept the file from session 1, skip this. GH Archive names files by UTC date and hour, no login.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · one file from GH Archive</span>curl -O https://data.gharchive.org/2024-03-04-15.json.gz
+ls -l 2024-03-04-15.json.gz        # 150807371 bytes</div>
+      </div>
+      <div class="step">
+        <p><strong>Load and flatten.</strong> One <code>read_json</code> call, then five scalar columns pulled out of the nested ones with the <code>.str</code> accessor, which indexes into a column of dicts. Then the three cheap looks.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · a frame you can group</span>import pandas as pd
+
+raw = pd.read_json("2024-03-04-15.json.gz", lines=True, compression="gzip")
+df = pd.DataFrame({
+    "ts": pd.to_datetime(raw["created_at"], utc=True),
+    "type": raw["type"],
+    "actor": raw["actor"].str["login"],
+    "actor_id": raw["actor"].str["id"],
+    "repo": raw["repo"].str["name"],
+})
+print("events", len(df), "columns in the raw file", list(raw.columns))
+# events 279130 columns in the raw file ['id', 'type', 'actor', 'repo', 'payload', 'public', 'created_at', 'org']
+print("span", df.ts.min(), "to", df.ts.max())
+# span ... one hour, 15:00 to 15:59 UTC on 2024-03-04
+print((df["type"].value_counts(normalize=True) * 100).round(1).head(6).to_string())
+# PushEvent            56.2
+# CreateEvent          14.2
+# PullRequestEvent      7.1
+# DeleteEvent           5.4
+# IssueCommentEvent     4.8
+# WatchEvent            3.4</div>
+      </div>
+      <div class="step">
+        <p><strong>The bot rule, then events per actor.</strong> The suffix rule is one line. The distribution is one <code>groupby</code>. Print the median, the mean and the maximum together, always.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · who wrote it</span>df["is_bot"] = df["actor"].str.endswith("[bot]")
+print("actors", df.actor_id.nunique(), "bot actors", df[df.is_bot].actor_id.nunique(),
+      "bot share of events %.1f%%" % (100 * df.is_bot.mean()))
+# actors 74491 bot actors 409 bot share of events 15.5%
+
+per = df.groupby("actor_id").size()
+print("events per actor: median %d, mean %.2f, max %d; actors with 1 event %.1f%%" % (
+    per.median(), per.mean(), per.max(), 100 * (per == 1).mean()))
+# events per actor: median 1, mean 3.75, max 25458; actors with 1 event 52.1%</div>
+      </div>
+      <div class="step">
+        <p><strong>Concentration.</strong> The top five logins by name, and the share of events the top 1 percent of actors produce. Two of the top five have no <code>[bot]</code> suffix.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · the few who carry the hour</span>top = df.groupby("actor").size().sort_values(ascending=False).head(5)
+print("top actors:", top.to_dict())
+# top actors: {'censameesss': 25458, 'github-actions[bot]': 19528, 'dependabot[bot]': 8962,
+#              'renovate[bot]': 6769, 'SolukGece': 3033}
+
+top1 = per.sort_values(ascending=False)
+k = max(1, len(top1) // 100)
+print("top 1%% of actors (%d) produce %.1f%% of events" % (k, 100 * top1.head(k).sum() / len(df)))
+# top 1% of actors (744) produce 38.7% of events</div>
+      </div>
+      <div class="step">
+        <p><strong>Sessionize the humans.</strong> Sort by actor and time, take the gap to the previous event within each actor, and start a new session where the gap is missing (first event) or over 30 minutes. A cumulative sum of the "new" flag numbers the sessions.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · 30-minute gap</span>hum = df[~df.is_bot].sort_values(["actor_id", "ts"])
+gap = hum.groupby("actor_id")["ts"].diff()
+hum = hum.assign(new=(gap.isna() | (gap > pd.Timedelta(minutes=30))))
+hum["session"] = hum.groupby("actor_id")["new"].cumsum()
+sess = hum.groupby(["actor_id", "session"]).agg(n=("type", "size"), start=("ts", "min"), end=("ts", "max"))
+print("human actors", hum.actor_id.nunique(), "sessions", len(sess),
+      "median events/session %d, mean %.2f" % (sess.n.median(), sess.n.mean()))
+# human actors 74082 sessions 76584 median events/session 1, mean 3.08
+print("actors with 2+ sessions inside the hour", int((hum.groupby("actor_id")["session"].max() >= 2).sum()))
+# actors with 2+ sessions inside the hour 2502</div>
+      </div>
+      <div class="step">
+        <p><strong>The tie check.</strong> How many distinct timestamps are shared by more than one event. On this hour: all of them. Add <code>raw["id"]</code> to the frame and to the sort before any step-order claim.</p>
+        <div class="prompt-box good"><span class="label">★ Step 6 · can created_at order the stream</span>same = (df.groupby("ts").size() > 1).mean()
+print("share of distinct timestamps shared by 2+ events %.1f%%" % (100 * same))
+# share of distinct timestamps shared by 2+ events 100.0%
+
+# so: carry the id and sort on it second
+df["id"] = raw["id"]
+ordered = df.sort_values(["actor_id", "ts", "id"])</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Print the rule with the result.</strong> Wherever the bot share or the session count appears in a report, the line above it should say the rule that produced it: "logins ending in [bot]; 30-minute gap; one hour, truncated at both edges". A number with its rule can be challenged; a number alone can only be believed or not.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 3</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Write the second half of the bot rule.</strong> Pick a behaviour threshold (events per hour, or regularity of gaps) that would catch censameesss, apply it to the human frame, and print how many actors and what share of events it removes. Write one sentence defending the threshold.</li>
+      <li><strong>Move the gap.</strong> Re-run step 5 at 10 and 60 minutes. Report the session count and the number of actors with 2+ sessions at each, next to the 30-minute values (76,584 and 2,502).</li>
+      <li><strong>Sort without the id, twice.</strong> Take one busy actor, sort by <code>ts</code> only, run it two ways (once after shuffling the frame) and check whether the event order inside a shared second changes. Then repeat with <code>id</code> as the second key.</li>
+      <li><strong>Keep the flattened frame.</strong> Save <code>df</code> to Parquet. Session 3 uses the same accounts to compute three different "active" counts from three definitions.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 2 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · The <code>[bot]</code> suffix rule finds 409 actors and removes 15.5 percent of the hour's events. What does that share tell you about automation in the stream?</p>
+      <button class="qopt" type="button">A · That exactly 15.5 percent of the hour is automated, so the remaining 84.5 percent is human</button>
+      <button class="qopt" type="button">B · That bots are negligible and can be left in</button>
+      <button class="qopt" type="button">C · Only the lower bound: it counts the apps that declare themselves; the busiest login of the hour, 25,458 events with no suffix, is not in it, so a behaviour rule is still needed and must be written down</button>
+      <button class="qopt" type="button">D · That the suffix should be stripped so the accounts count as people</button>
+      <p class="qwhy">A rule by name is exact for the accounts that follow the convention and blind to the rest. Print what each half of the rule removes on every run, so the definition of "human activity" can be audited rather than believed.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · Why can <code>created_at</code> alone not order this stream?</p>
+      <button class="qopt" type="button">A · Because the timestamps are in local time and shift with daylight saving</button>
+      <button class="qopt" type="button">B · Because it is recorded to the second and every distinct timestamp in the hour is shared by 2 or more events, so the order within a second is arbitrary; a unique monotone key such as the event id must break the tie</button>
+      <button class="qopt" type="button">C · Because pandas cannot sort datetime columns</button>
+      <button class="qopt" type="button">D · Because GH Archive stores the events in reverse order</button>
+      <p class="qwhy">A step-order claim such as "pushed before opening the pull request" needs a stable order. The id makes the order stable; whether it is the true order is a separate question the definition should state.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · What does the 30-minute gap decide in the sessionizer?</p>
+      <button class="qopt" type="button">A · Which events count as bot activity</button>
+      <button class="qopt" type="button">B · How long the hour of data is</button>
+      <button class="qopt" type="button">C · Nothing measurable; it is a fixed industry standard</button>
+      <button class="qopt" type="button">D · Where one visit ends and the next begins for the same actor, so it sets the session count (76,584 at 30 minutes), the mean events per session (3.08) and how many actors have 2+ sessions (2,502); a different gap moves all three</button>
+      <p class="qwhy">The threshold is inherited from web analytics, not derived from your product. Test 10, 30 and 60 minutes, pick one for a reason, and remember that a bounded extract truncates sessions at both edges.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">GH Archive hourly files</span><span class="note">GH Archive, https://www.gharchive.org/ (hourly archives, data.gharchive.org): UTC files, no login, Events API format since 2015</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Event object fields and types</span><span class="note">GitHub Docs, "GitHub event types": id, type, actor, repo, payload, public, created_at; CreateEvent ref_type; WatchEvent as a star</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every count in the build-along</span><span class="note">Measured on GH Archive 2024-03-04 15:00 UTC by the pandas code on this page</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The 30-minute session gap</span><span class="note">Taught as an inherited convention from web analytics, not sourced to a paper; the page asks you to test it</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Automation without the [bot] suffix</span><span class="note">Observed on the hour (censameesss, 25,458 events); no external source classifies the account, so it is taught as a judgment</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 2 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Flatten to scalars</b><span>Five columns you group by; the nested JSON stays for lookups.</span></div>
+      <div class="cheat-item"><b>Look at the type mix first</b><span>PushEvent is 56.2 percent; "events" mostly means pushes.</span></div>
+      <div class="cheat-item"><b>Bot rule, two halves</b><span>Suffix is exact (409, 15.5 percent). Behaviour is a judgment. Print both.</span></div>
+      <div class="cheat-item"><b>Median, mean, max together</b><span>1, 3.75, 25,458. No one of them is the user.</span></div>
+      <div class="cheat-item"><b>Gap sessionizer</b><span>Sort, diff, flag gap over 30 min, cumsum. 76,584 sessions; edges truncate.</span></div>
+      <div class="cheat-item"><b>Always a tie-breaker</b><span>Every second is shared. Sort on ts, then id.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>You now have a clean frame and a written bot rule. Session 3 asks the question the frame was built for: what does "active" mean? The same GitHub accounts, over four weeks and sampled hours, give three different monthly active counts under three definitions, 79,555 for any event, 48,946 for pushed code, 8,993 for opened an issue or pull request, and a DAU/MAU ratio that changes with each. The definition is the metric.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 2 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b1-tracking-plan-as-code.html">← Prev: The tracking plan as code</a> &nbsp;·&nbsp; <a href="b3-defining-active.html">Next: Defining "active" →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

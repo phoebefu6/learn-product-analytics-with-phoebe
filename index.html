@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Fourteen sessions on product analytics from the event up: the tracking plan, identity, what active means, activation, the power-user curve, feature adoption and AI feature metrics, ending in a bench that tests activation definitions on 8,348 real GitHub repositories. Free, by Phoebe Fu.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Product Analytics: Events to Decisions">
+<meta property="og:description" content="Coming back on a second day predicts later return at 5.44x. A busy first hour: 0.88x. Eight activation definitions on 8,348 real repositories, counted in your browser.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Product Analytics: Events to Decisions">
+<meta name="twitter:description" content="Coming back on a second day predicts later return at 5.44x. A busy first hour: 0.88x. Counted on 8,348 real repositories.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Product Analytics: Events to Decisions - learn with phoebe</title>
+<link rel="stylesheet" href="assets/style.css?v=2">
+<style>
+
+  .stats-row { display: flex; gap: 2.4rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .stat b { display: block; font-size: 2.1rem; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .72rem; opacity: .85; text-transform: uppercase; letter-spacing: .09em; font-weight: 600; }
+
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .course-card {
+    border: 1px solid var(--hairline);
+    border-top: 4px solid var(--diff, var(--indigo));
+    border-radius: var(--radius);
+    padding: 1.2rem 1.3rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+    color: var(--ink);
+    background: #fff;
+    transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+    position: relative;
+  }
+  .course-card:hover { border-color: var(--indigo-soft); border-top-color: var(--diff, var(--indigo)); box-shadow: 0 8px 28px rgba(var(--shadow-rgb),.16); transform: translateY(-3px); }
+  .course-card .cicon { font-size: 1.7rem; line-height: 1; }
+  .course-card .cnum { font-size: .72rem; font-weight: 700; color: var(--indigo); text-transform: uppercase; letter-spacing: .1em; }
+  .course-card h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.3; }
+  .course-card p { font-size: .85rem; color: var(--muted); flex: 1; }
+  .course-card .meta { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+  .diff-legend { display: flex; gap: 1rem; margin-top: 1.6rem; font-size: .74rem; color: var(--muted); font-weight: 600; flex-wrap: wrap; }
+  .diff-legend i { display: inline-block; width: .85rem; height: .35rem; border-radius: 999px; margin-right: .35rem; vertical-align: middle; }
+
+  .paths { margin-top: 2.6rem; }
+  .paths h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .3rem; }
+  .paths .plede { color: var(--muted); font-size: .92rem; margin-bottom: .8rem; }
+  .path { display: flex; gap: .55rem; align-items: center; padding: .75rem 0; border-bottom: .5px solid var(--hairline); flex-wrap: wrap; }
+  .path:last-child { border-bottom: none; }
+  .path b { min-width: 15.5rem; font-size: .9rem; }
+  .path .pstep { background: var(--indigo-50); color: var(--indigo); border-radius: 999px; padding: .16rem .68rem; font-weight: 700; font-size: .8rem; text-decoration: none; transition: all .12s ease; }
+  .path .pstep:hover { background: var(--indigo); color: #fff; }
+  .path .parr { color: var(--muted); font-weight: 700; }
+
+  .mm-section { margin-top: 1.6rem; }
+  .mm-section h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .2rem; }
+  .mm-section .mm-lede { color: var(--muted); font-size: .92rem; margin-bottom: .4rem; }
+  .mm-wrap { border: 1px solid var(--hairline); border-radius: var(--radius); background: linear-gradient(180deg, #fff, var(--indigo-50)); padding: .6rem; overflow-x: auto; }
+  .mm-svg { width: 100%; height: auto; display: block; max-width: 60rem; margin: 0 auto; min-width: 34rem; }
+  .mm-link { cursor: pointer; text-decoration: none; }
+  .mm-node rect { transition: opacity .15s ease, filter .15s ease; }
+  .mm-node text { pointer-events: none; }
+  .mm-link:hover .mm-node rect { filter: brightness(1.06); }
+  .mm-edge { transition: opacity .15s ease; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn with Phoebe · Data &amp; Analytics</div>
+    <h1>Product Analytics: <span class="accent">Events to Decisions</span></h1>
+    <p class="sub">A product only knows what it wrote down. Every argument about activation, engagement or an AI feature comes back to the same few questions: which event, counted how, for which people, from which start. Six leader sessions teach those questions without code, from the tracking plan to the product review. Eight analyst sessions answer them in Python on real public GitHub activity from GH Archive, and end on a bench where eight activation definitions are tested on 8,348 real new repositories, live in your browser. Coming back on a second day in week one predicts later return at 5.44x. A busy first hour predicts nothing at all.</p>
+    <div class="stats-row">
+      <div class="stat"><b data-count="14">14</b><span>sessions, two tracks</span></div>
+      <div class="stat"><b data-count="8348">8,348</b><span>real repositories on the bench</span></div>
+      <div class="stat"><b data-count="252">252</b><span>hours of GH Archive streamed</span></div>
+      <div class="stat"><b data-count="8">8</b><span>activation definitions tested</span></div>
+      <div class="stat"><b data-count="45">45</b><span>min per session</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>Leader track 🧭 <span style="font-size:.85rem;font-weight:600;color:var(--muted)">· six sessions, no code</span></h2>
+      <p class="plede">For product managers and whoever signs off on the metrics. What the diary records, which moment predicts staying, engagement you can defend, adoption that means value, how to measure an AI feature, and how to run a product review.</p>
+    </div>
+
+    <div class="course-grid">
+      <a class="course-card" href="courses/a1-events-are-the-diary.html" style="--diff:#34D399">
+        <span class="cicon">📓</span>
+        <span class="cnum">Leader session 1 · start here</span>
+        <h3>Events are the product's diary</h3>
+        <p>What one event contains, Object Action names, the tracking plan as a contract, and the blank pages no diary records. One real GitHub hour, 279,130 events, taken apart.</p>
+        <span class="meta"><span class="pill amber">▶ Start here</span></span>
+      </a>
+      <a class="course-card" href="courses/a2-the-moment-that-predicts-staying.html" style="--diff:#FBBF24">
+        <span class="cicon">✨</span>
+        <span class="cnum">Leader session 2</span>
+        <h3>The moment that predicts staying</h3>
+        <p>Activation and the aha moment, Facebook's reported "7 friends in 10 days" and Slack's "2,000 messages" traced to their earliest sources, and why a strong correlation is not a lever.</p>
+      </a>
+      <a class="course-card" href="courses/a3-engagement-you-can-defend.html" style="--diff:#FBBF24">
+        <span class="cicon">📊</span>
+        <span class="cnum">Leader session 3</span>
+        <h3>Engagement you can defend</h3>
+        <p>DAU/MAU and what one ratio hides, the power-user curve, and why the same accounts give three different monthly actives under three definitions of "active".</p>
+      </a>
+      <a class="course-card" href="courses/a4-adopted-is-not-valued.html" style="--diff:#FBBF24">
+        <span class="cicon">🧩</span>
+        <span class="cnum">Leader session 4</span>
+        <h3>Adopted is not valued</h3>
+        <p>Breadth, depth and time to adopt. The most widely adopted feature on the bench is a setup artefact with the weakest signal; one used by half a percent has the strongest.</p>
+      </a>
+      <a class="course-card" href="courses/a5-measuring-an-ai-feature.html" style="--diff:#FB923C">
+        <span class="cicon">🤖</span>
+        <span class="cnum">Leader session 5</span>
+        <h3>Measuring an AI feature</h3>
+        <p>Acceptance rate, kept versus edited output, and what Ziegler and colleagues actually found about acceptance and perceived productivity, read at the source.</p>
+      </a>
+      <a class="course-card" href="courses/a6-the-product-review.html" style="--diff:#FB923C">
+        <span class="cicon">🗂️</span>
+        <span class="cnum">Leader session 6</span>
+        <h3>The product review</h3>
+        <p>Reading a product dashboard the way a skeptic would: six questions about definition, cohort, denominator, blind spots, bots and cause, asked of real numbers.</p>
+        <span class="meta"><span class="pill amber">the leader capstone</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>Analyst track 🔬 <span style="font-size:.85rem;font-weight:600;color:var(--muted)">· eight sessions, one real event stream</span></h2>
+      <p class="plede">Python and the browser on GH Archive, the hourly record of GitHub's public activity. From one raw hour to a bench that scores your activation definition on 8,348 real repositories.</p>
+    </div>
+
+    <div class="course-grid">
+      <a class="course-card" href="courses/b1-tracking-plan-as-code.html" style="--diff:#34D399">
+        <span class="cicon">🧾</span>
+        <span class="cnum">Analyst session 1 · start here</span>
+        <h3>The tracking plan as code</h3>
+        <p>A five-event plan as a Python dict, a validator run on a real hour, typed and meaning checks, and identity keyed on an id that never changes.</p>
+        <span class="meta"><span class="pill amber">▶ Start here</span></span>
+      </a>
+      <a class="course-card" href="courses/b2-meet-the-event-stream.html" style="--diff:#34D399">
+        <span class="cicon">🌊</span>
+        <span class="cnum">Analyst session 2</span>
+        <h3>Meet the event stream</h3>
+        <p>One real hour in pandas: who produced it, how much of it bots wrote, how to cut it into sessions, and why a timestamp alone cannot order it.</p>
+      </a>
+      <a class="course-card" href="courses/b3-defining-active.html" style="--diff:#FBBF24">
+        <span class="cicon">🟢</span>
+        <span class="cnum">Analyst session 3</span>
+        <h3>Defining "active"</h3>
+        <p>The same 79,555 accounts under three definitions give three monthly actives. DAU, WAU and MAU computed from rows, and the definition written into code.</p>
+      </a>
+      <a class="course-card" href="courses/b4-hunting-the-activation-moment.html" style="--diff:#FBBF24">
+        <span class="cicon">🔎</span>
+        <span class="cnum">Analyst session 4</span>
+        <h3>Hunting the activation moment</h3>
+        <p>Sweep candidate first-week behaviours against later return, read lift beside coverage, and stop at correlation until an experiment says more.</p>
+      </a>
+      <a class="course-card" href="courses/b5-the-power-user-curve.html" style="--diff:#FB923C">
+        <span class="cicon">📈</span>
+        <span class="cnum">Analyst session 5</span>
+        <h3>The power-user curve from real rows</h3>
+        <p>An L28 histogram built from a month of GH Archive, what sampling does to its shape, and where automation hides in the right tail.</p>
+      </a>
+      <a class="course-card" href="courses/b6-adoption-funnels.html" style="--diff:#FB923C">
+        <span class="cicon">🪜</span>
+        <span class="cnum">Analyst session 6</span>
+        <h3>Adoption funnels and time to adopt</h3>
+        <p>Per-feature breadth, depth and hours to first use on the bench cohort, and the gradient from zero features to four.</p>
+      </a>
+      <a class="course-card" href="courses/b7-ai-feature-metrics.html" style="--diff:#F87171">
+        <span class="cicon">🧠</span>
+        <span class="cnum">Analyst session 7</span>
+        <h3>AI feature metrics</h3>
+        <p>A constructed code-assistant stream, labelled as constructed, where acceptance, persistence and characters kept point in different directions.</p>
+      </a>
+      <a class="course-card" href="courses/b8-the-activation-bench.html" style="--diff:#F87171">
+        <span class="cicon">🎛️</span>
+        <span class="cnum">Analyst session 8</span>
+        <h3>The activation bench</h3>
+        <p>8,348 real repositories, eight definitions and yours, a break button that shuffles the behaviour. Lifts from 0.88x to 5.45x, all counted live.</p>
+        <span class="meta"><span class="pill amber">🔒 the capstone</span></span>
+      </a>
+    </div>
+
+    <div class="diff-legend">
+      <span><i style="background:#34D399"></i>start here</span>
+      <span><i style="background:#FBBF24"></i>foundations</span>
+      <span><i style="background:#FB923C"></i>hands-on</span>
+      <span><i style="background:#F87171"></i>advanced and capstone</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="paths">
+      <h2>Choose your path 🗺️</h2>
+      <p class="plede">Three doors into the same practice. Each track starts at its own session 1, because the vocabulary is what makes the rest arguable.</p>
+      <div class="path"><b>💼 I own the product metrics</b>
+        <a class="pstep" href="courses/a1-events-are-the-diary.html">L1</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/a2-the-moment-that-predicts-staying.html">L2</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/a3-engagement-you-can-defend.html">L3</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/a6-the-product-review.html">L6</a>
+        <span style="font-size:.82rem;color:var(--muted)">the diary, activation, engagement, then the review</span>
+      </div>
+      <div class="path"><b>🤖 I am shipping an AI feature</b>
+        <a class="pstep" href="courses/a1-events-are-the-diary.html">L1</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/a4-adopted-is-not-valued.html">L4</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/a5-measuring-an-ai-feature.html">L5</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/b7-ai-feature-metrics.html">A7</a>
+        <span style="font-size:.82rem;color:var(--muted)">instrument it, tell adoption from value, pick the metric that fits the decision</span>
+      </div>
+      <div class="path"><b>🔬 I build the analysis</b>
+        <a class="pstep" href="courses/b1-tracking-plan-as-code.html">A1</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/b2-meet-the-event-stream.html">A2</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/b3-defining-active.html">A3</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/b4-hunting-the-activation-moment.html">A4</a>
+        <span class="parr">→</span>
+        <a class="pstep" href="courses/b8-the-activation-bench.html">A8</a>
+        <span style="font-size:.82rem;color:var(--muted)">from a raw hour to a tested activation definition</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>Your passport 🎫</h2>
+      <p class="plede">Clear all three quiz questions in a session and it gets stamped. Fourteen stamps across both tracks, and they live in this browser only.</p>
+    </div>
+    <div class="pp-strip"></div>
+  </section>
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>What is real here 🧾</h2>
+      <p class="plede">A course about honest product numbers should be exact about which of its own numbers are measured.</p>
+    </div>
+    <table class="clean">
+      <tr><th>Claim</th><th>Status</th></tr>
+      <tr><td>The event stream</td><td>Real. GH Archive's hourly files of public GitHub activity, streamed directly: one full hour for the analyst build-alongs, 252 sampled hours for the bench, 56 for the engagement curves</td></tr>
+      <tr><td>The bench cohort</td><td>Real. 8,348 public repositories born between 15:00 and 15:59 UTC on 4 March 2024, one per account, bot accounts excluded, followed every second hour through week one and through days 28 to 41</td></tr>
+      <tr><td>Every lift, rate and count on the bench</td><td>Computed in your browser from those rows; an independent Python run agrees on every count</td></tr>
+      <tr><td>New repositories, not new people</td><td>A deliberate choice. The public stream never records a signup, so "first seen" would mostly find old accounts; a repository's birth is recorded exactly once</td></tr>
+      <tr><td>The engagement curves</td><td>Real, and sampled: a fixed 5 percent of accounts, seen in two hours a day for 28 days. The shape says as much about the sampling as about GitHub, and the pages say so</td></tr>
+      <tr><td>The code-assistant event stream</td><td>Constructed from a fixed seed. No public AI-feature event stream exists; every page and chart that uses it says so</td></tr>
+      <tr><td>Facebook's 7 friends in 10 days</td><td>Reported only, through transcripts of a 2012 talk; taught as contested folklore, never as law</td></tr>
+      <tr><td>Slack's 2,000 messages, and Ziegler and colleagues on acceptance rate</td><td>Read at the source: the 2015 interview and the 2022 paper</td></tr>
+    </table>
+  </section>
+
+  <section class="section mm-section">
+    <h2>The knowledge map 🧠</h2>
+    <p class="mm-lede">Both tracks at a glance - hover a session to spotlight its concepts, click any node to jump in.</p>
+    <div class="mm-wrap"><div id="mindmap"></div></div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span>Neighbours on the shelf: <a href="https://phoebefu6.github.io/learn-customer-retention-with-phoebe/">Customer Retention ↗</a> &nbsp;·&nbsp; <a href="https://phoebefu6.github.io/learn-metric-decomposition-with-phoebe/">Metric Decomposition ↗</a> &nbsp;·&nbsp; <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">Experimentation ↗</a></span>
+  </footer>
+
+</main>
+
+<script>
+window.MINDMAP_DATA = {
+  "title": "Product\nAnalytics",
+  "centerColor": "#1030B0",
+  "sessions": [
+    {
+      "label": "The diary",
+      "href": "courses/a1-events-are-the-diary.html",
+      "concepts": [
+        {
+          "label": "Anatomy of an event",
+          "href": "courses/a1-events-are-the-diary.html"
+        },
+        {
+          "label": "Object Action names",
+          "href": "courses/a1-events-are-the-diary.html"
+        },
+        {
+          "label": "First seen is not new",
+          "href": "courses/a1-events-are-the-diary.html"
+        }
+      ]
+    },
+    {
+      "label": "Activation",
+      "href": "courses/a2-the-moment-that-predicts-staying.html",
+      "concepts": [
+        {
+          "label": "Aha moment folklore",
+          "href": "courses/a2-the-moment-that-predicts-staying.html"
+        },
+        {
+          "label": "Predictor, not lever",
+          "href": "courses/a2-the-moment-that-predicts-staying.html"
+        }
+      ]
+    },
+    {
+      "label": "Engagement",
+      "href": "courses/a3-engagement-you-can-defend.html",
+      "concepts": [
+        {
+          "label": "DAU/MAU blurs",
+          "href": "courses/a3-engagement-you-can-defend.html"
+        },
+        {
+          "label": "Power-user curve",
+          "href": "courses/a3-engagement-you-can-defend.html"
+        }
+      ]
+    },
+    {
+      "label": "Adoption",
+      "href": "courses/a4-adopted-is-not-valued.html",
+      "concepts": [
+        {
+          "label": "Breadth, depth, time",
+          "href": "courses/a4-adopted-is-not-valued.html"
+        },
+        {
+          "label": "Setup artefacts",
+          "href": "courses/a4-adopted-is-not-valued.html"
+        }
+      ]
+    },
+    {
+      "label": "AI feature",
+      "href": "courses/a5-measuring-an-ai-feature.html",
+      "concepts": [
+        {
+          "label": "Acceptance rate",
+          "href": "courses/a5-measuring-an-ai-feature.html"
+        },
+        {
+          "label": "Kept vs edited",
+          "href": "courses/a5-measuring-an-ai-feature.html"
+        }
+      ]
+    },
+    {
+      "label": "Product review",
+      "href": "courses/a6-the-product-review.html",
+      "concepts": [
+        {
+          "label": "Six questions",
+          "href": "courses/a6-the-product-review.html"
+        }
+      ]
+    },
+    {
+      "label": "Plan as code",
+      "href": "courses/b1-tracking-plan-as-code.html",
+      "concepts": [
+        {
+          "label": "Typed properties",
+          "href": "courses/b1-tracking-plan-as-code.html"
+        },
+        {
+          "label": "Identity on ids",
+          "href": "courses/b1-tracking-plan-as-code.html"
+        }
+      ]
+    },
+    {
+      "label": "Event stream",
+      "href": "courses/b2-meet-the-event-stream.html",
+      "concepts": [
+        {
+          "label": "Bots in the diary",
+          "href": "courses/b2-meet-the-event-stream.html"
+        },
+        {
+          "label": "Sessionizing",
+          "href": "courses/b2-meet-the-event-stream.html"
+        }
+      ]
+    },
+    {
+      "label": "Defining active",
+      "href": "courses/b3-defining-active.html",
+      "concepts": [
+        {
+          "label": "Three MAUs",
+          "href": "courses/b3-defining-active.html"
+        }
+      ]
+    },
+    {
+      "label": "The bench",
+      "href": "courses/b8-the-activation-bench.html",
+      "concepts": [
+        {
+          "label": "Lift and coverage",
+          "href": "courses/b8-the-activation-bench.html"
+        },
+        {
+          "label": "Shuffle floor",
+          "href": "courses/b8-the-activation-bench.html"
+        },
+        {
+          "label": "Volume trap",
+          "href": "courses/b8-the-activation-bench.html"
+        }
+      ]
+    }
+  ]
+};
+</script>
+<script src="assets/app.js?v=2"></script>
+<script src="assets/mindmap.js?v=1"></script>
+</body>
+</html>

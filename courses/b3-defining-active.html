@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 3 of 8. Three definitions of active on the same 79,555 GitHub accounts give three MAUs, 79,555, 48,946 and 8,993, while DAU/MAU barely moves: 6.4, 6.6 and 5.0 percent. Python on a 5 percent GH Archive sample.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Defining &quot;active&quot; - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 3 of 8. The count moves ninefold with the definition; the stickiness ratio hides the choice. DAU, WAU, MAU from real rows.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b3-defining-active.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Defining &quot;active&quot; - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 3 of 8. Three definitions, three MAUs, one ratio that barely moves.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 3 · Defining &quot;active&quot; - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 3 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 3 of 8</div>
+    <h1>Defining <span class="accent">"active"</span></h1>
+    <p class="sub">"Monthly active users" sounds like a measurement. It is a decision wearing a measurement's clothes. Tonight we take one set of real GitHub accounts, a deterministic 5 percent sample followed through 28 days of March 2024, and count them three times: active if they did anything, active if they pushed code, active if they opened an issue or a pull request. The count moves from 79,555 to 8,993. The stickiness ratio everyone quotes barely moves at all, which is exactly why it cannot be trusted to reveal the definition underneath it. Then we ask what "a day" even means when the data only sees two hours of it.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python, standard library only</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Three definitions, the ratios, the sampled day</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: DAU, WAU, MAU from real rows</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Sessions 1 and 2 worked on one hour. Tonight needs time, because "active" is a word about repetition: a person seen on one day and again on another. So the dataset changes shape. Instead of every event in one hour, we follow a fixed set of accounts, every account whose GitHub id is divisible by 20, across two hours a day (03:00 and 15:00 UTC) for the 28 days from 2024-03-04 to 2024-03-31. That is 56 hourly files streamed and thrown away, keeping only who was seen and what they did. 79,555 accounts appear at least once; 98 of them carry the <code>[bot]</code> suffix and are dropped. Everything on this page is computed from that sample, and every count is "seen in the sampled hours", never "active on GitHub".</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A script that turns a month of sampled events into per-day "seen" sets under three definitions of active, prints MAU, average DAU and average WAU for each, and the two ratios (DAU/MAU, DAU/WAU) that boards ask for. Plus the argument you will need the first time someone changes a definition and the stickiness number stays flat: 79,555 / 48,946 / 8,993 monthly actives, 6.4 / 6.6 / 5.0 percent DAU/MAU, same accounts, same month.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers three definitions on the same accounts</span>
+      <h2>Three definitions, three monthly actives</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Hold the accounts fixed and change only the verb. "Active" as any event at all gives 79,555 monthly actives, which is every account in the sample by construction. "Active" as pushed code gives 48,946. "Active" as opened an issue or a pull request gives 8,993. Nothing about the users changed between those three sentences; a definition did. Whoever writes the definition is choosing the number, and the choice should be written down next to the number every time it is reported.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three definitions of active drawn as sets on the same 79,555 sampled GitHub accounts, March 2024. The outer set, any event, holds 79,555 accounts. Inside it a large set, pushed code, holds 48,946. A small set, opened an issue or pull request, holds 8,993; its overlap with the push set was not counted, so it is drawn apart. A note says the accounts are identical across the three counts and only the verb changed.">
+        <defs>
+          <filter id="b3aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b3aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b3aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b3aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b3aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b3aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b3aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b3aV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .b3aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b3aH" x="30" y="26">ONE SAMPLE, THREE VERBS</text>
+        <text class="b3aS" x="232" y="26">79,555 accounts with id divisible by 20 · two sampled hours a day · 28 days of March 2024</text>
+
+        <g filter="url(#b3aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- outer set: any event -->
+          <rect x="40" y="52" width="540" height="240" rx="26" transform="rotate(-0.4 310 172)" fill="url(#b3aHc)"/>
+          <!-- pushed code -->
+          <rect x="70" y="96" width="330" height="172" rx="22" transform="rotate(0.5 235 182)" fill="#EEF1FF"/>
+          <!-- opened an issue or PR; its overlap with the push set was not counted, so it is drawn apart -->
+          <rect x="416" y="150" width="148" height="104" rx="18" transform="rotate(-1.2 490 202)" fill="#F7B928" stroke="#614300"/>
+          <!-- pointers to the numbers on the right -->
+          <path d="M582 90 L640 90" marker-end="url(#b3aAr)"/>
+          <path d="M402 130 C470 118 560 138 640 150" marker-end="url(#b3aAr)"/>
+          <path d="M568 214 L640 214" marker-end="url(#b3aAr)"/>
+        </g>
+
+        <text class="b3aL" x="58" y="80">any event</text>
+        <text class="b3aL" x="88" y="122">pushed code</text>
+        <text class="b3aB" x="428" y="176">opened an issue</text>
+        <text class="b3aB" x="428" y="192">or PR</text>
+        <text class="b3aS" x="428" y="226">overlap with push</text>
+        <text class="b3aS" x="428" y="240">not counted</text>
+
+        <text class="b3aH" x="652" y="82">ANY EVENT</text>
+        <text class="b3aV" x="652" y="104">79,555</text>
+        <text class="b3aH" x="652" y="142">PUSHED CODE</text>
+        <text class="b3aV" x="652" y="164">48,946</text>
+        <text class="b3aH" x="652" y="206">OPENED ISSUE OR PR</text>
+        <text class="b3aV" x="652" y="228">8,993</text>
+        <text class="b3aS" x="652" y="248">roughly a ninth of the outer set</text>
+
+        <text class="b3aN" x="30" y="322">Same accounts, same 28 days, same sampled hours. Only the verb in the definition changed, and the "MAU" moved ninefold.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - a monthly active count without its verb is a number without a meaning</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Active is a verb, not a status<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>In the script, each definition is one test on the per-hour record of an account: <code>any</code> is "at least one event", <code>push</code> is "at least one PushEvent", <code>open</code> is "at least one issue or pull request opened". An account is active on a day under a definition if the test passes in either sampled hour of that UTC day. The three tests are one line each, and that line is the whole product decision. "Any event" includes starring someone else's repository and commenting on a thread; "pushed code" is closer to the work; "opened an issue or PR" is the narrowest, the moment an account asks the project for something or offers it something.</p>
+        <p>None of the three is the right one. The right one depends on the question. A capacity planner wants "any event" because servers do not care about intent. A team asking "is our product being used for its purpose" wants the narrow verb, and has to accept a number one ninth the size. Reporting the wide number to answer the narrow question is the most common quiet lie in product analytics, and it is rarely told on purpose.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why 79,555 is not "GitHub's MAU"<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Two reasons, both worth saying out loud whenever the number is quoted. First, the sample: only accounts whose id is divisible by 20, so about one account in twenty, kept deterministically so the same accounts are followed through every hour. Second, the clock: two hours out of 24, every day. An account that works from 09:00 to 17:00 Central European time and never touches GitHub at 03:00 or 15:00 UTC does not exist in this dataset. 79,555 is "accounts in the sample seen in the sampled hours during March 2024", and the build-along prints it with that sentence attached. Part 3 is about what the two-hour clock does to every count on the page.</p>
+        <p>The 98 dropped accounts are the ones whose login ends in <code>[bot]</code>. Automation that does not label itself stays in the sample, exactly as in session 2's hour, where the busiest account had no suffix at all. Session 5 goes looking for it in the right tail of the days-active histogram.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Two decks, two MAUs, one product.</strong> A common pattern: the growth team's deck counts a user active if they opened the app, because the login event is the one that is never missing. The product team's deck counts a user active if they completed the core action, because that is what the roadmap is trying to move. Both numbers are correct. Then a board member reads both decks in the same afternoon and asks why the company cannot count its own users. The fix is not to pick a winner; it is a one-line definition printed under every chart, with the verb in it.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers DAU, WAU, MAU and the ratios</span>
+      <h2>The ratio that hides the choice</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Stickiness, DAU divided by MAU, is the number that survives every meeting. Here it is for the three definitions: 6.4 percent, 6.6 percent, 5.0 percent. The monthly count moved ninefold between the first and third definition; the ratio moved by less than two points. A reader given only the ratios would conclude the three definitions describe nearly the same engagement. They do not describe the same anything. The ratio normalises away the size of the population, and with it the entire definition question.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three small panels, one per definition of active, each showing MAU, average WAU and average DAU as horizontal bars scaled to that panel's own MAU. Any event: MAU 79,555, WAU 27,490.0, DAU 5,110.6, DAU/MAU 6.4 percent. Pushed code: MAU 48,946, WAU 17,094.2, DAU 3,217.9, DAU/MAU 6.6 percent. Opened an issue or PR: MAU 8,993, WAU 2,761.2, DAU 452.4, DAU/MAU 5.0 percent. The three bar shapes look almost identical while the counts differ ninefold.">
+        <defs>
+          <filter id="b3bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="47" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b3bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b3bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b3bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b3bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b3bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b3bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b3bV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b3bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b3bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b3bH" x="30" y="26">SAME SHAPE, DIFFERENT WORLD</text>
+        <text class="b3bS" x="266" y="26">each panel scales its bars to its own MAU · averages over 28 days and 4 calendar weeks</text>
+
+        <g filter="url(#b3bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- panel frames -->
+          <rect x="30" y="50" width="260" height="222" rx="10" transform="rotate(-0.4 160 161)" fill="#FFFFFF"/>
+          <rect x="310" y="50" width="260" height="222" rx="10" transform="rotate(0.3 440 161)" fill="#FFFFFF"/>
+          <rect x="590" y="50" width="260" height="222" rx="10" transform="rotate(-0.3 720 161)" fill="#FFFFFF"/>
+          <!-- panel 1 bars: MAU 180, WAU 62, DAU 12 -->
+          <rect x="60" y="102" width="180" height="18" rx="3" fill="url(#b3bHc)"/>
+          <rect x="60" y="142" width="62" height="18" rx="3" fill="#EEF1FF"/>
+          <rect x="60" y="182" width="12" height="18" rx="3" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- panel 2 bars: MAU 180, WAU 63, DAU 12 -->
+          <rect x="340" y="102" width="180" height="18" rx="3" fill="url(#b3bHc)"/>
+          <rect x="340" y="142" width="63" height="18" rx="3" fill="#EEF1FF"/>
+          <rect x="340" y="182" width="12" height="18" rx="3" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- panel 3 bars: MAU 180, WAU 55, DAU 9 -->
+          <rect x="620" y="102" width="180" height="18" rx="3" fill="url(#b3bHc)"/>
+          <rect x="620" y="142" width="55" height="18" rx="3" fill="#EEF1FF"/>
+          <rect x="620" y="182" width="9" height="18" rx="3" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- the ratio badges: the thing this figure is about -->
+          <rect x="60" y="222" width="200" height="30" rx="8" transform="rotate(-0.8 160 237)" fill="#F7B928" stroke="#614300"/>
+          <rect x="340" y="222" width="200" height="30" rx="8" transform="rotate(0.7 440 237)" fill="#F7B928" stroke="#614300"/>
+          <rect x="620" y="222" width="200" height="30" rx="8" transform="rotate(-0.6 720 237)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="b3bH" x="60" y="72">ANY EVENT</text>
+        <text class="b3bL" x="60" y="96">MAU</text><text class="b3bV" x="120" y="96">79,555</text>
+        <text class="b3bL" x="60" y="136">avg WAU</text><text class="b3bS" x="130" y="136">27,490.0</text>
+        <text class="b3bL" x="60" y="176">avg DAU</text><text class="b3bS" x="130" y="176">5,110.6</text>
+        <text class="b3bB" x="72" y="242">DAU/MAU 6.4%</text><text class="b3bB" x="172" y="242">DAU/WAU 18.6%</text>
+
+        <text class="b3bH" x="340" y="72">PUSHED CODE</text>
+        <text class="b3bL" x="340" y="96">MAU</text><text class="b3bV" x="400" y="96">48,946</text>
+        <text class="b3bL" x="340" y="136">avg WAU</text><text class="b3bS" x="410" y="136">17,094.2</text>
+        <text class="b3bL" x="340" y="176">avg DAU</text><text class="b3bS" x="410" y="176">3,217.9</text>
+        <text class="b3bB" x="352" y="242">DAU/MAU 6.6%</text><text class="b3bB" x="452" y="242">DAU/WAU 18.8%</text>
+
+        <text class="b3bH" x="620" y="72">OPENED ISSUE OR PR</text>
+        <text class="b3bL" x="620" y="96">MAU</text><text class="b3bV" x="680" y="96">8,993</text>
+        <text class="b3bL" x="620" y="136">avg WAU</text><text class="b3bS" x="690" y="136">2,761.2</text>
+        <text class="b3bL" x="620" y="176">avg DAU</text><text class="b3bS" x="690" y="176">452.4</text>
+        <text class="b3bB" x="632" y="242">DAU/MAU 5.0%</text><text class="b3bB" x="732" y="242">DAU/WAU 16.4%</text>
+
+        <text class="b3bA" x="30" y="296">The bars are the ratios. They look alike because a ratio throws the population size away, and the definition with it.</text>
+        <text class="b3bN" x="30" y="316">Sampled hours only: a person active at other hours is missing from every bar on this figure. Part 3 says how much that matters.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three almost identical shapes, and the left one counts nine times as many people as the right one</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>How the three counts are built, and what each averages<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>MAU</strong> here is the number of accounts active on at least one of the 28 days, so it is one count for the whole window. <strong>DAU</strong> is a count per day, 28 of them, and the page reports the average. <strong>WAU</strong> is a count per calendar week (the window starts on a Monday, so the four weeks are Monday to Sunday), and the page reports the average of the four. A single account can therefore be in MAU once, in WAU up to four times and in DAU up to 28 times. DAU/MAU asks: of the people who showed up at all this month, what share shows up on a typical day. DAU/WAU asks the same over a week, and comes out around three times larger because a week is a smaller net.</p>
+        <p>Li Jin and Andrew Chen put the objection precisely in their power-user curve essay: DAU/MAU "is a single number and so blurs this variance". They meant the variance between users who come once and users who come daily. Tonight's data adds a second blur: the ratio also hides which verb was used to count anyone at all. Session 5 unpacks the first blur with the L28 histogram, on these same accounts.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why the ratio barely moved<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It is tempting to read 6.4 versus 6.6 versus 5.0 as "engagement is about the same however you define it", and that reading is exactly backwards. When the definition narrows from any event to pushing code, both numerator and denominator shrink, and they shrank in almost the same proportion, so the ratio held. The narrowest verb has the lowest ratio, 5.0 percent, which is at least in the expected direction: opening issues and pull requests is a rarer daily habit than pushing. But a ratio that sits between 5 and 7 percent for three populations that differ ninefold is telling you it is a poor instrument for this question, not that the question has one answer.</p>
+        <p>A working rule: never report a ratio without the two counts that made it, on the same line. "DAU/MAU 6.6 percent (3,218 of 48,946, pushed code, sampled hours)" cannot be misread. "Stickiness 6.6 percent" can be misread in a dozen ways, and will be.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The redefinition nobody noticed.</strong> A common pattern: a team tightens its definition of active mid-quarter, from "opened the app" to "performed the core action", for good reasons. MAU falls by a large fraction on the chart and there is a difficult meeting. DAU/MAU, on the slide beside it, hardly moves, and someone says "at least engagement is stable". Both slides are computed correctly. The second one is answering a question nobody asked, and its stability is a property of the arithmetic rather than of the users.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers what "a day" means under sampling</span>
+      <h2>A day the data only half sees</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Every count tonight says "active on a day", and the data behind it saw two hours of that day. An account that pushes at 10:00 UTC every single morning is, in this sample, never active. An account that pushes once at 15:20 is active for the day. "Active on a day" here means "seen in the 03:00 or the 15:00 hour of that UTC day", and the honest sentence is longer than the convenient one every time. The same problem hides inside your own product's numbers, in gentler forms: which timezone's midnight ends the day, which events the client failed to send, and what a verb like "pushed" is allowed to count.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A 24-hour ring drawn as a clock face, midnight UTC at the top. Two wedges are filled, the 03:00 hour and the 15:00 hour, the only two hours sampled each day. Three account marks sit on the ring: one at 03:30 inside a sampled wedge, seen; one at 10:00 outside both wedges, drawn dashed, not seen and so not active that day; one at 15:20 inside the second wedge, seen. Right-hand notes: 2 of 24 hours are watched; a daily user who works outside them is missing from every count; the counts are seen-in-sampled-hours, never active-on-GitHub.">
+        <defs>
+          <filter id="b3cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="59" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b3cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b3cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b3cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b3cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b3cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b3cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b3cV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .b3cA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b3cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b3cH" x="30" y="26">ONE UTC DAY, TWO WATCHED HOURS</text>
+
+        <g filter="url(#b3cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the day as a ring -->
+          <circle cx="240" cy="180" r="110" fill="#FFFFFF"/>
+          <circle cx="240" cy="180" r="70" fill="url(#b3cHc)" stroke="#C8CFEA"/>
+          <!-- the two sampled hours: 03:00-04:00 and 15:00-16:00 -->
+          <path d="M240 180 L317.8 102.2 A110 110 0 0 1 335.3 125 Z" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <path d="M240 180 L162.2 257.8 A110 110 0 0 1 144.7 235 Z" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- midnight tick -->
+          <path d="M240 70 L240 58"/>
+          <!-- account marks: seen at 03:30 and 15:20, unseen at 10:00 -->
+          <circle cx="311.4" cy="125.2" r="7" fill="#F7B928" stroke="#614300"/>
+          <circle cx="171.1" cy="237.9" r="7" fill="#F7B928" stroke="#614300"/>
+          <circle cx="285" cy="257.9" r="7" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <!-- pointer from the unseen mark to its note -->
+          <path d="M296 266 C340 300 400 300 440 296" marker-end="url(#b3cAr)"/>
+        </g>
+
+        <text class="b3cS" x="240" y="52" text-anchor="middle">00:00 UTC</text>
+        <text class="b3cS" x="372" y="184">06:00</text>
+        <text class="b3cS" x="240" y="312" text-anchor="middle">12:00</text>
+        <text class="b3cS" x="72" y="184">18:00</text>
+        <text class="b3cA" x="346" y="104">03:00 hour</text>
+        <text class="b3cA" x="88" y="270">15:00 hour</text>
+        <text class="b3cS" x="240" y="184" text-anchor="middle">22 unwatched</text>
+
+        <text class="b3cH" x="470" y="80">WHAT THE SAMPLE CAN SEE</text>
+        <text class="b3cV" x="470" y="104">2 of 24 hours</text>
+        <text class="b3cS" x="470" y="124">the same two, every day, for 28 days</text>
+        <text class="b3cL" x="470" y="156">gold mark: pushed at 03:30 or 15:20</text>
+        <text class="b3cS" x="470" y="172">counted as active on this day</text>
+        <text class="b3cL" x="470" y="200">dashed mark: pushed at 10:00 only</text>
+        <text class="b3cS" x="470" y="216">not seen, so not active, every day</text>
+        <text class="b3cB" x="470" y="248">a daily user on the wrong schedule</text>
+        <text class="b3cB" x="470" y="264">has zero active days in this dataset</text>
+        <text class="b3cS" x="450" y="300">"never active" here means "never at 03:00 or 15:00"</text>
+
+        <text class="b3cN" x="30" y="344">Every DAU, WAU and MAU on this page is "seen in the sampled hours". The ring is why the page never says "GitHub's stickiness".</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the two blue wedges are the whole dataset; the rest of the day is a guess the numbers are not allowed to make</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three ways "a day" goes wrong<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The clock.</strong> Two hours of 24 is the extreme case, chosen because 56 files can be streamed on a laptop while 672 cannot. But even complete data has a clock problem: a "day" is a UTC day here, and an account in Sydney whose working afternoon is 03:00 to 07:00 UTC has its Tuesday counted as Wednesday. Choose the day boundary and write it down; the same person can be a one-day user or a two-day user depending on it.</p>
+        <p><strong>The verb.</strong> Session 1 found 234 PushEvents in a single hour that carried zero commits: a branch moved, a force push, a ref updated with nothing new in it. The <code>push</code> test tonight is "at least one PushEvent", so every one of those 234 makes its account "pushed code" active for the day. A stricter verb, "pushed at least one commit", needs the payload's commit count, which the sampler kept as a per-event count but not per commit. The definition you can compute is bounded by what you chose to keep.</p>
+        <p><strong>The gap.</strong> An event that never arrived looks identical to an action that never happened. In this sample the gap is 22 hours a day and it is known. In a product it is a client that dropped events on a bad connection, and it is not known unless someone counts arrivals against expectations, which is what the session 1 validator's "not in the plan" tray was for.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Which direction the sampling bends each number<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The two-hour clock undercounts everything, but not evenly. MAU is hurt least: an account needs to be seen in just one of 56 sampled hours across the month to make it in. DAU is hurt most: an account has to land in one of two specific hours on that specific day. So the DAU/MAU ratio is biased low by construction, and by an unknown amount, because the true distribution of activity across hours for these accounts is not in the data. That is why the page reports 6.4 percent without ever calling it GitHub's stickiness, and why session 5's days-active histogram will lean left partly for a reason that has nothing to do with the users.</p>
+        <p>A fair question is whether any of this is worth computing. Yes, for the comparison: all three definitions were sampled by the same clock, so the ninefold gap between them is real even though each absolute number is low. Relative claims survive a shared bias; absolute claims do not.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The dashboard that sampled without saying so.</strong> A common pattern: a high-volume product turns on event sampling in its analytics tool to control cost, and the tool scales the counts back up so the charts look complete. Months later an analyst compares the dashboard's daily actives against the billing database and the two disagree, most for the smallest segments, where a scaled-up handful of sampled users stands in for thousands. Nothing was wrong with the tool. The word "sampled" had simply fallen off the chart title, and every reader assumed a census. The fix is a label, not a recompute: "sampled hours" or "sampled users", in the same font as the number.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>DAU, WAU and MAU from real rows, three ways</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Standard-library Python and 56 GH Archive files, streamed and discarded. Step 1 is the slow part, about 37 files' worth of gzip per hour of download depending on your connection, and it produces a small JSON cache; everything after it runs in seconds. Every number printed below is what this code prints on the cache for 2024-03-04 to 2024-03-31, hours 03:00 and 15:00 UTC, accounts with id divisible by 20.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline of five boxes: stream 56 hourly files and keep only actors whose id is divisible by 20; write one small JSON per hour and combine them into actor-days.json; drop the 98 bot-suffixed accounts, leaving 79,555; build a set of days seen per account under each of three definitions; count MAU, average DAU and average WAU per definition and print the two ratios.">
+        <defs>
+          <filter id="b3dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b3dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b3dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b3dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b3dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b3dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b3dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b3dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b3dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b3dH" x="30" y="26">FIVE STEPS, FIFTY-SIX FILES</text>
+
+        <g filter="url(#b3dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b3dHc)"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#FFFFFF"/>
+          <rect x="362" y="70" width="130" height="60" rx="8" transform="rotate(-0.5 427 100)" fill="#EEF1FF"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L188 100" marker-end="url(#b3dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b3dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b3dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b3dAr)"/>
+        </g>
+
+        <text class="b3dL" x="44" y="96">1 · stream 56 hours</text>
+        <text class="b3dS" x="44" y="114">keep id % 20 == 0</text>
+        <text class="b3dL" x="210" y="96">2 · one JSON each</text>
+        <text class="b3dS" x="210" y="114">then actor-days.json</text>
+        <text class="b3dL" x="376" y="96">3 · drop [bot]</text>
+        <text class="b3dS" x="376" y="114">98 out, 79,555 stay</text>
+        <text class="b3dW" x="542" y="96">4 · days seen</text>
+        <text class="b3dW" x="542" y="114">a set per verb</text>
+        <text class="b3dL" x="708" y="96">5 · MAU, DAU, WAU</text>
+        <text class="b3dB" x="708" y="114">and the two ratios</text>
+
+        <text class="b3dS" x="30" y="160">about 37 GB streamed, nothing kept but who and what</text>
+        <text class="b3dS" x="362" y="160">a few MB of cache</text>
+        <text class="b3dS" x="528" y="160">three sets per account</text>
+        <text class="b3dS" x="694" y="160">three lines of output</text>
+
+        <text class="b3dN" x="30" y="206">On your own product, step 1 is a query on the events table. Steps 3 to 5 are unchanged, and step 4 is where the definition lives.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - step 4 is one lambda per definition, and it is the only step a product decision touches</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Stream the sample.</strong> Each hourly file is gunzipped on the fly and every line is tested with a regex before any JSON is parsed, because parsing 95 percent of the lines just to throw them away is the slow way. An actor id divisible by 20 is kept; the rest are skipped. Bot logins stay in the file so the drop is visible later.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · one small JSON per sampled hour (shell loop + keep_sample.py)</span># shell: 28 days x 2 hours = 56 files, streamed, never stored
+mkdir -p actors
+for d in $(seq 0 27); do
+  day=$(python3 -c "import datetime as dt,sys; print(dt.date(2024,3,4)+dt.timedelta(int(sys.argv[1])))" $d)
+  for h in 3 15; do
+    curl -sfL --retry 3 https://data.gharchive.org/$day-$h.json.gz | gunzip | python3 keep_sample.py &gt; actors/$day-$h.json
+  done
+done
+
+# keep_sample.py: stdin is one hour of events, one JSON object per line
+import json, re, sys
+ACTOR_ID = re.compile(r'"actor":\{"id":(\d+),')
+acc, n = {}, 0
+for line in sys.stdin:
+    n += 1
+    m = ACTOR_ID.search(line)
+    if m is None or int(m.group(1)) % 20:
+        continue                                  # not in the 5 percent: skip before json.loads
+    e = json.loads(line)
+    a = acc.setdefault(e["actor"]["id"], [e["actor"]["login"], 0, 0, 0])
+    a[1] += 1                                     # any event
+    if e["type"] == "PushEvent":
+        a[2] += 1                                 # pushed (a PushEvent, commits not counted)
+    elif e["type"] in ("PullRequestEvent", "IssuesEvent") and (e.get("payload") or {}).get("action") == "opened":
+        a[3] += 1                                 # opened an issue or a pull request
+print(json.dumps({"events": n, "actors": acc}))</div>
+      </div>
+      <div class="step">
+        <p><strong>Combine and load.</strong> One dictionary keyed by hour, each value the per-actor record <code>[login, n_events, n_push, n_opened]</code>. Then drop bots and print the two sizes. The print statement is the first line of every report built from this cache.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · actor-days.json, then drop the [bot] suffix</span>import json, glob, os
+from collections import defaultdict
+
+hours = {os.path.basename(p)[:-5]: json.load(open(p)) for p in glob.glob("actors/*.json")}
+json.dump(hours, open("actor-days.json", "w"))    # 56 keys like "2024-03-04-15"
+
+days = sorted({h.rsplit("-", 1)[0] for h in hours})
+assert len(days) == 28, len(days)
+
+bots, seen = set(), defaultdict(lambda: {d: set() for d in DEFS})   # DEFS is step 3
+events = defaultdict(int)
+for h, blob in hours.items():
+    day = h.rsplit("-", 1)[0]
+    for aid, v in blob["actors"].items():
+        if v[0].endswith("[bot]"):
+            bots.add(aid)
+            continue
+        events[aid] += v[1]
+        for d, test in DEFS.items():
+            if test(v):
+                seen[aid][d].add(day)
+print("sampled accounts seen at least once:", len(seen), " bot accounts dropped:", len(bots))
+# sampled accounts seen at least once: 79555  bot accounts dropped: 98</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the definitions.</strong> Three lambdas on the per-hour record. This is the step a product manager should be able to read, and the one that changes when the definition of active changes. Run it before step 2 so the loop can use it.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · three definitions of "active on a day"</span>DEFS = {
+    "any":  lambda v: v[1] &gt; 0,   # did anything at all in a sampled hour
+    "push": lambda v: v[2] &gt; 0,   # at least one PushEvent (a zero-commit push counts)
+    "open": lambda v: v[3] &gt; 0,   # opened at least one issue or pull request
+}
+# an account is active on a UTC day, under a definition, if the test passes
+# in either of that day's two sampled hours; seen[aid][d] is the set of such days</div>
+      </div>
+      <div class="step">
+        <p><strong>Count.</strong> MAU is the number of accounts with a non-empty set. DAU is the count per day, averaged over 28. WAU is the count per calendar week (the window opens on a Monday), averaged over four. The ratios use the averages. One extra line reports how concentrated the sampled events are, for session 5.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · MAU, average DAU, average WAU, two ratios</span>ev = sorted(events.values(), reverse=True)
+print("top 1 percent of accounts by events hold %.1f%% of all sampled events" % (100 * sum(ev[: len(ev) // 100]) / sum(ev)))
+
+for d in DEFS:
+    ldays = [len(s[d]) for s in seen.values() if s[d]]
+    mau = len(ldays)
+    dau = [sum(1 for s in seen.values() if day in s[d]) for day in days]
+    avg_dau = sum(dau) / 28
+    wk = [sum(1 for s in seen.values() if any(day in s[d] for day in days[i:i + 7])) for i in (0, 7, 14, 21)]
+    print("\n[%s] MAU (active on &gt;= 1 of 28 days): %d" % (d, mau))
+    print("  average DAU %.1f  stickiness DAU/MAU %.1f%%  average WAU %.1f  DAU/WAU %.1f%%" % (
+        avg_dau, 100 * avg_dau / mau, sum(wk) / 4, 100 * avg_dau / (sum(wk) / 4)))</div>
+      </div>
+      <div class="step">
+        <p><strong>Read the output.</strong> These are the lines the cache gives. Say the long sentence when you quote them: accounts in the 5 percent sample, seen in the two sampled hours, March 2024.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · what it prints</span># top 1 percent of accounts by events hold 30.1% of all sampled events
+#
+# [any] MAU (active on &gt;= 1 of 28 days): 79555
+#   average DAU 5110.6  stickiness DAU/MAU 6.4%  average WAU 27490.0  DAU/WAU 18.6%
+#
+# [push] MAU (active on &gt;= 1 of 28 days): 48946
+#   average DAU 3217.9  stickiness DAU/MAU 6.6%  average WAU 17094.2  DAU/WAU 18.8%
+#
+# [open] MAU (active on &gt;= 1 of 28 days): 8993
+#   average DAU 452.4  stickiness DAU/MAU 5.0%  average WAU 2761.2  DAU/WAU 16.4%</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Keep the cache and the sets.</strong> <code>seen[aid][d]</code> is a set of days per account per definition. Session 5 turns the size of each set into the L28 histogram, the power-user curve, without touching GH Archive again. If you change a definition, change the lambda in step 3 and re-run steps 2 and 4; the fetch never needs to repeat.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 4</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Add a fourth definition</strong> to step 3, "busy": at least two events in a sampled hour (<code>v[1] &gt; 1</code>). Re-run steps 2 and 4 and write down where its MAU and DAU/MAU land relative to the three on this page. Your numbers will differ from nothing here; this is the same cache, so they are new canon for you.</li>
+      <li><strong>Compute DAU/MAU per calendar week</strong> instead of for the whole month, for the "push" definition, and note whether it moves more between weeks than between definitions. One sentence on what that says about the ratio as an instrument.</li>
+      <li><strong>Write your own product's three definitions</strong> of active, one sentence each with the verb in it, and predict their ordering before you count. Then count, if you have the events. Keep the prediction; being wrong about the ordering is the useful part.</li>
+      <li><strong>Keep <code>actor-days.json</code> and the <code>seen</code> sets.</strong> Session 5 builds the days-active histogram from them, and session 4 switches to a different sample: 8,348 new repositories followed for six weeks.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 3 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · The same 79,555 sampled accounts give MAU 79,555 under "any event", 48,946 under "pushed code" and 8,993 under "opened an issue or PR". What changed between the three counts?</p>
+      <button class="qopt" type="button">A · The users: fewer people were around for the narrower counts</button>
+      <button class="qopt" type="button">B · The sample: each definition used a different 5 percent</button>
+      <button class="qopt" type="button">C · Only the verb in the definition; the accounts, the days and the sampled hours are identical, so the ninefold gap is a decision, not a measurement</button>
+      <button class="qopt" type="button">D · The month: the narrower definitions used fewer days</button>
+      <p class="qwhy">Hold everything fixed and change the verb, and "MAU" moves ninefold. That is why a monthly active number reported without its definition cannot be compared with anything, including last quarter's.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · DAU/MAU reads 6.4, 6.6 and 5.0 percent for the three definitions. A colleague says "so engagement is about the same however you define active". What is wrong with that reading?</p>
+      <button class="qopt" type="button">A · Nothing; the ratio is designed to be comparable across definitions</button>
+      <button class="qopt" type="button">B · The ratio divides away the population size, so it hides that the three definitions count populations that differ ninefold; its stability is a property of the arithmetic, not of the users</button>
+      <button class="qopt" type="button">C · The ratios should have been computed on WAU instead</button>
+      <button class="qopt" type="button">D · 5.0 percent is too far from 6.6 percent for the reading to hold</button>
+      <p class="qwhy">Numerator and denominator shrank in almost the same proportion, so the ratio held while the counts collapsed. Report a ratio with the two counts that made it on the same line, and the verb beside them.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · The sample watches the 03:00 and 15:00 UTC hours only. An account that pushes code at 10:00 UTC every weekday in March 2024 appears in the cache as:</p>
+      <button class="qopt" type="button">A · Active on about 20 days, because the sampler scales the hours up</button>
+      <button class="qopt" type="button">B · Active on 28 days, because daily users are always caught</button>
+      <button class="qopt" type="button">C · A bot, because the schedule is regular</button>
+      <button class="qopt" type="button">D · Absent: zero active days under every definition, so every count on the page is "seen in the sampled hours", never "active on GitHub"</button>
+      <p class="qwhy">Two hours of 24 cannot see a user who works at other hours. MAU is hurt least and DAU most, so the ratio is biased low by an unknown amount. Relative claims between the three definitions survive the shared bias; absolute claims about GitHub do not.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every MAU, DAU, WAU and ratio on the page</span><span class="note">Measured on GH Archive, accounts with id divisible by 20, hours 03:00 and 15:00 UTC, 2024-03-04 to 2024-03-31, by the code on this page</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">79,555 accounts seen, 98 [bot] dropped, top 1 percent hold 30.1 percent of sampled events</span><span class="note">Same run, printed by steps 2 and 4</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DAU/MAU "is a single number and so blurs this variance"</span><span class="note">Jin, L. and Chen, A. (2018). "The Power User Curve: The best way to understand your most engaged users." a16z, 6 August 2018, read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">234 zero-commit pushes in one hour</span><span class="note">Measured on GH Archive 2024-03-04 15:00 UTC in analyst session 1</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Hourly files, UTC, no login</span><span class="note">GH Archive. https://www.gharchive.org/ (hourly archives, data.gharchive.org)</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">GitHub's true daily active count and stickiness</span><span class="note">Not measurable from two sampled hours a day; taught as an uncertainty with its direction, never as a number</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 3 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Active is a verb</b><span>Any event 79,555 · pushed code 48,946 · opened issue or PR 8,993. Same accounts.</span></div>
+      <div class="cheat-item"><b>The ratio hides the choice</b><span>DAU/MAU 6.4 / 6.6 / 5.0 percent while the count moves ninefold.</span></div>
+      <div class="cheat-item"><b>Print the counts with the ratio</b><span>"6.6 percent (3,218 of 48,946, pushed code, sampled hours)" cannot be misread.</span></div>
+      <div class="cheat-item"><b>Say the long sentence</b><span>Seen in the sampled hours, 5 percent of accounts, March 2024. Never "GitHub's MAU".</span></div>
+      <div class="cheat-item"><b>A day has a clock and a verb</b><span>UTC midnight decides the day; a zero-commit push still counts as "pushed".</span></div>
+      <div class="cheat-item"><b>Relative survives, absolute does not</b><span>All three definitions share the two-hour bias, so the gap between them is real.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Tonight counted who is active. Session 4 asks which early behaviour predicts coming back at all. The sample changes to 8,348 new public repositories born in one hour and followed for six weeks, of which 325, 3.9 percent, were ever touched again. We sweep candidate behaviours and thresholds, meet lift and returners caught, and find that "seen on a second day" at 5.44x beats "pushed on day one" at 1.74x, while a busy birth hour predicts nothing. Then the hard part: a predictor is not a lever, and the experiment that would prove one belongs to another course.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 3 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b2-meet-the-event-stream.html">← Prev: Meet the event stream</a> &nbsp;·&nbsp; <a href="b4-hunting-the-activation-moment.html">Next: Hunting the activation moment →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

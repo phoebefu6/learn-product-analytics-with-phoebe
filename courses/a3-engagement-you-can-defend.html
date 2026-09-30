@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 3 of 6. Why DAU/MAU blurs the one thing you need to see, how the power-user curve (L28) shows it, and how the definition of active moves MAU from 79,555 to 8,993 on the same GitHub accounts. Vanity versus signal, with a sampling caveat you can repeat.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Engagement you can defend - learn product analytics with phoebe">
+<meta property="og:description" content="Leader session 3 of 6. One ratio hides the shape; the power-user curve shows it. Three definitions of active, three MAUs, one set of real accounts, and the bots hiding in the right tail.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/a3-engagement-you-can-defend.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Engagement you can defend - learn product analytics with phoebe">
+<meta name="twitter:description" content="Leader session 3 of 6. DAU/MAU, the L28 curve, vanity versus signal, and the definition that decides your MAU.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 3 · Engagement you can defend - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Leader session 3 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Leader track · Session 3 of 6</div>
+    <h1>Engagement you can <span class="accent">defend</span></h1>
+    <p class="sub">"Engagement is up" is the sentence most likely to be said in a product review and least likely to survive a follow-up question. Tonight we take the three follow-ups in order: which ratio you quoted and what it hides, what shape the users are actually in, and which definition of "active" produced the number. Every count comes from 79,555 real GitHub accounts watched for 28 days, and the sampling that produced them is on the page, because a number you cannot explain is a number you cannot defend.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product managers and product leaders</span>
+      <span class="chip audience">No code</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · The ratio, the curve, the definition</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: your engagement definition card</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Session 1 wrote the diary. Session 2 found the moment that predicts staying. Tonight is about the number that gets quoted most and questioned least: engagement. Most teams report it as one ratio, daily actives over monthly actives, and the ratio is not wrong, it is just quiet about the thing that matters, which is how many different kinds of user are hiding inside it. A product with a small core that shows up every day and a product where everyone drops in twice a month can print the same DAU/MAU. The way to see the difference is a histogram, not a ratio, and the way to trust either is to know exactly which action made someone count as active.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = you make the artifact</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A one-page engagement definition card for your product: the one action that means someone got value, the written definition of "active" built on it, the period (daily or weekly) that matches how often the product is naturally used, and a list of everything that would inflate the number without anyone getting value. Plus the habit of asking, before any engagement chart is discussed, "what shape is the curve, and what counted as active?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers DAU/MAU and why one ratio blurs</span>
+      <h2>The ratio that hides the shape</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">DAU/MAU is the number of daily active users divided by the number of monthly active users, usually averaged over the month. It is quoted as "stickiness": if 100 people used the product this month and 20 used it on a typical day, the ratio is 20 percent. It is a fine number. The trouble is what Li Jin and Andrew Chen put in one clause in 2018: "it's a single number and so blurs this variance". Two products with the same ratio can be made of completely different people.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A sketch, no real numbers. Two hand-drawn panels, each a small histogram of how many days in a month users were active. The left panel, product A, has tall bars on the left and nothing on the right: everyone drops in a few days a month. The right panel, product B, has a tall bar on the left, a dip in the middle, and a second tall bar on the right: occasional visitors plus a small daily core. A shared gold tag between them says same DAU/MAU. The note says the ratio cannot tell the two apart; the histogram can.">
+        <defs>
+          <filter id="a3aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a3aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a3aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a3aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a3aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a3aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a3aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a3aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a3aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a3aH" x="30" y="26">TWO PRODUCTS, ONE RATIO</text>
+        <text class="a3aS" x="230" y="26">a sketch of the idea: bar heights are drawn, not measured</text>
+
+        <g filter="url(#a3aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- left panel -->
+          <rect x="30" y="44" width="360" height="220" rx="10" transform="rotate(-0.4 210 154)" fill="#FFFFFF"/>
+          <path d="M60 230 L370 230" marker-end="url(#a3aAr)"/>
+          <path d="M60 230 L60 80" marker-end="url(#a3aAr)"/>
+          <rect x="72" y="100" width="34" height="130" transform="rotate(-1 89 165)" fill="url(#a3aHc)"/>
+          <rect x="114" y="150" width="34" height="80" transform="rotate(1 131 190)" fill="url(#a3aHc)"/>
+          <rect x="156" y="192" width="34" height="38" transform="rotate(-1 173 211)" fill="url(#a3aHc)"/>
+          <rect x="198" y="214" width="34" height="16" transform="rotate(1 215 222)" fill="url(#a3aHc)"/>
+          <rect x="240" y="225" width="34" height="5" fill="url(#a3aHc)"/>
+          <!-- right panel -->
+          <rect x="490" y="44" width="360" height="220" rx="10" transform="rotate(0.4 670 154)" fill="#FFFFFF"/>
+          <path d="M520 230 L830 230" marker-end="url(#a3aAr)"/>
+          <path d="M520 230 L520 80" marker-end="url(#a3aAr)"/>
+          <rect x="532" y="120" width="34" height="110" transform="rotate(1 549 175)" fill="url(#a3aHc)"/>
+          <rect x="574" y="190" width="34" height="40" transform="rotate(-1 591 210)" fill="url(#a3aHc)"/>
+          <rect x="616" y="216" width="34" height="14" fill="url(#a3aHc)"/>
+          <rect x="658" y="212" width="34" height="18" fill="url(#a3aHc)"/>
+          <rect x="700" y="188" width="34" height="42" transform="rotate(1 717 209)" fill="url(#a3aHc)"/>
+          <rect x="742" y="128" width="34" height="102" transform="rotate(-1 759 179)" fill="#1D4AFF" stroke="#1030B0"/>
+          <!-- the shared tag -->
+          <rect x="386" y="130" width="108" height="46" rx="8" transform="rotate(-3 440 153)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="a3aL" x="60" y="66">Product A: everyone drops in</text>
+        <text class="a3aS" x="60" y="250">1 day</text>
+        <text class="a3aS" x="230" y="250">days active</text>
+        <text class="a3aS" x="336" y="250">30</text>
+        <text class="a3aL" x="520" y="66">Product B: visitors plus a daily core</text>
+        <text class="a3aS" x="520" y="250">1 day</text>
+        <text class="a3aS" x="640" y="250">days active</text>
+        <text class="a3aA" x="742" y="250">the core</text>
+        <text class="a3aB" x="440" y="150" text-anchor="middle">same</text>
+        <text class="a3aB" x="440" y="165" text-anchor="middle">DAU/MAU</text>
+
+        <text class="a3aN" x="30" y="296">The ratio averages both shapes into one number. Only the histogram shows that B has a core</text>
+        <text class="a3aN" x="30" y="314">and A has none. That histogram is the power-user curve, and it is Part 2.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold tag is the problem: the same ratio, and only the blue bar on the right tells you which product has a habit</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What DAU/MAU measures, and what it averages away<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The definition.</strong> Count the accounts active on each day, average that across the month, and divide by the accounts active at least once in the month. On our GitHub sample, with "active" meaning any event at all, average DAU is 5,110.6, MAU is 79,555, and the ratio is 6.4 percent. The weekly version, DAU/WAU, is 18.6 percent. Both are real, both come from the same accounts, and neither says what a typical account looks like.</p>
+        <p><strong>Why a ratio blurs.</strong> Jin and Chen's point is arithmetic, not opinion. The ratio is a mean, and a mean of a mixed population hides the mix. Product A in the sketch could reach the same ratio as product B by having many people show up a few days each; product B gets there with a small group that shows up every day and a crowd that barely does. One of those products has a habit inside it and the other does not, and that is the first thing a product leader needs to know.</p>
+        <p><strong>What to ask instead.</strong> "How many days in the month were people active, and how is that distributed?" That question has a chart, the histogram in Part 2, and the chart cannot be summarised by one number without losing the shape.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The period should match the product<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>DAU/MAU assumes a product that could plausibly be used daily. Many products cannot be: an expense tool is opened at month end, a tax product once a year, a code-review tool on working days. For those, a daily ratio reads as failure no matter how healthy the product is, and the honest choice is a period that matches the natural frequency: weekly actives over monthly actives, or monthly actives over quarterly. The build-along asks you to pick that period on purpose, in writing, so that nobody later compares a weekly product to a daily one and calls it a decline.</p>
+        <p>One seam to note. Whether those actives are still here in six months is retention, and it has its own course: <a href="https://phoebefu6.github.io/learn-customer-retention-with-phoebe/">Customer retention with Phoebe</a>. Tonight stays inside the month.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The stickiness slide, common pattern.</strong> A team reports DAU/MAU rising for three quarters and takes it as a habit forming. What actually happened, once someone drew the histogram: a batch of low-frequency accounts had stopped using the product, MAU fell, and the same daily core divided by a smaller month looked stickier. Nothing improved; the denominator shrank. No numbers here because it is a pattern rather than one company's case, and it is the most common way a ratio flatters a product that is losing its edges.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the power-user curve, L30 and the real L28</span>
+      <h2>Draw the histogram, not the ratio</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Jin and Chen call it the power user curve: "a histogram of users' engagement by the total number of days they were active in a month". It is "also commonly called the activity histogram or the 'L30' (coined by the Facebook growth team)". The shape they hope for is a smile: a bar on the left for the occasional, a dip, then a bar on the right for the people who show up nearly every day. We drew one from 28 real days of GitHub, and it does not smile. Part of that is true of GitHub and part of it is how we sampled, and the page says which is which.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn L28 histogram from the GitHub engagement sample, 79,555 accounts, any event counts as active. Six bars by days active out of 28: 1 day 66.7 percent, 2 to 3 days 24.0 percent, 4 to 7 days 7.5 percent, 8 to 14 days 1.6 percent, 15 to 21 days 0.2 percent, 22 to 28 days 0.1 percent. The last two bars are drawn at a visible minimum height. The curve leans hard left, no smile. A small clock doodle marks the sampling caveat: two hours a day.">
+        <defs>
+          <filter id="a3bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="59" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a3bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a3bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a3bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a3bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a3bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a3bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a3bV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .a3bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .a3bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a3bH" x="30" y="26">THE REAL L28: 79,555 GITHUB ACCOUNTS, MARCH 2024</text>
+        <text class="a3bS" x="420" y="26">active = any event in a sampled hour; share of accounts</text>
+
+        <g filter="url(#a3bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M70 250 L800 250" marker-end="url(#a3bAr)"/>
+          <path d="M70 250 L70 40" marker-end="url(#a3bAr)"/>
+          <rect x="90" y="50" width="90" height="200" transform="rotate(-0.5 135 150)" fill="#F7B928" stroke="#614300"/>
+          <rect x="210" y="178" width="90" height="72" transform="rotate(0.5 255 214)" fill="url(#a3bHc)"/>
+          <rect x="330" y="227" width="90" height="23" transform="rotate(-0.5 375 238)" fill="url(#a3bHc)"/>
+          <rect x="450" y="245" width="90" height="5" fill="url(#a3bHc)"/>
+          <rect x="570" y="248" width="90" height="2" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="690" y="248" width="90" height="2" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- the smile that is not there -->
+          <path d="M120 120 C 400 290 620 290 760 150" stroke="#C8CFEA" stroke-dasharray="5 4"/>
+          <!-- clock doodle -->
+          <circle cx="822" cy="196" r="20" fill="#FFFFFF"/>
+          <path d="M822 184 L822 196 L831 202"/>
+        </g>
+
+        <text class="a3bV" x="135" y="76" text-anchor="middle">66.7%</text>
+        <text class="a3bL" x="255" y="170" text-anchor="middle">24.0%</text>
+        <text class="a3bL" x="375" y="219" text-anchor="middle">7.5%</text>
+        <text class="a3bL" x="495" y="237" text-anchor="middle">1.6%</text>
+        <text class="a3bL" x="615" y="237" text-anchor="middle">0.2%</text>
+        <text class="a3bL" x="735" y="237" text-anchor="middle">0.1%</text>
+        <text class="a3bS" x="135" y="270" text-anchor="middle">1 day</text>
+        <text class="a3bS" x="255" y="270" text-anchor="middle">2-3 days</text>
+        <text class="a3bS" x="375" y="270" text-anchor="middle">4-7</text>
+        <text class="a3bS" x="495" y="270" text-anchor="middle">8-14</text>
+        <text class="a3bS" x="615" y="270" text-anchor="middle">15-21</text>
+        <text class="a3bS" x="735" y="270" text-anchor="middle">22-28</text>
+        <text class="a3bA" x="440" y="290" text-anchor="middle">days active out of 28</text>
+        <text class="a3bS" x="500" y="128">the smile a growth team hopes for (dashed) is not here</text>
+        <text class="a3bB" x="822" y="232" text-anchor="middle">2 h a day</text>
+        <text class="a3bS" x="822" y="246" text-anchor="middle">sampled</text>
+
+        <text class="a3bN" x="30" y="318">Median: 1 day. 62 accounts seen on all 28 days. The last two bars are drawn at a visible minimum height.</text>
+        <text class="a3bN" x="30" y="336">Sampled: 5 percent of accounts, 03:00 and 15:00 UTC only. A daily user active at other hours looks occasional.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold bar is two thirds of every account; whether that is GitHub or the two-hour window is the question the note answers honestly: both</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading a power-user curve<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The x axis is days active in the period,</strong> 1 to 30 for a month, 1 to 28 here because we watched four full weeks. The y axis is the share of monthly actives at each count. Every bar together adds to MAU, so the curve contains DAU/MAU and more: the ratio is roughly the average bar position divided by the period length, and the curve is the whole distribution the ratio was averaged from.</p>
+        <p><strong>The smile.</strong> Jin and Chen's ideal is a right-leaning smile: a meaningful bar at the far right, meaning a group that shows up almost every day. They write that Facebook "would have a very right-leaning smile, with 60%+ of its MAUs coming back daily". That is their claim about a company they did not work for at the time and it is not verifiable from outside, so treat it as an illustration of the shape, never as a benchmark to be measured against.</p>
+        <p><strong>Our curve leans left.</strong> 66.7 percent of the sampled accounts were seen on exactly one day in 28; 24.0 percent on two or three; 7.5 on four to seven; and everything beyond 8 days is under 2 percent combined. There is no second bump. Two explanations are true at once, and the next card separates them.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Real, or an artefact of how we looked<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The real part.</strong> Most public GitHub accounts are occasional. Someone stars a repository, opens one issue, pushes one fix to a fork, and is not seen again that month. Session 2 of the analyst track found the same thing inside a single hour: 52.1 percent of actors had exactly one event. A left-leaning curve is what a broad, mostly casual user base looks like, and there is nothing wrong with it as long as nobody presents it as a smile.</p>
+        <p><strong>The sampling part.</strong> We watched two hours a day, 03:00 and 15:00 UTC, and only accounts whose id divides by 20. An engineer who pushes code every working day from 09:00 to 17:00 in San Francisco is invisible at both of our hours and lands in the 1-day bar or not at all. So the true GitHub curve has more weight to the right than this one, and by an amount we cannot compute from this sample. That sentence is the caveat that makes the chart defensible: it says what the number is, how it was made, and which direction it is biased.</p>
+        <p><strong>The habit worth copying:</strong> every engagement chart carries its sampling and its definition in the footnote. If yours came from the full event stream, say so. If it came from a client library that some users block, say which direction that pushes it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Concentration is the other view of the same curve<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A left-leaning curve means the days are concentrated in few hands. In the sample, the top 10 percent of accounts hold 33.5 percent of all account-days, and the top 1 percent by event count hold 30.1 percent of all sampled events. Those two numbers are the same story as the histogram from a different angle: a small group does a disproportionate share, and the ratio would have hidden that too. Analyst session 5 builds this curve from the rows and shows where automation hides in its right tail, which is where Part 3 goes next.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>62 accounts, 28 out of 28 days.</strong> In a sample of 79,555, exactly 62 accounts were seen in at least one of our two hours on every single day of March 2024. That is 0.08 percent. Before you call them your most loyal users, look at the names: the right tail is where scheduled jobs live, and the same 28-day streak that marks a devoted human also marks a cron job that runs at 03:00. Part 3 does the crude check.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers vanity versus signal and the definition of active</span>
+      <h2>Which "active" did you mean</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">Every engagement number rests on a sentence nobody reads aloud: what counted as active. Change the sentence and the number moves, on the same accounts, from 79,555 to 8,993. A vanity metric is one the team can raise without any user getting more value; a signal is one that only moves when they do. The definition of active is where a metric becomes one or the other.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Left: three definitions of active drawn as nested sets on the same 79,555 GitHub accounts. The outer box is any event, MAU 79,555, DAU over MAU 6.4 percent. Inside it a large oval, pushed code, MAU 48,946, 6.6 percent, and a smaller gold oval overlapping it, opened an issue or pull request, MAU 8,993, 5.0 percent. Right: the right tail of the curve, 105 accounts seen on 22 or more days, of which 17 have bot-like names with no bot suffix, found by a crude name check.">
+        <defs>
+          <filter id="a3cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a3cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a3cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a3cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a3cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a3cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a3cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a3cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .a3cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a3cH" x="30" y="26">SAME ACCOUNTS, THREE DEFINITIONS, THREE MAUs</text>
+        <text class="a3cH" x="600" y="26">THE RIGHT TAIL, CHECKED</text>
+
+        <g filter="url(#a3cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- outer set -->
+          <rect x="40" y="44" width="520" height="250" rx="14" transform="rotate(-0.3 300 169)" fill="#EEF1FF"/>
+          <!-- pushed -->
+          <ellipse cx="250" cy="180" rx="180" ry="86" transform="rotate(-2 250 180)" fill="url(#a3cHc)"/>
+          <!-- opened -->
+          <ellipse cx="440" cy="196" rx="92" ry="52" transform="rotate(3 440 196)" fill="#F7B928" stroke="#614300"/>
+          <!-- right tail bar -->
+          <rect x="612" y="110" width="210" height="34" rx="4" transform="rotate(0.6 717 127)" fill="url(#a3cHc)"/>
+          <rect x="612" y="110" width="34" height="34" rx="4" fill="#F7B928" stroke="#614300"/>
+          <path d="M629 160 L629 148" marker-end="url(#a3cAr)"/>
+          <!-- chip list -->
+          <rect x="606" y="212" width="248" height="70" rx="8" transform="rotate(-0.5 730 247)" fill="#FFFFFF"/>
+        </g>
+
+        <text class="a3cL" x="56" y="70">any event</text>
+        <text class="a3cV" x="56" y="90">MAU 79,555</text>
+        <text class="a3cS" x="56" y="106">DAU/MAU 6.4%</text>
+        <text class="a3cL" x="92" y="170">pushed code</text>
+        <text class="a3cV" x="92" y="190">MAU 48,946</text>
+        <text class="a3cS" x="92" y="206">DAU/MAU 6.6%</text>
+        <text class="a3cB" x="440" y="176" text-anchor="middle">opened an issue or PR</text>
+        <text class="a3cB" x="440" y="192" text-anchor="middle">MAU 8,993</text>
+        <text class="a3cB" x="440" y="208" text-anchor="middle">DAU/MAU 5.0%</text>
+        <text class="a3cS" x="56" y="270">the two inner sets overlap: many who opened an issue also pushed</text>
+
+        <text class="a3cS" x="612" y="66">accounts seen on 22+ of 28 days</text>
+        <text class="a3cV" x="612" y="92">105</text>
+        <text class="a3cS" x="650" y="92">accounts, the far right of the curve</text>
+        <text class="a3cB" x="612" y="176">17 have bot-like names,</text>
+        <text class="a3cB" x="612" y="190">no [bot] suffix</text>
+        <text class="a3cS" x="620" y="234">crude name check, nothing more:</text>
+        <text class="a3cS" x="620" y="250">bot · -ci · ci- · sync · deploy ·</text>
+        <text class="a3cS" x="620" y="266">commenter · assistant</text>
+
+        <text class="a3cN" x="30" y="326">The gold set is the one that costs a user effort: by far the smallest, and the hardest to inflate.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three true MAUs for one product; the number to quote is the one built on the action that means value, and the tail is where automation hides</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three definitions, one product, one month<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Any event.</strong> Starring a repository, commenting, pushing, anything at all: MAU 79,555, DAU/MAU 6.4 percent. This is the widest possible definition and the one most dashboards default to, because it is the easiest to compute and the largest number.</p>
+        <p><strong>Pushed code.</strong> Only accounts that pushed at least once in a sampled hour: MAU 48,946, DAU/MAU 6.6 percent. Far narrower, and notice the ratio barely moved. The stickiness of the people who push is about the same as the stickiness of everyone; what changed is how many people there are.</p>
+        <p><strong>Opened an issue or pull request.</strong> Accounts that did the thing that starts collaboration: MAU 8,993, DAU/MAU 5.0 percent. A fraction of the first number. If GitHub's product review quoted "monthly actives" without the sentence underneath, three honest analysts could bring three numbers between 8,993 and 79,555 and each would be right.</p>
+        <p>The lesson is not that the small number is correct. It is that the definition is the metric. Pick the action that means a user got value, write it down, and quote nothing that is not built on it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Vanity versus signal<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The test.</strong> Could the team raise this number next quarter without a single user getting more value? If yes, it is vanity. "Any event" fails the test: a notification campaign that brings people back to glance at a page raises it, so does a bot, so does a new client that fires an event on open. "Opened an issue or PR" mostly passes: it takes a human intention, it is hard to automate without it showing, and it is rare enough that a real change is visible.</p>
+        <p><strong>Vanity is not useless.</strong> The wide number tells you about reach; it just cannot tell you about value, and the failure mode is quoting one when you mean the other. A defensible review shows both, labelled, and never lets the wide one stand alone.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where automation hides<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The engagement sample drops the 98 accounts whose login ends in <code>[bot]</code>, because GitHub labels those. It cannot drop the rest. Among the 105 accounts seen on 22 or more days, a crude name check (does the login contain bot, -ci, ci-, sync, deploy, commenter or assistant) flags 17. The check is deliberately crude and the page says so: it will miss automation with an ordinary name and it will flag a human called "deploy-dave". The point is not the 17. It is that the far right of a power-user curve, the bar a growth team most wants to see, is exactly where scheduled software looks like a devoted person, and any right-tail celebration needs a bot pass first. Session 2 of the analyst track met the same problem inside one hour, where the single busiest login, with 25,458 events, had no [bot] suffix at all.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The number that fell from 79,555 to 8,993 without anyone doing anything.</strong> The three MAUs above are the same accounts in the same 28 days. Nobody shipped a feature, nobody ran a campaign, and "monthly active users" went from 79,555 to 8,993 by changing one clause. If your product's engagement definition lives only in the analyst's query, it can be changed by accident, by a dashboard migration, or by whoever is asked to make the chart look better before the board meeting. It belongs on a page with a date and an owner, which is what you build next.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Your engagement definition card</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">No tools and no data. One page, four fields, and the tracking plan from session 1 open beside you. The card is the sentence under every engagement chart your team will ever show, written once, owned by someone, with a date. Session 4 adds the feature funnels on top of it and session 6 reads a whole dashboard through it.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn engagement definition card with four fields. Value action: the one event that means a user got value, in Object Action form. Active means: the written definition built on that action, with the window. Period: daily, weekly or monthly, chosen to match how often the product is naturally used. Inflators: what would raise the number without value, such as bots, notification-driven opens, internal accounts. A gold tab holds the owner and the review date. The example row, Report Exported, is constructed.">
+        <defs>
+          <filter id="a3dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a3dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a3dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a3dH { font: 800 11px Inter, sans-serif; fill: #0F1535; letter-spacing: .04em; }
+          .a3dL { font: 600 11px Inter, sans-serif; fill: #0F1535; }
+          .a3dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a3dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a3dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a3dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="30" width="820" height="170" rx="8" transform="rotate(-0.3 440 115)" fill="#FFFFFF"/>
+          <path d="M30 62 L850 62"/>
+          <path d="M230 30 L230 200 M470 30 L470 200 M600 30 L600 200" stroke="#C8CFEA"/>
+          <rect x="36" y="68" width="808" height="60" rx="4" fill="#EEF1FF" stroke="#EEF1FF"/>
+          <path d="M40 150 L840 150 M40 176 L840 176" stroke="#E0E4F5"/>
+          <rect x="30" y="210" width="290" height="28" rx="6" transform="rotate(0.8 175 224)" fill="#F7B928" stroke="#614300"/>
+          <path d="M340 224 L390 224" marker-end="url(#a3dAr)"/>
+        </g>
+
+        <text class="a3dH" x="44" y="51">VALUE ACTION</text>
+        <text class="a3dH" x="242" y="51">ACTIVE MEANS</text>
+        <text class="a3dH" x="482" y="51">PERIOD</text>
+        <text class="a3dH" x="612" y="51">WHAT WOULD INFLATE IT</text>
+        <text class="a3dL" x="44" y="88">Report Exported</text>
+        <text class="a3dS" x="44" y="104">the moment a user takes</text>
+        <text class="a3dS" x="44" y="120">something away</text>
+        <text class="a3dS" x="242" y="88">1+ Report Exported by a</text>
+        <text class="a3dS" x="242" y="104">non-internal account,</text>
+        <text class="a3dS" x="242" y="120">in the period, counted by id</text>
+        <text class="a3dS" x="482" y="88">weekly (WAU)</text>
+        <text class="a3dS" x="482" y="104">used on Mondays,</text>
+        <text class="a3dS" x="482" y="120">not daily</text>
+        <text class="a3dS" x="612" y="88">scheduled exports (bot)</text>
+        <text class="a3dS" x="612" y="104">internal QA accounts</text>
+        <text class="a3dS" x="612" y="120">a nudge email that opens it</text>
+        <text class="a3dS" x="44" y="144">one row, one definition. The example row is constructed.</text>
+        <text class="a3dB" x="44" y="229">Owner: growth PM · reviewed: date</text>
+        <text class="a3dN" x="400" y="229">Any chart that says "active" points here.</text>
+
+        <text class="a3dN" x="30" y="260">One action, one sentence, one period, one list. If the card needs a second row, you have two metrics.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the example row is constructed; the four columns and the gold owner tab are the part to copy</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Pick the one action that means a user got value.</strong> Open the tracking plan from session 1 and read the five names. One of them is the moment the product did its job: the report left the building, the message was read by someone else, the invoice went out. Not the login, not the page view, not the thing the user does on the way to value. If two candidates compete, choose the one a bot would find hardest to fake.</p>
+        <div class="prompt-box good"><span class="label">★ The choice, with the reason written down</span>Candidates from the plan:  Workspace Created · Invite Sent · Report Exported · Plan Upgraded · Integration Connected
+Rejected:  Workspace Created (setup, happens once) · Plan Upgraded (rare, a billing event, not use)
+Chosen:    Report Exported
+Because:   it is the moment the product's output is used somewhere else; nothing upstream of it counts as value</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the definition of active as one sentence.</strong> It names the action, the minimum count, who is excluded, the identity key and the window. Read it aloud. If a colleague could compute a different number from the same sentence, it is not finished.</p>
+        <div class="prompt-box good"><span class="label">★ Active, defined</span>An account is active in a week when it has 1 or more Report Exported events
+in that week, counted by account id (never by email), excluding accounts on
+the internal list and excluding exports fired by a schedule rather than a click.</div>
+      </div>
+      <div class="step">
+        <p><strong>Choose the period to match the product's natural frequency.</strong> If people would use it every day when everything is going well, the period is daily and the ratio is DAU/MAU. If it is a Monday product, a month-end product or a per-project product, choose weekly or monthly and say why. On the GitHub sample the daily ratio is 6.4 percent and the weekly one is 18.6 percent, on the same accounts and the same definition; the period alone nearly triples the headline. Pick it once and do not let it be picked again by whoever wants a bigger number.</p>
+        <div class="prompt-box good"><span class="label">★ The period, chosen on purpose</span>Period:  weekly
+Ratio:   WAU / MAU
+Because: reports are exported on Monday mornings for the weekly review; a daily ratio would read as failure on a healthy product</div>
+      </div>
+      <div class="step">
+        <p><strong>List what would inflate it without value.</strong> Bots and scheduled jobs, internal and test accounts, notification-driven opens, a client that fires the event on load, a migration that replays history. Every item gets a one-line answer: excluded, flagged, or accepted with a note. This list is what makes the metric defensible, because it is the list of questions you already answered before anyone asked.</p>
+        <div class="prompt-box good"><span class="label">★ Inflators, and what is done about each</span>Scheduled exports        excluded: property trigger = "schedule"
+Internal and QA accounts excluded: internal account list, reviewed monthly
+Nudge email opens        accepted, but reported separately as "nudged actives"
+Event fired on page load flagged: engineering to confirm the trigger is the click
+A replay of history      flagged: any backfill is announced before it runs</div>
+      </div>
+    </div>
+
+    <div class="prompt-box bad"><span class="label">✗ The card that cannot be defended</span>Active = any event
+Period  = whatever the dashboard defaults to
+Bots    = we don't think we have many</div>
+
+    <div class="callout tip">
+      <p><strong>Show the wide number too, labelled.</strong> A card with one strict definition does not forbid the reach metric; it names it. "Accounts with any event: 79,555. Accounts that opened work: 8,993." Two numbers with two labels are defensible. One number with no label is a question waiting to be asked in front of the board.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 4</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find the sentence under your engagement chart.</strong> Ask the analyst which event, which count, which identity key and which window define "active" in the number the leadership team sees. If the answer is "the tool's default", write that down: it is the finding.</li>
+      <li><strong>Ask for the histogram.</strong> Days active per user for the last full month, as bars, not as a ratio. Look at the left bar first and the right bar second, and write one sentence about the shape before anyone tells you what it should be.</li>
+      <li><strong>Run the crude bot check on the right tail.</strong> Take the accounts active on 22 or more days and read their names. Count the ones that look like scheduled software or internal accounts. Ask what share of the right bar they are; if nobody knows, that is a second finding.</li>
+      <li><strong>Bring the card.</strong> Session 4 puts feature adoption on top of your value action, and its first question is which of your features are used again after the first try; the card decides what "used" means.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and leader session 3 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · Two products report the same DAU/MAU. What can you conclude about their users?</p>
+      <button class="qopt" type="button">A · They have the same share of daily users; the ratio measures exactly that</button>
+      <button class="qopt" type="button">B · Both have a habit-forming core of roughly the same size</button>
+      <button class="qopt" type="button">C · Almost nothing: one may have a small daily core plus a crowd of occasional visitors and the other no core at all; the ratio is a single number and blurs that shape</button>
+      <button class="qopt" type="button">D · The one with the larger MAU is the stickier product</button>
+      <p class="qwhy">Jin and Chen's whole argument for the power-user curve is that a ratio is a mean of a mixed population. The histogram of days active is the only view that shows whether there is a core at all.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · The GitHub L28 on this page leans hard left: 66.7 percent of accounts were seen on one day in 28. What is the honest reading?</p>
+      <button class="qopt" type="button">A · GitHub has almost no daily users</button>
+      <button class="qopt" type="button">B · Partly real, since most public accounts are occasional, and partly sampling, since two hours a day cannot see a daily user who works at other hours; the true curve has more weight to the right by an amount this sample cannot compute</button>
+      <button class="qopt" type="button">C · The sample is broken and should not be shown</button>
+      <button class="qopt" type="button">D · It proves the smile shape is a myth</button>
+      <p class="qwhy">A defensible chart carries its sampling and its bias direction in the footnote. This one is sampled at 03:00 and 15:00 UTC on 5 percent of accounts, so it understates the right tail; saying so is what makes it usable.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · On the same 79,555 accounts, MAU is 79,555 under "any event", 48,946 under "pushed code" and 8,993 under "opened an issue or PR". Which number should the product review quote?</p>
+      <button class="qopt" type="button">A · The largest, because it is the most complete count of users</button>
+      <button class="qopt" type="button">B · The smallest, because small numbers are always more honest</button>
+      <button class="qopt" type="button">C · The middle one, as a compromise</button>
+      <button class="qopt" type="button">D · The one built on the action that means a user got value, written on a card with an owner and a date, with the wide number shown beside it and labelled as reach</button>
+      <p class="qwhy">The definition is the metric. Neither size is a virtue; what is defensible is a definition chosen for value, written down, and quoted with its label so the reach number cannot be mistaken for it.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DAU/MAU as a single number that "blurs this variance"; the power-user curve; "L30 (coined by the Facebook growth team)"</span><span class="note">Jin, L. and Chen, A. (2018). "The Power User Curve: The best way to understand your most engaged users." a16z, 6 August 2018; read at source</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Facebook "60%+ of its MAUs coming back daily"</span><span class="note">Their claim in the same post, not verifiable from outside; taught as an illustration of the smile shape, never as a benchmark</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The GitHub L28, the three MAUs, DAU/MAU and DAU/WAU, the 62 all-28-day accounts, the 105 on 22+ days and the 17 bot-like names</span><span class="note">GH Archive. https://www.gharchive.org/ (hourly archives, data.gharchive.org); 5 percent of accounts, 03:00 and 15:00 UTC, 2024-03-04 to 2024-03-31; measured in this build by fetch-gharchive-actors.py and engagement-numbers.py</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The sampling caveat</span><span class="note">Two hours a day cannot see daily users active at other hours; the curve understates the right tail by an amount the sample cannot compute, and is never presented as GitHub's true stickiness</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Vanity versus signal, the definition of active as the metric</span><span class="note">Standard practice; every count on this page from the same 79,555 accounts under three written definitions</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The Report Exported card, the stickiness slide story</span><span class="note">Constructed for the build-along and labelled a common pattern; not from any real product, no numbers</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Leader session 3 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>A ratio blurs the shape</b><span>DAU/MAU is a mean; two different populations can print the same number.</span></div>
+      <div class="cheat-item"><b>Draw the power-user curve</b><span>Days active per user, as a histogram. L30, or L28 for four weeks. Look for a right bar.</span></div>
+      <div class="cheat-item"><b>Left-leaning is normal, say why</b><span>GitHub sample: 66.7% on one day. Part real, part two-hour sampling. Footnote both.</span></div>
+      <div class="cheat-item"><b>The definition is the metric</b><span>Same accounts: MAU 79,555 / 48,946 / 8,993 by what counted as active.</span></div>
+      <div class="cheat-item"><b>Vanity test</b><span>Can the team raise it without a user getting value? Then label it reach, not engagement.</span></div>
+      <div class="cheat-item"><b>Check the right tail</b><span>105 accounts on 22+ days, 17 bot-like names. Streaks mark cron jobs as well as fans.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Your card says what "active" means. Session 4 asks the harder question about every feature you ship: was it adopted, and did adoption mean anything? On 8,348 real new repositories, the most widely used feature (branch created, 68.8 percent) is a setup artefact with almost no link to coming back, and the rarest (issue opened, 0.5 percent) has the strongest. Breadth, depth, time to adopt, and why "adopted" counted from setup is the adoption version of vanity.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Leader session 3 of 6 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="a2-the-moment-that-predicts-staying.html">← Prev: The moment that predicts staying</a> &nbsp;·&nbsp; <a href="a4-adopted-is-not-valued.html">Next: Adopted is not valued →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

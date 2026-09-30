@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 1 of 8. A tracking plan written as Python: Object Action names, typed properties, a validator run against one real GitHub hour of 279,130 events, and identity keyed on an id that never changes.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The tracking plan as code - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 1 of 8. Five plan events track 67.9 percent of a real GitHub hour, with zero type violations and 234 pushes that carry no commits.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b1-tracking-plan-as-code.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The tracking plan as code - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 1 of 8. Schema, validator and identity, on real GitHub events.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 1 · The tracking plan as code - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 1 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 1 of 8</div>
+    <h1>The tracking plan <span class="accent">as code</span></h1>
+    <p class="sub">A tracking plan kept in a spreadsheet is a wish. The same plan kept as code is a test: it can be run against the live stream and it fails loudly when the stream drifts. Tonight we write a five-event plan in plain Python, map real GitHub events onto it, validate every property's type, and meet the three kinds of result a validator returns: tracked, not in the plan, and wrong. Then we settle the question every product dataset raises in its first week: which field is the person?</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python, no libraries beyond the standard one</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Plan, types, identity</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: validate a real hour</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">The analyst track works on one real public dataset all the way through: GH Archive, the hourly record of GitHub's public activity. It is not a product you run, which is the point. It has the shape of every product's event stream, with bots, renames, a few actors doing most of the work and a signup moment it never records, and nothing about it has been cleaned up for teaching. Eight sessions take it from one hour of raw JSON to a bench that tests activation definitions on 8,348 real new repositories.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A tracking plan as a Python dictionary, a validator that maps and type-checks every event in a real 279,130-event hour, the three counts it prints, and the rule that people are keyed on an id and never on a login.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the plan as a schema</span>
+      <h2>A plan that can fail</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">Written as code, a tracking plan has three parts: the names (Object Action, as leader session 1 argues), the rule that says which raw event becomes which plan event, and the properties each plan event must carry, with a type. Everything that arrives either maps to a plan event, maps to nothing, or maps and breaks a property. Those three buckets are the whole output of a validator.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn sieve. 279,130 raw GitHub events from one hour pour in at the top. The sieve is the five-event tracking plan. Three trays catch what comes out: tracked by the plan, 189,640 events or 67.9 percent; not in the plan, 89,490 events such as branch creations, deletions and comments; and property violations, zero. A side note says a validator that finds zero is only proving the types, not the meaning.">
+        <defs>
+          <filter id="b1aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b1aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b1aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b1aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b1aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b1aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b1aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b1aV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .b1aW { font: 800 12px Inter, sans-serif; fill: #FFFFFF; }
+          .b1aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b1aH" x="30" y="26">ONE HOUR THROUGH THE PLAN</text>
+        <text class="b1aS" x="226" y="26">GH Archive 2024-03-04 15:00 UTC · every event mapped, then type-checked</text>
+
+        <g filter="url(#b1aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the pile pouring in -->
+          <path d="M120 50 C150 40 250 40 290 50 L270 92 L140 92 Z" fill="url(#b1aHc)"/>
+          <!-- sieve -->
+          <path d="M100 104 L330 104 L280 150 L150 150 Z" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- trays -->
+          <rect x="40" y="206" width="200" height="66" rx="8" transform="rotate(-0.6 140 239)" fill="#EEF1FF"/>
+          <rect x="270" y="206" width="200" height="66" rx="8" transform="rotate(0.5 370 239)" fill="#FFFFFF"/>
+          <rect x="500" y="206" width="200" height="66" rx="8" transform="rotate(-0.4 600 239)" fill="#F7B928" stroke="#614300"/>
+          <!-- arrows -->
+          <path d="M180 154 C170 176 150 184 140 200" marker-end="url(#b1aAr)"/>
+          <path d="M240 154 C260 176 330 184 360 200" marker-end="url(#b1aAr)"/>
+          <path d="M270 150 C360 160 560 170 596 200" marker-end="url(#b1aAr)"/>
+        </g>
+
+        <text class="b1aL" x="205" y="72" text-anchor="middle">279,130 raw events</text>
+        <text class="b1aW" x="215" y="131" text-anchor="middle">five-event plan</text>
+
+        <text class="b1aH" x="56" y="228">TRACKED</text>
+        <text class="b1aV" x="56" y="252">189,640</text>
+        <text class="b1aS" x="140" y="252">67.9 percent</text>
+        <text class="b1aH" x="286" y="228">NOT IN THE PLAN</text>
+        <text class="b1aV" x="286" y="252">89,490</text>
+        <text class="b1aS" x="364" y="252">a decision</text>
+        <text class="b1aH" x="516" y="228">TYPE VIOLATIONS</text>
+        <text class="b1aV" x="516" y="252">0</text>
+        <text class="b1aB" x="540" y="252">and still 234 wrong</text>
+
+        <text class="b1aH" x="730" y="80">THE PLAN</text>
+        <text class="b1aS" x="730" y="98">Repository Created</text>
+        <text class="b1aS" x="730" y="114">Code Pushed</text>
+        <text class="b1aS" x="730" y="130">Pull Request Opened</text>
+        <text class="b1aS" x="730" y="146">Repository Starred</text>
+        <text class="b1aS" x="730" y="162">Issue Opened</text>
+
+        <text class="b1aN" x="30" y="302">Zero type violations proves the types. The 234 pushes carrying zero commits are valid by type and wrong by meaning.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the middle tray is not a failure; a plan that says what it does not track is doing its job</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The plan as a dictionary<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Each plan event has a <code>when</code> rule and a <code>props</code> map. The rule names the raw event type and, where one raw type hides several moments, the payload key and value that picks the right one: a CreateEvent is only "Repository Created" when <code>ref_type == "repository"</code>, a PullRequestEvent is only "Pull Request Opened" when <code>action == "opened"</code>. The props map is name to Python type. Nothing else. A plan this small can be read in a code review, which is most of its value.</p>
+        <p>Keeping the plan in the repository next to the code that sends events means a change to one shows up in the diff of the other. Commercial tools offer the same idea as a hosted schema with a "block unplanned events" switch; the principle is identical and the code version costs nothing.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why "not in the plan" is a count, not an error<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>89,490 events in the hour map to no plan event: 29,113 branch and tag creations, 15,033 deletions, 13,398 issue comments, 9,662 pull request events that are not openings, 8,515 reviews and the long tail. Printing that count, by type, every run, is what stops a plan from rotting. When the count for a type jumps, something new is being sent, and either the plan grows a row or someone asks why the product started emitting it.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The event nobody planned.</strong> A mobile release adds a "screen viewed" call to every screen for a debugging session and nobody removes it. Event volume triples, the analytics bill follows, and the weekly active chart jumps because a user who only opened the app now counts as active. A validator that prints "not in the plan: 4,000,000 events of a type we have never seen" on the morning after the release is the cheapest possible alarm.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers typed properties</span>
+      <h2>Valid by type, wrong by meaning</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">A type check is the floor, not the ceiling. On the real hour every tracked event carries every required property with the right type, and the validator prints zero. Then one extra line, a check on what a value means rather than what type it is, finds 234 "Code Pushed" events that carry no commits.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 304" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two gates in a row that one event must pass. The first gate checks types: commits is an int, repo_id is an int; a push with commits equal to zero passes. The second gate checks meaning: a push should carry at least one commit; the same event is stopped. Counts from the real hour: 156,983 Code Pushed events pass the type gate, 234 of them fail the meaning gate.">
+        <defs>
+          <filter id="b1bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="29" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <marker id="b1bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b1bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b1bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b1bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b1bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b1bC { font: 600 11px ui-monospace, Menlo, monospace; fill: #1030B0; }
+          .b1bV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .b1bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b1bH" x="30" y="26">TWO GATES, ONE EVENT</text>
+
+        <g filter="url(#b1bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- event card -->
+          <rect x="30" y="70" width="200" height="110" rx="8" transform="rotate(-1 130 125)" fill="#FFFFFF"/>
+          <!-- gate 1 -->
+          <path d="M300 56 L300 200 M380 56 L380 200 M300 56 L380 56" />
+          <rect x="304" y="96" width="72" height="60" rx="4" fill="#EEF1FF" stroke="#1D4AFF"/>
+          <!-- gate 2 -->
+          <path d="M520 56 L520 200 M600 56 L600 200 M520 56 L600 56" />
+          <rect x="524" y="96" width="72" height="60" rx="4" fill="#F7B928" stroke="#614300"/>
+          <!-- arrows -->
+          <path d="M236 126 L292 126" marker-end="url(#b1bAr)"/>
+          <path d="M386 126 L512 126" marker-end="url(#b1bAr)"/>
+          <path d="M560 206 L560 236" marker-end="url(#b1bAr)"/>
+          <path d="M606 126 L690 126" stroke="#C8CFEA" stroke-dasharray="5 4" marker-end="url(#b1bAr)"/>
+        </g>
+
+        <text class="b1bL" x="46" y="94">Code Pushed</text>
+        <text class="b1bC" x="46" y="116">repo_id: 7654...</text>
+        <text class="b1bC" x="46" y="134">actor_id: 1234...</text>
+        <text class="b1bC" x="46" y="152">commits: 0</text>
+        <text class="b1bS" x="46" y="170">a real shape, ids elided</text>
+
+        <text class="b1bH" x="340" y="46" text-anchor="middle">TYPE GATE</text>
+        <text class="b1bS" x="340" y="122" text-anchor="middle">int? int?</text>
+        <text class="b1bS" x="340" y="138" text-anchor="middle">int? yes</text>
+        <text class="b1bL" x="340" y="222" text-anchor="middle">passes</text>
+        <text class="b1bS" x="340" y="238" text-anchor="middle">156,983 of 156,983</text>
+
+        <text class="b1bH" x="560" y="46" text-anchor="middle">MEANING GATE</text>
+        <text class="b1bB" x="560" y="122" text-anchor="middle">commits</text>
+        <text class="b1bB" x="560" y="138" text-anchor="middle">at least 1?</text>
+        <text class="b1bV" x="560" y="258" text-anchor="middle">234 stopped</text>
+
+        <text class="b1bH" x="700" y="110">WHAT A ZERO-COMMIT</text>
+        <text class="b1bH" x="700" y="126">PUSH USUALLY IS</text>
+        <text class="b1bS" x="700" y="146">a branch moved, a force</text>
+        <text class="b1bS" x="700" y="162">push, a ref updated with</text>
+        <text class="b1bS" x="700" y="178">no new work in it</text>
+
+        <text class="b1bN" x="30" y="290">If "active" means "pushed code", these 234 are active without having written anything. The meaning gate decides.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold gate is one line of code and it is the one that protects the definition of active</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three kinds of property check<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Presence:</strong> is the property there at all. <strong>Type:</strong> is it an int, a string, a bool. <strong>Meaning:</strong> is it a value that fits what the event claims happened, a push with at least one commit, a price above zero, a timestamp not in the future. Most tools check the first two. The third is where product definitions live, and it has to be written by someone who knows what the event is for.</p>
+        <p>Keep meaning checks as warnings with counts, not as filters that silently drop rows. The 234 are real events. Whether they count toward "active" is a definition question for session 3, and the validator's job is to make sure the question gets asked.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Missing is not the same as false<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>GitHub adds an <code>org</code> object only when a repository belongs to an organisation, so "is_org" is derived from whether the key exists. That is a legitimate encoding, and a dangerous one to copy: in your own product, a property that is absent because the client failed to send it looks exactly like one absent because it does not apply. Plans should say, per property, whether absent means false or means unknown.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers identity</span>
+      <h2>Which field is the person</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">GitHub's stream is the easy case: every event is by a logged-in account. Even so, 7 account ids appear with more than one login in a single hour, and no login appears with more than one id. Most products have the harder case too: a visitor who is anonymous until they sign up, and whose earlier events have to be joined to the account they become.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two identity mechanisms side by side. Left: one GitHub account id carrying two logins in the same hour; counted by login it is two people, counted by id it is one; 7 such ids in the hour. Right: an anonymous visitor's three events under a device id, then a login where identify is called, and the earlier events merged into the known person; on logout, reset starts a fresh anonymous id so a shared device does not merge two people.">
+        <defs>
+          <filter id="b1cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="43" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <marker id="b1cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b1cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b1cL { font: 600 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b1cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b1cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b1cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b1cW { font: 800 11px Inter, sans-serif; fill: #FFFFFF; }
+          .b1cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b1cH" x="30" y="26">A RENAME</text>
+        <text class="b1cH" x="420" y="26">AN ANONYMOUS VISITOR BECOMES A PERSON</text>
+
+        <g filter="url(#b1cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- left: one id, two logins -->
+          <circle cx="90" cy="110" r="16"/>
+          <path d="M60 160 C66 136 114 136 120 160"/>
+          <rect x="160" y="72" width="170" height="30" rx="6" transform="rotate(-1 245 87)" fill="#FFFFFF"/>
+          <rect x="160" y="120" width="170" height="30" rx="6" transform="rotate(1 245 135)" fill="#FFFFFF"/>
+          <rect x="60" y="190" width="270" height="40" rx="8" transform="rotate(-0.4 195 210)" fill="#EEF1FF"/>
+          <path d="M126 110 L152 90 M126 116 L152 134" />
+          <!-- right: anonymous -> identified -->
+          <circle cx="450" cy="90" r="8" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <circle cx="490" cy="90" r="8" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <circle cx="530" cy="90" r="8" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <rect x="580" y="74" width="100" height="32" rx="8" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="730" cy="90" r="8" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="770" cy="90" r="8" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <path d="M540 90 L572 90" marker-end="url(#b1cAr)"/>
+          <path d="M686 90 L718 90" marker-end="url(#b1cAr)"/>
+          <path d="M490 104 C500 150 620 160 700 124" stroke="#1030B0" marker-end="url(#b1cAr)"/>
+          <rect x="580" y="196" width="100" height="32" rx="8" fill="#F7B928" stroke="#614300"/>
+          <circle cx="730" cy="212" r="8" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="3 3"/>
+          <path d="M686 212 L718 212" marker-end="url(#b1cAr)"/>
+        </g>
+
+        <text class="b1cS" x="90" y="186" text-anchor="middle">one account id</text>
+        <text class="b1cL" x="172" y="92">login before rename</text>
+        <text class="b1cL" x="172" y="140">login after rename</text>
+        <text class="b1cL" x="76" y="208">by login: 2 people</text>
+        <text class="b1cL" x="200" y="208">by id: 1</text>
+        <text class="b1cV" x="76" y="266">7 ids</text>
+        <text class="b1cS" x="130" y="266">with two logins, in one hour</text>
+
+        <text class="b1cS" x="490" y="66" text-anchor="middle">anonymous events</text>
+        <text class="b1cW" x="630" y="94" text-anchor="middle">identify()</text>
+        <text class="b1cS" x="750" y="66" text-anchor="middle">known person</text>
+        <text class="b1cB" x="610" y="176" text-anchor="middle">earlier events merged in</text>
+        <text class="b1cL" x="630" y="216" text-anchor="middle">reset()</text>
+        <text class="b1cS" x="744" y="216">fresh anonymous id</text>
+        <text class="b1cS" x="580" y="248">on logout, so a shared laptop does</text>
+        <text class="b1cS" x="580" y="264">not merge two people into one</text>
+
+        <text class="b1cN" x="30" y="292">Left is GitHub, measured. Right is the pattern in PostHog's identify docs; the diagram is a sketch of it, not data.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - both halves are the same rule: the person is the stable id, and every other label is joined to it</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Key on the id, join the labels<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The rule is short: <strong>the person is a stable id</strong>; logins, emails and display names are properties of the person that can change. The build-along counts ids per login and logins per id on the real hour and finds 7 and 0. The asymmetry is the lesson: an id never splits, a label sometimes does.</p>
+        <p>For anonymous-then-known products, PostHog's documentation describes the standard mechanism: every visitor gets an anonymous id, and calling <code>identify</code> at login "merges the anonymous person <em>into</em> the identified person", so the pre-signup events join the account. Two warnings from the same docs matter to an analyst: call <code>reset()</code> on logout so a shared device does not merge two people, and never identify with a generic value like "null" or "guest", which PostHog blocks because it would merge strangers.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What merging does to your history<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A merge rewrites the past: yesterday's "anonymous visitor who left" becomes today's "customer who browsed first". Funnels computed before and after a merge disagree for the same day, and both are correct for their moment. Freeze the definition of the population you report on, and when a number changes after the fact, check whether identity resolution moved people before assuming behaviour moved.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Validate one real hour against the plan</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Standard-library Python and one GH Archive file. Every number printed below is what this code prints on the file <code>2024-03-04-15.json.gz</code>. The file is about 150 MB and the full pass takes under a minute on a laptop.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline: download one hourly file, stream it line by line, map each raw event to a plan event or to nothing, type-check the mapped ones, and print four results: tracked counts per plan event, the not-in-plan counts by type, violations, and the identity check of logins per id.">
+        <defs>
+          <filter id="b1dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b1dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b1dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b1dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b1dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b1dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b1dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b1dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b1dH" x="30" y="26">FIVE STEPS, ONE FILE</text>
+
+        <g filter="url(#b1dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b1dHc)"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#FFFFFF"/>
+          <rect x="362" y="70" width="130" height="60" rx="8" transform="rotate(-0.5 427 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#EEF1FF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L188 100" marker-end="url(#b1dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b1dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b1dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b1dAr)"/>
+        </g>
+
+        <text class="b1dL" x="44" y="96">1 · one hour</text>
+        <text class="b1dS" x="44" y="114">about 150 MB</text>
+        <text class="b1dL" x="210" y="96">2 · the plan</text>
+        <text class="b1dS" x="210" y="114">a dict, 5 events</text>
+        <text class="b1dW" x="376" y="96">3 · map</text>
+        <text class="b1dW" x="376" y="114">raw to plan name</text>
+        <text class="b1dL" x="542" y="96">4 · validate</text>
+        <text class="b1dS" x="542" y="114">types, then meaning</text>
+        <text class="b1dL" x="708" y="96">5 · four counts</text>
+        <text class="b1dS" x="708" y="114">and an identity check</text>
+
+        <text class="b1dS" x="30" y="160">279,130 events in</text>
+        <text class="b1dS" x="362" y="160">189,640 mapped</text>
+        <text class="b1dS" x="528" y="160">0 type violations</text>
+        <text class="b1dS" x="694" y="160">7 ids, two logins</text>
+
+        <text class="b1dN" x="30" y="206">The same five steps work on your product's export. Only step 2 changes, and step 2 is the tracking plan.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - step 2 is the only product-specific line of the whole pipeline</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Download the hour.</strong> GH Archive names files by UTC date and hour, no login needed. One hour is enough for everything tonight.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · one file from GH Archive</span>curl -O https://data.gharchive.org/2024-03-04-15.json.gz
+ls -l 2024-03-04-15.json.gz        # 150807371 bytes</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the plan.</strong> Names, the rule that picks the raw moment, and typed properties. This is the whole contract.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · the tracking plan as a dict</span>PLAN = {
+    "Repository Created":  {"when": ("CreateEvent", "ref_type", "repository"),
+                            "props": {"repo_id": int, "owner_id": int, "is_org": bool}},
+    "Code Pushed":         {"when": ("PushEvent", None, None),
+                            "props": {"repo_id": int, "actor_id": int, "commits": int}},
+    "Issue Opened":        {"when": ("IssuesEvent", "action", "opened"),
+                            "props": {"repo_id": int, "actor_id": int, "issue_number": int}},
+    "Pull Request Opened": {"when": ("PullRequestEvent", "action", "opened"),
+                            "props": {"repo_id": int, "actor_id": int, "base_branch": str}},
+    "Repository Starred":  {"when": ("WatchEvent", "action", "started"),
+                            "props": {"repo_id": int, "actor_id": int}},
+}</div>
+      </div>
+      <div class="step">
+        <p><strong>Map a raw event to a plan event.</strong> Return the plan name and only the properties the plan asks for, or <code>None</code>.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · raw to plan</span>def to_plan(e):
+    p = e.get("payload") or {}
+    for name, spec in PLAN.items():
+        t, key, val = spec["when"]
+        if e["type"] == t and (key is None or p.get(key) == val):
+            props = {"repo_id": e["repo"]["id"], "actor_id": e["actor"]["id"],
+                     "owner_id": e["actor"]["id"], "is_org": "org" in e,
+                     "commits": p.get("size"),
+                     "issue_number": (p.get("issue") or {}).get("number"),
+                     "base_branch": ((p.get("pull_request") or {}).get("base") or {}).get("ref")}
+            return name, {k: props[k] for k in spec["props"]}
+    return None</div>
+      </div>
+      <div class="step">
+        <p><strong>Stream the file and count the three buckets.</strong> One pass, line by line, so memory stays flat. The meaning check for pushes and the identity check ride along.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · validate every event</span>import gzip, json
+from collections import Counter
+
+def violations(name, props):
+    return [k for k, typ in PLAN[name]["props"].items() if not isinstance(props.get(k), typ)]
+
+tracked, untracked, bad = Counter(), Counter(), Counter()
+zero_commit_pushes, logins_per_id, ids_per_login, n = 0, {}, {}, 0
+for line in gzip.open("2024-03-04-15.json.gz", "rt"):
+    e = json.loads(line); n += 1
+    logins_per_id.setdefault(e["actor"]["id"], set()).add(e["actor"]["login"])
+    ids_per_login.setdefault(e["actor"]["login"], set()).add(e["actor"]["id"])
+    m = to_plan(e)
+    if m is None:
+        untracked[e["type"]] += 1; continue
+    tracked[m[0]] += 1
+    if m[0] == "Code Pushed" and m[1]["commits"] == 0:
+        zero_commit_pushes += 1
+    for k in violations(*m):
+        bad[(m[0], k)] += 1</div>
+      </div>
+      <div class="step">
+        <p><strong>Print the report.</strong> These are the numbers the real hour gives.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · four counts and the identity check</span>print(n, sum(tracked.values()))              # 279130 189640   (67.9 percent)
+print(tracked.most_common())
+# Code Pushed 156983 · Repository Created 10384 · Pull Request Opened 10030
+# Repository Starred 9447 · Issue Opened 2796
+print(untracked.most_common(5))
+# CreateEvent 29113 · DeleteEvent 15033 · IssueCommentEvent 13398
+# PullRequestEvent 9662 · PullRequestReviewEvent 8515
+print(dict(bad) or "none")                   # none
+print(zero_commit_pushes)                    # 234
+print(sum(len(s) > 1 for s in logins_per_id.values()))   # 7
+print(sum(len(s) > 1 for s in ids_per_login.values()))   # 0</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Run it on a schedule, not once.</strong> The report is most useful as a diff: yesterday's counts against today's. A new raw type appearing in the untracked list, or a violation count leaving zero, is the moment to look, and the plan is what makes either one visible.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 2</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Add a sixth plan event</strong> for "Repository Forked" (raw type ForkEvent) with the properties you think it needs, re-run, and write down the new tracked share.</li>
+      <li><strong>Write one more meaning check,</strong> for example a pull request whose base branch is empty, and count it on the hour.</li>
+      <li><strong>Print the 7 renamed ids' event counts.</strong> Decide, in one sentence, whether a weekly active count by login would have over- or under-counted them, and by how many.</li>
+      <li><strong>Keep the file.</strong> Session 2 loads the same hour into pandas and looks at who produced it.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 1 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">1 · The validator prints zero type violations on the real hour. What does that prove?</p>
+      <button class="qopt" type="button">A · That the data is correct and ready to report on</button>
+      <button class="qopt" type="button">B · That the plan covers every event the product sends</button>
+      <button class="qopt" type="button">C · Nothing; validators always print zero</button>
+      <button class="qopt" type="button">D · Only that every tracked event carries its properties with the right types; 234 pushes with zero commits pass that check and are still wrong for a definition of "active"</button>
+      <p class="qwhy">Presence and type are the floor. Meaning checks, written by someone who knows what the event is for, are where definitions are protected, and they should report counts rather than silently drop rows.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">2 · Why does the plan map CreateEvent to "Repository Created" only when <code>ref_type == "repository"</code>?</p>
+      <button class="qopt" type="button">A · Because one raw type hides three moments, branches, tags and repositories, and only the payload says which; without the condition, 29,113 branch and tag creations would count as new projects</button>
+      <button class="qopt" type="button">B · Because repositories are the only CreateEvents GitHub publishes</button>
+      <button class="qopt" type="button">C · To make the file smaller</button>
+      <button class="qopt" type="button">D · Because Object Action naming requires a condition on every event</button>
+      <p class="qwhy">The rule that picks the raw moment is as much a part of the plan as the name. When you inherit a stream, look for names that hide several moments and split them in the mapping.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">3 · In a product with anonymous visitors, what does calling <code>reset()</code> on logout protect against?</p>
+      <button class="qopt" type="button">A · It deletes the user's history for privacy</button>
+      <button class="qopt" type="button">B · It starts a fresh anonymous id, so the next person on a shared device is not merged into the account that just logged out</button>
+      <button class="qopt" type="button">C · It speeds up event sending</button>
+      <button class="qopt" type="button">D · It renames the user</button>
+      <p class="qwhy">Identify merges the anonymous person into the known one; reset ends that link. Without it, two people on one laptop become one person in every chart, which is a merge nobody can undo from the data alone.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">GitHub event object and payload fields</span><span class="note">GitHub Docs, "GitHub event types": CreateEvent ref_type, IssuesEvent and PullRequestEvent actions, WatchEvent as a star</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Every count in the build-along</span><span class="note">Measured on GH Archive 2024-03-04 15:00 UTC by the code on this page</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Anonymous-to-identified merge, reset on logout, blocked generic ids</span><span class="note">PostHog Docs, "Identifying users", read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Object Action names</span><span class="note">Twilio Segment naming conventions, as in leader session 1</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Segment's Identify specification</span><span class="note">Not quoted; the page could not be read during this build</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 1 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Plan = names + rule + typed props</b><span>A dict in the repository, reviewed like code.</span></div>
+      <div class="cheat-item"><b>Three buckets</b><span>Tracked, not in the plan, violations. Print all three every run.</span></div>
+      <div class="cheat-item"><b>Type is the floor</b><span>Meaning checks catch the 234 zero-commit pushes.</span></div>
+      <div class="cheat-item"><b>Split hidden moments</b><span>CreateEvent is branch, tag or repository. The payload decides.</span></div>
+      <div class="cheat-item"><b>People are ids</b><span>7 ids with two logins in one hour; 0 logins with two ids.</span></div>
+      <div class="cheat-item"><b>identify, then reset</b><span>Merge anonymous into known at login; fresh id at logout.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>The plan says what the events should be. Session 2 looks at who actually produced them: the same hour in pandas, where half the accounts appear once, one account without a bot suffix produces 25,458 events, and bots write 15.5 percent of the diary. Then we cut the stream into sessions and meet the tie problem that a timestamp to the second cannot solve.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 1 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="../index.html">← Course home</a> &nbsp;·&nbsp; <a href="b2-meet-the-event-stream.html">Next: Meet the event stream →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

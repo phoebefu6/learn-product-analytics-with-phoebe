@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 7 of 8. Acceptance rate, persistence and characters kept, computed in pandas on a constructed code-assistant stream of 119,905 suggestions, with Ziegler et al.'s definitions and findings read at source.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="AI feature metrics - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 7 of 8. Three metrics on one constructed stream give two different winners, and the per-developer spread hides behind every average.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b7-ai-feature-metrics.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI feature metrics - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 7 of 8. Acceptance, persistence and characters kept, on a constructed code-assistant stream.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 7 · AI feature metrics - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 7 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 7 of 8</div>
+    <h1>AI feature <span class="accent">metrics</span></h1>
+    <p class="sub">An AI feature makes an offer every few seconds, and the offer can be taken, kept, changed or thrown away. Each of those moments is a different metric, and they do not have to agree. Tonight we build a code-assistant event stream in pandas, compute acceptance rate, persistence and characters kept for two versions of the same assistant, and watch the winner change with the metric. Then we look under the average at the developers it is made of.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Hands-on</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python + pandas + numpy</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Schema, three metrics, the spread</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: the constructed stream</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Six sessions ran on real GitHub rows. This one cannot: no AI-feature event stream is public, so tonight's data is <strong>constructed</strong>. A short numpy script, seed 2022, generates one working week for two versions of a code assistant, 200 developers each: "short" suggests a line, "long" suggests a whole block. Every rate inside it is an assumption written in the script, and every number on this page is what that script prints. The definitions, and the findings about what the metrics mean, come from a real study read at source: Ziegler et al. (2022), "Productivity Assessment of Neural Code Completion".</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> An event schema for an AI suggestion, a pandas table that computes three competing metrics per version, the habit of reporting the per-user spread next to any average, and a sentence you can say in a product review: "which of these metrics matches the decision we are making?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the event schema for an AI feature</span>
+      <h2>One suggestion, followed for ten minutes</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">A normal product event records something that happened once. An AI suggestion is a small story: it is shown, then accepted or not, then, if accepted, it survives, gets changed, or disappears. The schema has to carry the whole story on one row, or the metrics that read its later chapters cannot be computed. Tonight's stream is constructed, and its row is the minimum that makes three metrics possible.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 318" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The life of one suggestion in the constructed stream, left to right. At time zero it is shown and a row is written. Then it is accepted or not, which is where acceptance rate reads. At 30 seconds the accepted code is checked again. At 600 seconds it ends in one of three states: kept unchanged, which is where persistence reads, changed but not gone, or deleted. Below, the one row per suggestion shown carries arm, dev, accepted, kept_30s, kept_600s, deleted_600s and chars. Ziegler et al. checked persistence at 30, 120, 300 and 600 seconds.">
+        <defs>
+          <filter id="b7aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b7aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b7aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b7aH { font: 800 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7aL { font: 600 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7aS { font: 400 11px Inter, system-ui, sans-serif; fill: #4B5372; }
+          .b7aB { font: 800 11px Inter, system-ui, sans-serif; fill: #614300; }
+          .b7aA { font: 700 11px Inter, system-ui, sans-serif; fill: #1D4AFF; }
+          .b7aC { font: 600 11px ui-monospace, Menlo, monospace; fill: #1030B0; }
+          .b7aN { font: 400 12px Inter, system-ui, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b7aH" x="30" y="26">ONE SUGGESTION, FOLLOWED FOR TEN MINUTES</text>
+
+        <g filter="url(#b7aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- stations -->
+          <rect x="30" y="70" width="140" height="56" rx="8" transform="rotate(-1 100 98)" fill="#FFFFFF"/>
+          <rect x="200" y="70" width="140" height="56" rx="8" transform="rotate(0.8 270 98)" fill="#EEF1FF"/>
+          <rect x="370" y="70" width="140" height="56" rx="8" transform="rotate(-0.6 440 98)" fill="#FFFFFF"/>
+          <!-- three endings at 600 s -->
+          <rect x="560" y="58" width="150" height="34" rx="6" transform="rotate(0.7 635 75)" fill="#F7B928" stroke="#614300"/>
+          <rect x="560" y="102" width="150" height="34" rx="6" transform="rotate(-0.8 635 119)" fill="#FFFFFF"/>
+          <rect x="560" y="146" width="150" height="34" rx="6" transform="rotate(0.5 635 163)" fill="#FFFFFF" stroke-dasharray="5 4"/>
+          <!-- arrows -->
+          <path d="M174 98 L194 98" marker-end="url(#b7aAr)"/>
+          <path d="M344 98 L364 98" marker-end="url(#b7aAr)"/>
+          <path d="M514 94 C530 84 540 78 552 76" marker-end="url(#b7aAr)"/>
+          <path d="M514 100 C530 106 540 116 552 118" marker-end="url(#b7aAr)"/>
+          <path d="M514 106 C528 130 538 154 552 160" marker-end="url(#b7aAr)"/>
+          <!-- the row -->
+          <rect x="30" y="206" width="820" height="70" rx="8" transform="rotate(-0.3 440 241)" fill="url(#b7aHc)"/>
+          <!-- doodle anchor: a stopwatch -->
+          <circle cx="820" cy="40" r="13" fill="#FFFFFF"/>
+          <path d="M820 40 L820 31 M820 40 L826 44 M816 24 L824 24 M820 24 L820 27"/>
+        </g>
+
+        <text class="b7aA" x="100" y="54" text-anchor="middle">t = 0</text>
+        <text class="b7aA" x="440" y="54" text-anchor="middle">t = 30 s</text>
+        <text class="b7aA" x="635" y="46" text-anchor="middle">t = 600 s</text>
+
+        <text class="b7aL" x="44" y="94">1 · shown</text>
+        <text class="b7aS" x="44" y="112">a row is written</text>
+        <text class="b7aL" x="214" y="94">2 · accepted?</text>
+        <text class="b7aS" x="214" y="112">Tab pressed</text>
+        <text class="b7aL" x="384" y="94">3 · kept at 30 s?</text>
+        <text class="b7aS" x="384" y="112">still in the file</text>
+
+        <text class="b7aB" x="574" y="80">4 · kept at 600 s</text>
+        <text class="b7aL" x="574" y="124">changed, not gone</text>
+        <text class="b7aL" x="574" y="168">deleted by 600 s</text>
+
+        <text class="b7aA" x="724" y="80">persistence</text>
+        <text class="b7aS" x="724" y="124">partly rewritten</text>
+        <text class="b7aS" x="724" y="168">the offer is gone</text>
+
+        <text class="b7aA" x="270" y="146" text-anchor="middle">acceptance rate</text>
+        <text class="b7aA" x="440" y="146" text-anchor="middle">kept 30 s</text>
+
+        <text class="b7aH" x="46" y="230">ONE ROW PER SUGGESTION SHOWN</text>
+        <text class="b7aC" x="46" y="256">arm · dev · accepted · kept_30s · kept_600s · deleted_600s · chars</text>
+        <text class="b7aS" x="560" y="256">booleans, except chars, an integer</text>
+
+        <text class="b7aN" x="30" y="300">Constructed stream, seed 2022. Ziegler et al. 2022 checked persistence at 30, 120, 300 and 600 seconds.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - acceptance reads station 2, persistence reads the gold box; one row has to carry both</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The row, field by field<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The event is <code>suggestion_shown</code>, one row per offer. <code>arm</code> says which version of the assistant made it, <code>dev</code> says who saw it. <code>accepted</code> is the moment the developer took it. <code>kept_30s</code> and <code>kept_600s</code> say whether the accepted code was still there, unchanged, 30 seconds and 10 minutes later; <code>deleted_600s</code> says it was gone by 10 minutes. <code>chars</code> is the size of the offer. Every later flag is only meaningful when <code>accepted</code> is true, which is why the metrics divide by accepted rows, not by shown ones.</p>
+        <p>In a real product the later flags arrive later, as their own events joined back to the suggestion by an id. Storing them as columns on one row, as tonight's stream does, is the shape you end up with after that join. Plan the suggestion id before the feature ships: without it, "kept at 600 s" cannot be tied to the offer it describes.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Ziegler's definitions, read at source<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Ziegler et al. define acceptance rate as "the fraction of completions shown to the developer that are subsequently accepted for inclusion in the source file". In code that is <code>accepted.sum() / shown</code>, or in pandas the mean of a boolean column. For what happens after acceptance they measure persistence at four checkpoints, 30, 120, 300 and 600 seconds. Tonight's stream keeps two of them, 30 and 600, which is enough to see the difference between a quick check and a lasting one.</p>
+        <p>Their productivity outcome came from a survey built on the SPACE dimensions (they used S, P, C and E), matched to each respondent's usage: 17,420 users were emailed and 2,047 responses were matched to usage data, between 10 February and 6 March 2022.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Same name, different fraction.</strong> In the Ziegler study Copilot's acceptance rate was 27 percent, and the paper mentions a click-through rate of 10 percent for IntelliCode Compose. Those two numbers look comparable and are not: different products, different ways of showing a suggestion, different denominators. Before putting two AI features' "acceptance" side by side, read what each one divides by. The definition is part of the number.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers three metrics that disagree</span>
+      <h2>Three metrics, two answers</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Run the constructed week and ask which version of the assistant is better. Acceptance says "long": 0.309 against 0.262. Characters kept per suggestion shown says "long" by a wide margin: 20.183 against 6.486. Persistence says "short": 0.618 of its accepted suggestions are still there, unchanged, at 600 seconds, against 0.408 for "long". None of the three is wrong. They answer different questions.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 334" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three small bar charts on the constructed stream, each with its own scale. Acceptance rate: long 0.309, short 0.262, long wins. Kept at 600 seconds, of accepted: long 0.408, short 0.618, short wins, drawn in gold. Characters kept at 600 seconds per suggestion shown: long 20.183, short 6.486, long wins.">
+        <defs>
+          <filter id="b7bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b7bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b7bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b7bH { font: 800 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7bL { font: 600 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7bS { font: 400 11px Inter, system-ui, sans-serif; fill: #4B5372; }
+          .b7bB { font: 800 11px Inter, system-ui, sans-serif; fill: #614300; }
+          .b7bV { font: 800 16px Inter, system-ui, sans-serif; fill: #1030B0; }
+          .b7bN { font: 400 12px Inter, system-ui, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b7bH" x="30" y="26">THREE METRICS, TWO ANSWERS</text>
+        <text class="b7bS" x="250" y="26">constructed stream · 200 developers per arm · one week</text>
+
+        <g filter="url(#b7bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- panels -->
+          <rect x="30" y="46" width="260" height="250" rx="10" transform="rotate(-0.4 160 171)" fill="#FFFFFF"/>
+          <rect x="310" y="46" width="260" height="250" rx="10" transform="rotate(0.3 440 171)" fill="#FFFFFF"/>
+          <rect x="590" y="46" width="260" height="250" rx="10" transform="rotate(-0.3 720 171)" fill="#FFFFFF"/>
+          <!-- baselines -->
+          <path d="M60 246 L270 246 M340 246 L550 246 M620 246 L830 246"/>
+          <!-- acceptance -->
+          <rect x="80" y="122.4" width="70" height="123.6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="180" y="141.2" width="70" height="104.8" fill="url(#b7bHc)"/>
+          <!-- kept 600 s of accepted -->
+          <rect x="360" y="164.4" width="70" height="81.6" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="460" y="122.4" width="70" height="123.6" fill="#F7B928" stroke="#614300"/>
+          <!-- chars kept per shown -->
+          <rect x="640" y="133" width="70" height="113" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="740" y="209.7" width="70" height="36.3" fill="url(#b7bHc)"/>
+          <!-- doodle anchor: a balance -->
+          <path d="M800 16 L840 16 M820 16 L820 34 M812 34 L828 34 M800 16 L796 26 L804 26 Z M840 16 L836 26 L844 26 Z"/>
+        </g>
+
+        <text class="b7bH" x="46" y="70">ACCEPTANCE RATE</text>
+        <text class="b7bS" x="46" y="88">accepted of shown</text>
+        <text class="b7bV" x="115" y="114" text-anchor="middle">0.309</text>
+        <text class="b7bV" x="215" y="133" text-anchor="middle">0.262</text>
+        <text class="b7bL" x="115" y="264" text-anchor="middle">long</text>
+        <text class="b7bL" x="215" y="264" text-anchor="middle">short</text>
+        <text class="b7bS" x="46" y="284">long wins</text>
+
+        <text class="b7bH" x="326" y="70">KEPT AT 600 S</text>
+        <text class="b7bS" x="326" y="88">of accepted, unchanged</text>
+        <text class="b7bV" x="395" y="156" text-anchor="middle">0.408</text>
+        <text class="b7bV" x="495" y="114" text-anchor="middle">0.618</text>
+        <text class="b7bL" x="395" y="264" text-anchor="middle">long</text>
+        <text class="b7bL" x="495" y="264" text-anchor="middle">short</text>
+        <text class="b7bB" x="326" y="284">short wins</text>
+
+        <text class="b7bH" x="606" y="70">CHARS KEPT PER SHOWN</text>
+        <text class="b7bS" x="606" y="88">characters still there at 600 s</text>
+        <text class="b7bV" x="675" y="125" text-anchor="middle">20.183</text>
+        <text class="b7bV" x="775" y="201" text-anchor="middle">6.486</text>
+        <text class="b7bL" x="675" y="264" text-anchor="middle">long</text>
+        <text class="b7bL" x="775" y="264" text-anchor="middle">short</text>
+        <text class="b7bS" x="606" y="284">long wins</text>
+
+        <text class="b7bN" x="30" y="318">Constructed, seed 2022: your numbers will differ if you change it. Each panel has its own scale.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold bar is the only one that reverses the verdict, and it is the one that asks whether the code survived</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What each metric is a proxy for<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Acceptance rate</strong> measures the moment of the offer: did the developer think it was worth taking. <strong>Persistence</strong> measures what the code turned out to be worth: of the accepted suggestions, how many were still there, unchanged, ten minutes later. "Long" is accepted more (0.309) and survives less (0.408 kept, 0.190 deleted by 600 seconds); "short" is accepted less (0.262) and survives more (0.618 kept, 0.078 deleted). <strong>Characters kept per shown</strong> multiplies survival by size, and a block that survives less often still leaves more text behind than a line that survives more often: 20.183 against 6.486.</p>
+        <p>So the question is never "which metric is right". It is "which decision are we making". Choosing a default for developers who hate cleaning up after the tool points at persistence. Estimating how much typing the tool saves points at characters kept. Neither table proves that switching versions would change anything for real users: that needs an experiment (see <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">Learn Experimentation with Phoebe</a>).</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The 30-second check is kinder than the 600-second one<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>At 30 seconds "long" keeps 0.693 of its accepted suggestions and "short" keeps 0.800. At 600 seconds the figures are 0.408 and 0.618. The early check flatters both arms, and in this constructed stream it flatters the block more, because the script assumes a big suggestion is more often rewritten after the first glance. Pick the checkpoint before you look at the results, and report it with the number: "kept" without a time is not a definition.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The metric that tracks perception.</strong> Ziegler et al. found that "the rate with which shown suggestions are accepted, rather than more specific metrics regarding the persistence of completions in the code over time, drives developers' perception of productivity". Acceptance rate correlated best with aggregate perceived productivity, rho = 0.24, P &lt; 0.0001, and every persistence measure correlated less well. The authors add that "there is still notable unexplained variance". Read it carefully: acceptance predicts how productive developers <em>feel</em>, modestly, in one study. It is a correlation with a survey answer, not proof of value, and it does not make persistence useless for the decisions persistence is built for.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the per-developer spread</span>
+      <h2>The average is not a developer</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">An arm's acceptance rate is one number made of 200 developers. In the constructed stream, the middle 80 percent of "long" developers accept between 0.177 and 0.467 of what they are shown; for "short" the range is 0.127 to 0.390. The two ranges overlap over most of their width. Many individual developers on the "worse" arm accept more than many on the "better" one, and a single average says none of that.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two horizontal spread bars on an axis from 0 to 0.5, constructed data. Long: 10th percentile 0.177, 90th percentile 0.467, arm average 0.309. Short: 10th percentile 0.127, 90th percentile 0.390, arm average 0.262. A gold-tinted band marks the stretch from 0.177 to 0.390 where both arms' middle developers sit. Below, the real Ziegler et al. finding on acceptance by time: weekend 23.5 percent, weekday outside working hours 23 percent, working hours 21.2 percent.">
+        <defs>
+          <filter id="b7cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b7cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b7cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b7cH { font: 800 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7cL { font: 600 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7cS { font: 400 11px Inter, system-ui, sans-serif; fill: #4B5372; }
+          .b7cB { font: 800 11px Inter, system-ui, sans-serif; fill: #614300; }
+          .b7cV { font: 800 16px Inter, system-ui, sans-serif; fill: #1030B0; }
+          .b7cA { font: 700 11px Inter, system-ui, sans-serif; fill: #1D4AFF; }
+          .b7cN { font: 400 12px Inter, system-ui, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b7cH" x="30" y="26">WHERE THE 200 DEVELOPERS OF EACH ARM SIT</text>
+
+        <g filter="url(#b7cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- overlap band -->
+          <path d="M376.6 60 L376.6 196 M649.2 60 L649.2 196" stroke="#614300" stroke-dasharray="4 4"/>
+          <!-- spread bars, 10th to 90th percentile -->
+          <rect x="376.6" y="76" width="371.2" height="28" rx="6" transform="rotate(-0.4 562 90)" fill="url(#b7cHc)" stroke="#1D4AFF"/>
+          <rect x="312.6" y="156" width="336.6" height="28" rx="6" transform="rotate(0.4 481 170)" fill="url(#b7cHc)" stroke="#1D4AFF"/>
+          <!-- arm averages -->
+          <path d="M545.5 70 L545.5 110" stroke="#1030B0" stroke-width="3"/>
+          <path d="M485.4 150 L485.4 190" stroke="#1030B0" stroke-width="3"/>
+          <!-- axis -->
+          <path d="M150 240 L790 240 M150 240 L150 246 M278 240 L278 246 M406 240 L406 246 M534 240 L534 246 M662 240 L662 246 M790 240 L790 246"/>
+          <!-- Ziegler panel -->
+          <rect x="30" y="292" width="820" height="64" rx="8" transform="rotate(-0.3 440 324)" fill="#FFFFFF"/>
+          <!-- doodle anchor: a magnifier -->
+          <circle cx="826" cy="126" r="12" fill="#FFFFFF"/>
+          <path d="M834 135 L846 148"/>
+        </g>
+
+        <text class="b7cL" x="30" y="94">long (block)</text>
+        <text class="b7cS" x="30" y="110">200 developers</text>
+        <text class="b7cL" x="30" y="174">short (line)</text>
+        <text class="b7cS" x="30" y="190">200 developers</text>
+
+        <text class="b7cV" x="545.5" y="66" text-anchor="middle">0.309</text>
+        <text class="b7cS" x="376.6" y="122" text-anchor="middle">0.177</text>
+        <text class="b7cS" x="747.8" y="122" text-anchor="middle">0.467</text>
+        <text class="b7cS" x="553" y="122">arm average</text>
+
+        <text class="b7cV" x="485.4" y="146" text-anchor="middle">0.262</text>
+        <text class="b7cS" x="312.6" y="202" text-anchor="middle">0.127</text>
+        <text class="b7cS" x="649.2" y="202" text-anchor="middle">0.390</text>
+        <text class="b7cB" x="512" y="222" text-anchor="middle">both arms' middle developers sit here</text>
+
+        <text class="b7cA" x="150" y="258" text-anchor="middle">0</text>
+        <text class="b7cA" x="278" y="258" text-anchor="middle">0.1</text>
+        <text class="b7cA" x="406" y="258" text-anchor="middle">0.2</text>
+        <text class="b7cA" x="534" y="258" text-anchor="middle">0.3</text>
+        <text class="b7cA" x="662" y="258" text-anchor="middle">0.4</text>
+        <text class="b7cA" x="790" y="258" text-anchor="middle">0.5</text>
+        <text class="b7cA" x="790" y="276" text-anchor="end">per-developer acceptance rate, 10th to 90th percentile</text>
+
+        <text class="b7cH" x="46" y="314">ZIEGLER ET AL. 2022, ACCEPTANCE BY TIME, READ AT SOURCE</text>
+        <text class="b7cV" x="46" y="342">23.5%</text>
+        <text class="b7cS" x="104" y="342">weekend</text>
+        <text class="b7cV" x="250" y="342">23%</text>
+        <text class="b7cS" x="292" y="342">weekday, outside working hours</text>
+        <text class="b7cV" x="560" y="342">21.2%</text>
+        <text class="b7cS" x="618" y="342">working hours</text>
+
+        <text class="b7cN" x="30" y="380">Top: constructed, 10th to 90th percentile per arm. Bottom: the real study's acceptance by time.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the two averages sit inside one shared band; the difference between arms is smaller than the difference between developers</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Report the spread with the average<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The fix is one extra line of pandas: group by developer first, take each developer's acceptance rate, then describe that distribution with its 10th and 90th percentiles. Put the band next to the arm average in every review. It changes the conversation from "long is better" to "long shifts the whole band up a little, and the band is wide", which is the honest reading.</p>
+        <p>Two cautions. First, 200 developers per arm is a small group: percentiles from groups that size move noticeably with the seed, so treat the band's edges as rough. Second, the average of per-developer rates and the pooled rate are different numbers when developers see different amounts; a heavy user counts once in the first and many times in the second. Say which one you report.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The same metric moves with the clock<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Ziegler et al. report that acceptance also varies with time: 23.5 percent at weekends, 23 percent on weekdays outside working hours and 21.2 percent in working hours. So a change in the mix of when people use the tool can move the headline rate with no change in the tool at all. A launch that happens to land near a holiday, or a team that shifts its hours, is enough. Break acceptance down by time of use before reading a week-on-week movement as the feature getting better or worse.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The vendor says it too.</strong> GitHub's own documentation describes acceptance rate as a measure of "how often developers accept Copilot's suggestions", and advises readers to "look for patterns across these signals rather than focusing on any single number". That is the spread rule and the three-metrics rule in one sentence, from the people who ship the tool. When a dashboard shows one acceptance number for a whole organisation, ask for the distribution and the other signals before anyone draws a conclusion.</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Build the constructed stream and compute all three metrics</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">numpy and pandas, no downloads. The script below generates the <strong>constructed</strong> week from seed 2022 and prints every number on this page. Run it exactly as written and you get the outputs in the comments; change the seed or any assumed rate and your numbers will differ, which is the fastest way to feel how much a metric depends on what you assumed.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a pipeline over constructed data: assumed rates per arm, a generation loop over 200 developers per arm, one table of 119,905 suggestion_shown rows, a per-arm metrics table, and a per-developer spread with 10th and 90th percentiles.">
+        <defs>
+          <filter id="b7dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="109" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b7dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b7dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b7dH { font: 800 12px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7dL { font: 700 11.5px Inter, system-ui, sans-serif; fill: #0F1535; }
+          .b7dS { font: 400 11px Inter, system-ui, sans-serif; fill: #4B5372; }
+          .b7dW { font: 800 11.5px Inter, system-ui, sans-serif; fill: #FFFFFF; }
+          .b7dN { font: 400 12px Inter, system-ui, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b7dH" x="30" y="26">FIVE STEPS, ONE SEED</text>
+
+        <g filter="url(#b7dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="8" transform="rotate(-1 95 100)" fill="#FFFFFF"/>
+          <rect x="196" y="70" width="130" height="60" rx="8" transform="rotate(0.6 261 100)" fill="#EEF1FF"/>
+          <rect x="362" y="70" width="130" height="60" rx="6" transform="rotate(-0.5 427 100)" fill="url(#b7dHc)"/>
+          <rect x="528" y="70" width="130" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="694" y="70" width="156" height="60" rx="8" transform="rotate(-0.4 772 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L188 100" marker-end="url(#b7dAr)"/>
+          <path d="M330 100 L354 100" marker-end="url(#b7dAr)"/>
+          <path d="M496 100 L520 100" marker-end="url(#b7dAr)"/>
+          <path d="M662 100 L686 100" marker-end="url(#b7dAr)"/>
+          <!-- doodle anchor: a die -->
+          <rect x="818" y="14" width="22" height="22" rx="4" transform="rotate(8 829 25)" fill="#FFFFFF"/>
+          <circle cx="824" cy="20" r="1.5" fill="#0F1535"/>
+          <circle cx="829" cy="25" r="1.5" fill="#0F1535"/>
+          <circle cx="834" cy="30" r="1.5" fill="#0F1535"/>
+        </g>
+
+        <text class="b7dL" x="44" y="96">1 · assumptions</text>
+        <text class="b7dS" x="44" y="114">rates per arm</text>
+        <text class="b7dL" x="210" y="96">2 · generate</text>
+        <text class="b7dS" x="210" y="114">200 devs per arm</text>
+        <text class="b7dL" x="376" y="96">3 · one table</text>
+        <text class="b7dS" x="376" y="114">a row per shown</text>
+        <text class="b7dW" x="542" y="96">4 · metrics</text>
+        <text class="b7dW" x="542" y="114">grouped by arm</text>
+        <text class="b7dL" x="708" y="96">5 · the spread</text>
+        <text class="b7dS" x="708" y="114">per developer</text>
+
+        <text class="b7dS" x="30" y="160">seed 2022</text>
+        <text class="b7dS" x="362" y="160">119,905 events</text>
+        <text class="b7dS" x="528" y="160">0.309 vs 0.262</text>
+        <text class="b7dS" x="694" y="160">0.177 to 0.467</text>
+
+        <text class="b7dN" x="30" y="206">Constructed data: change the seed or any rate and every number moves. Watching them move is the lesson.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - step 1 is where every number on this page is really decided, so it is written down first</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Write the assumptions down.</strong> Two arms, and for each the rates the generator will use. On constructed data this block is the whole truth; everything later only reveals it.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · constructed: seed and assumed rates</span>import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(2022)
+
+# Two versions of one assistant, 200 developers each, one working week.
+# "short" suggests a line; "long" suggests a whole block. Every rate below is an assumption.
+ARMS = {
+    #          accept  kept 30s  kept 600s  deleted by 600s  chars
+    "short": (0.26,    0.80,     0.62,      0.08,            40),
+    "long":  (0.31,    0.70,     0.41,      0.19,            160),
+}</div>
+      </div>
+      <div class="step">
+        <p><strong>Generate a week per developer.</strong> Each developer gets their own acceptance probability from a beta distribution, so developers differ, and a Poisson number of suggestions. One uniform draw per suggestion decides what happens after acceptance, so "kept at 600 s" implies "kept at 30 s".</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · constructed: the generation loop</span>rows = []
+for arm, (p_acc, k30, k600, p_del, chars) in ARMS.items():
+    for dev in range(200):
+        p_dev = rng.beta(p_acc * 20, (1 - p_acc) * 20)          # developers differ
+        shown = rng.poisson(60 * 5)                              # a week of suggestions
+        acc = rng.random(shown) &lt; p_dev
+        u = rng.random(shown)
+        kept30 = acc &amp; (u &lt; k30)
+        kept600 = acc &amp; (u &lt; k600)                               # kept at 600s implies kept at 30s
+        deleted = acc &amp; (u &gt; 1 - p_del)
+        n_chars = rng.poisson(chars, shown)
+        rows.append(pd.DataFrame({"arm": arm, "dev": f"{arm}-{dev:03d}", "accepted": acc,
+                                  "kept_30s": kept30, "kept_600s": kept600,
+                                  "deleted_600s": deleted, "chars": n_chars}))</div>
+      </div>
+      <div class="step">
+        <p><strong>One table.</strong> Concatenate and count the rows: one per suggestion shown.</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · constructed: the event table</span>ev = pd.concat(rows, ignore_index=True)
+print("suggestion_shown events:", len(ev))
+# suggestion_shown events: 119905</div>
+      </div>
+      <div class="step">
+        <p><strong>Three metrics, grouped by arm.</strong> Acceptance divides by shown; the kept and deleted rates divide by accepted; the character metrics divide by shown, so they combine how often, how much and how long.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · constructed: metrics by arm</span>g = ev.groupby("arm")
+out = pd.DataFrame({
+    "shown": g.size(),
+    "acceptance_rate": g["accepted"].mean(),
+    "kept_30s_of_accepted": g.apply(lambda d: d.kept_30s.sum() / d.accepted.sum()),
+    "kept_600s_of_accepted": g.apply(lambda d: d.kept_600s.sum() / d.accepted.sum()),
+    "deleted_of_accepted": g.apply(lambda d: d.deleted_600s.sum() / d.accepted.sum()),
+    "chars_accepted_per_shown": g.apply(lambda d: d.chars[d.accepted].sum() / len(d)),
+    "chars_kept_600s_per_shown": g.apply(lambda d: d.chars[d.kept_600s].sum() / len(d)),
+})
+print(out.round(3).to_string())
+# arm    shown  acceptance  kept_30s  kept_600s  deleted  chars_acc/shown  chars_kept_600s/shown
+# long   60023  0.309       0.693     0.408      0.190    49.455           20.183
+# short  59882  0.262       0.800     0.618      0.078    10.487            6.486</div>
+      </div>
+      <div class="step">
+        <p><strong>Look under the average.</strong> One rate per developer, then the 10th and 90th percentiles per arm.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · constructed: the per-developer spread</span>per_dev = ev.groupby(["arm", "dev"])["accepted"].mean()
+print("\nper-developer acceptance rate, 10th to 90th percentile:")
+print(per_dev.groupby("arm").quantile([0.1, 0.9]).unstack().round(3).to_string())
+# per-developer acceptance rate, 10th to 90th percentile:
+# arm    0.1    0.9
+# long   0.177  0.467
+# short  0.127  0.390</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The comments are shortened column names.</strong> pandas prints the full names from the dictionary and its own spacing; the values are the ones above. If your run disagrees in the third decimal, check your numpy version before your code: numpy does not promise identical distribution draws across releases, even from the same seed.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 8</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Add the missing checkpoints.</strong> Ziegler et al. measured persistence at 30, 120, 300 and 600 seconds. Add <code>kept_120s</code> and <code>kept_300s</code> to the generator with rates you choose, write them down as assumptions, and plot kept-of-accepted against time for both arms.</li>
+      <li><strong>Flip the verdict on purpose.</strong> Change one assumed rate in <code>ARMS</code> until characters kept per shown favours "short". Write one sentence on what that rate would have to mean about real developers for the flip to be believable.</li>
+      <li><strong>Pooled versus per-developer.</strong> Compute each arm's mean of per-developer acceptance rates and compare it with the pooled acceptance rate from step 4. Explain in one line why they can differ.</li>
+      <li><strong>Draft the review line.</strong> For a product review, write the three metrics, the per-developer band and the word "constructed" on one slide, and one sentence saying which metric you would pick for a default-setting decision, and why.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 7 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · On the constructed stream, "long" has the higher acceptance rate (0.309) and "short" the higher kept-at-600-seconds rate (0.618). What is the right conclusion?</p>
+      <button class="qopt" type="button">A · "Long" is better, because acceptance correlated best with perceived productivity</button>
+      <button class="qopt" type="button">B · "Short" is better, because persistence is always the true value</button>
+      <button class="qopt" type="button">C · The metrics answer different questions; pick the one that matches the decision, and remember the stream is constructed, so neither verdict says anything about real developers</button>
+      <button class="qopt" type="button">D · The metrics disagree, so the data is broken</button>
+      <p class="qwhy">Acceptance reads the moment of the offer, persistence reads what survived. Disagreement between them is information, and on constructed data it only shows how the metrics behave, never which product is better.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">2 · What did Ziegler et al. find about acceptance rate and perceived productivity?</p>
+      <button class="qopt" type="button">A · Acceptance rate correlated best with aggregate perceived productivity, rho = 0.24, with "notable unexplained variance"; persistence measures correlated less well</button>
+      <button class="qopt" type="button">B · Acceptance rate proves that the tool makes developers faster</button>
+      <button class="qopt" type="button">C · Persistence at 600 seconds was the best predictor of perceived productivity</button>
+      <button class="qopt" type="button">D · None of the usage metrics correlated with perception at all</button>
+      <p class="qwhy">A modest correlation with a survey answer, in one study. It says acceptance tracks how productive developers feel, not that it measures the value of the code.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · Why report the per-developer 10th to 90th percentile next to an arm's acceptance rate?</p>
+      <button class="qopt" type="button">A · Because percentiles are always more accurate than averages</button>
+      <button class="qopt" type="button">B · Because pandas cannot compute a pooled rate</button>
+      <button class="qopt" type="button">C · Because the 90th percentile is the real acceptance rate</button>
+      <button class="qopt" type="button">D · Because the average hides how far developers differ: the constructed bands, 0.177 to 0.467 and 0.127 to 0.390, overlap over most of their width, and 200 developers per arm is a small group</button>
+      <p class="qwhy">The band shows whether a difference between arms is large next to the difference between people. With groups this small, treat the band's edges as rough too.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Acceptance rate definition and persistence checkpoints</span><span class="note">Ziegler, A., Kalliamvakou, E., Simister, S., Sittampalam, G., Li, A., Rice, A., Rifkin, D., and Aftandilian, E. (2022). "Productivity Assessment of Neural Code Completion." MAPS '22. arXiv:2205.06537. Sections 2 and 3, read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Acceptance and perceived productivity, rho = 0.24; acceptance by time of use</span><span class="note">Same paper, abstract and sections 4 and 5, read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">"Look for patterns across these signals"</span><span class="note">GitHub Docs, "Copilot metrics" concepts page, read at source</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The code-assistant event stream and every number in the build-along</span><span class="note">Constructed from seed 2022 by the code on this page; the rates are assumptions, not observations of any real product</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">A real AI-feature event stream</span><span class="note">None is public; the gap is why the stream above is constructed</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 7 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>One row per suggestion shown</b><span>accepted, kept_30s, kept_600s, deleted_600s, chars, joined by a suggestion id.</span></div>
+      <div class="cheat-item"><b>Acceptance divides by shown</b><span>Ziegler: the fraction of shown completions accepted into the file.</span></div>
+      <div class="cheat-item"><b>Persistence divides by accepted</b><span>Always say the checkpoint: 30, 120, 300 or 600 seconds.</span></div>
+      <div class="cheat-item"><b>Metrics can disagree</b><span>Constructed: long wins acceptance and chars kept, short wins kept at 600 s.</span></div>
+      <div class="cheat-item"><b>Perception, not value</b><span>Acceptance tracked perceived productivity at rho = 0.24, with unexplained variance.</span></div>
+      <div class="cheat-item"><b>Band beside the average</b><span>Per-developer 10th to 90th percentile, and a note when groups are small.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Back to real rows. Session 8 is the activation bench: 8,348 new GitHub repositories, eight candidate definitions of "activated", their lifts and the returners each one catches, and a break button that shuffles the link away so you can see what no signal looks like at every group size.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 7 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b6-adoption-funnels.html">← Prev: Adoption funnels and time to adopt</a> &nbsp;·&nbsp; <a href="b8-the-activation-bench.html">Next: The activation bench →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

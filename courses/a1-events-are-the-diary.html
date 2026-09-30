@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 1 of 6. What an event is, why Object Action naming beats whatever the first engineer typed, and the tracking plan as the contract that decides what the product can ever know about itself. Built on one real hour of GitHub: 279,130 events.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Events are the product's diary - learn product analytics with phoebe">
+<meta property="og:description" content="Leader session 1 of 6. A product only knows what it wrote down. One real hour of GitHub, dissected: the event, the name, the plan, and what the diary can never see.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/a1-events-are-the-diary.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Events are the product's diary - learn product analytics with phoebe">
+<meta name="twitter:description" content="Leader session 1 of 6. The event, the name, the tracking plan, and the blind spots.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 1 · Events are the product's diary - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Leader session 1 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Leader track · Session 1 of 6</div>
+    <h1>Events are the product's <span class="accent">diary</span></h1>
+    <p class="sub">Every chart a product team argues over is built from one kind of thing: a record that somebody did something to something at a moment in time. That record is an event, and a product only knows what it wrote down. Tonight we open one real hour of GitHub's public diary, 279,130 events long, and read it the way a product leader should: what one entry contains, why the names decide what can be counted, what a tracking plan is for, and what no diary will ever see.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Core</span>
+      <span class="chip audience">Product managers and product leaders</span>
+      <span class="chip audience">No code</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · The event, the name, the blind spot</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: your first tracking plan</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Product analytics is often sold as dashboards. It is really a writing discipline. Somebody decides, usually in a sprint and usually in a hurry, which moments of a user's life inside the product get written down, what each one is called, and which details travel with it. Every later question, from "is activation up?" to "did the AI feature help?", can only be answered from what was written. The six leader sessions work up from that diary to the product review; the eight analyst sessions build the same things in Python on real public data.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = you make the artifact</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A one-page tracking plan for the five moments your product most needs to know about, written in Object Action names with the properties each one must carry, and the one question that stops most analytics arguments before they start: "which event, exactly, and who decided what it means?"</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers what an event is</span>
+      <h2>One entry in the diary</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">GitHub publishes its public activity as a stream of events, and GH Archive keeps every hour of it as a file anyone can download. In the hour starting 15:00 UTC on 4 March 2024 there are 279,130 of them. Pick any one. It has the same five parts as an event in any product, whether it records a push to a repository, a song played or an invoice sent.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn index card holding one real GitHub event, id 36226160836, a push at 2024-03-04 15:00:00 UTC carrying one commit. Five arrows pull out its parts: who (the actor id and login), did what (the type, PushEvent), to what (the repository id and name), when (created_at in UTC) and with which details (the payload, here the number of commits). A note says the same five parts describe an event in any product.">
+        <defs>
+          <filter id="a1aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a1aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="a1aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a1aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a1aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a1aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a1aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a1aC { font: 600 11px ui-monospace, Menlo, monospace; fill: #1030B0; }
+          .a1aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a1aH" x="30" y="26">ONE REAL EVENT, TAKEN APART</text>
+        <text class="a1aS" x="250" y="26">GH Archive, hour 2024-03-04 15:00 UTC, one of 279,130 entries</text>
+
+        <g filter="url(#a1aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the card -->
+          <rect x="30" y="50" width="330" height="236" rx="8" transform="rotate(-0.6 195 168)" fill="#FFFFFF"/>
+          <path d="M44 74 L346 74" stroke="#C8CFEA"/>
+          <!-- five slots -->
+          <rect x="520" y="46" width="330" height="38" rx="8" transform="rotate(0.5 685 65)" fill="#EEF1FF"/>
+          <rect x="520" y="96" width="330" height="38" rx="8" transform="rotate(-0.4 685 115)" fill="#F7B928" stroke="#614300"/>
+          <rect x="520" y="146" width="330" height="38" rx="8" transform="rotate(0.3 685 165)" fill="#EEF1FF"/>
+          <rect x="520" y="196" width="330" height="38" rx="8" transform="rotate(-0.5 685 215)" fill="#EEF1FF"/>
+          <rect x="520" y="246" width="330" height="38" rx="8" transform="rotate(0.4 685 265)" fill="url(#a1aHc)"/>
+          <!-- arrows -->
+          <path d="M300 112 C400 112 430 66 512 66" marker-end="url(#a1aAr)"/>
+          <path d="M300 136 C400 136 440 116 512 116" marker-end="url(#a1aAr)"/>
+          <path d="M300 160 C400 160 440 166 512 166" marker-end="url(#a1aAr)"/>
+          <path d="M300 208 C400 208 440 216 512 216" marker-end="url(#a1aAr)"/>
+          <path d="M300 250 C400 250 440 266 512 266" marker-end="url(#a1aAr)"/>
+        </g>
+
+        <text class="a1aL" x="46" y="68">"id": "36226160836"</text>
+        <text class="a1aC" x="46" y="112">"actor": {"id": ..., "login": ...}</text>
+        <text class="a1aC" x="46" y="136">"type": "PushEvent"</text>
+        <text class="a1aC" x="46" y="160">"repo": {"id": ..., "name": ...}</text>
+        <text class="a1aC" x="46" y="184">"public": true</text>
+        <text class="a1aC" x="46" y="208">"created_at": "2024-03-04T15:00:00Z"</text>
+        <text class="a1aC" x="46" y="250">"payload": {"size": 1, "ref": ...}</text>
+        <text class="a1aS" x="46" y="274">plus "org" when the repository has one</text>
+
+        <text class="a1aH" x="536" y="70">WHO · the actor</text>
+        <text class="a1aS" x="668" y="70">an id that never changes</text>
+        <text class="a1aH" x="536" y="120">DID WHAT · the action</text>
+        <text class="a1aB" x="700" y="120">the name decides it all</text>
+        <text class="a1aH" x="536" y="170">TO WHAT · the object</text>
+        <text class="a1aS" x="690" y="170">here, a repository</text>
+        <text class="a1aH" x="536" y="220">WHEN · the timestamp</text>
+        <text class="a1aS" x="690" y="220">always UTC, to the second</text>
+        <text class="a1aH" x="536" y="270">WITH WHAT · properties</text>
+        <text class="a1aS" x="712" y="270">commits, branch</text>
+
+        <text class="a1aN" x="30" y="316">Swap "PushEvent" for "Song Played" and "repository" for "track": the same five slots describe every product's diary.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold slot is the one a product team argues about, because the name is where meaning is decided</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Actor, action, object, time, properties<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Actor</strong> is who did it. In GitHub's diary it is an account with a numeric id and a login; the login can be renamed, the id cannot. In the one hour we opened, 7 accounts appear under more than one login. Anything that counts people must count the id.</p>
+        <p><strong>Action and object</strong> are the verb and the noun. GitHub folds them into one <code>type</code> (PushEvent, WatchEvent, CreateEvent) plus a detail in the payload: a CreateEvent can create a branch, a tag or a whole repository, and only the payload says which. That is the first product-analytics trap you will meet: one name hiding three different moments.</p>
+        <p><strong>Time</strong> is a UTC timestamp. <strong>Properties</strong> are everything else that travels with the event: how many commits a push carried, which branch a pull request targets. Properties are where the useful questions live, and they are also what gets forgotten when an event is added in a hurry.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why an event and not a table of users<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A users table says what is true now: plan, country, signup date. An event stream says what happened, in order. Every product metric that involves time, activation, engagement, adoption, retention, is a question about the order of things, so it can only be answered from events. The users table is still needed, to say who a person is; the events say what they did. Session 2 of the analyst track loads a real hour of the stream and shows how different it looks from a table: most actors appear once, a few appear thousands of times.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Renamed, and counted twice.</strong> A product team counts weekly active users by username because it is readable in the export. A user renames their account on Wednesday and becomes two users that week, one who went quiet and one who arrived. At the scale of one GitHub hour that is 7 accounts; across a month of a large product it is a measurable slice of "new" users who are nobody new. The fix is one decision, written once: people are counted by an id that never changes.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers Object Action naming and the tracking plan</span>
+      <h2>The name decides what can be counted</h2>
+      <span class="tag concept">6 min live</span>
+    </div>
+    <p class="lede">An event nobody can find is an event nobody counts. The convention most analytics teams settle on is Segment's Object Action framework: choose the objects first, then the actions a customer can take on them, so the diary reads "Repository Created", "Code Pushed", "Issue Opened". The list of those names, with the properties each must carry and who owns it, is the tracking plan.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Before and after. On the left, a pile of hand-written event names a team might accumulate: click_btn_3, pushed, Repo-create, repoCreated, new_repo_v2; nobody can say which ones mean the same moment. On the right, a five-line tracking plan in Object Action form: Repository Created, Code Pushed, Pull Request Opened, Repository Starred, Issue Opened, each with its required properties. Run against one real GitHub hour, the plan tracks 189,640 of 279,130 events, 67.9 percent.">
+        <defs>
+          <filter id="a1bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="23" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <marker id="a1bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a1bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a1bR { font: 800 12px Inter, sans-serif; fill: #991B1B; }
+          .a1bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .a1bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a1bC { font: 600 11px ui-monospace, Menlo, monospace; fill: #991B1B; }
+          .a1bV { font: 800 18px Inter, sans-serif; fill: #1030B0; }
+          .a1bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a1bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="40" y="50" width="390" height="180" rx="12" fill="#FEF2F2" stroke="#FCA5A5"/>
+          <rect x="450" y="50" width="390" height="180" rx="12" fill="#EEF1FF" stroke="#1D4AFF"/>
+          <!-- scraps on the left -->
+          <rect x="60" y="96" width="112" height="24" rx="4" transform="rotate(-3 116 108)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <rect x="190" y="92" width="80" height="24" rx="4" transform="rotate(2.5 230 104)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <rect x="290" y="98" width="120" height="24" rx="4" transform="rotate(-2 350 110)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <rect x="80" y="140" width="116" height="24" rx="4" transform="rotate(2 138 152)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <rect x="220" y="142" width="116" height="24" rx="4" transform="rotate(-2.5 278 154)" fill="#FFFFFF" stroke="#FCA5A5"/>
+          <!-- plan rows on the right -->
+          <path d="M466 106 L824 106 M466 126 L824 126 M466 146 L824 146 M466 166 L824 166" stroke="#C8CFEA"/>
+        </g>
+
+        <text class="a1bR" x="58" y="80">✗ Whatever the first engineer typed</text>
+        <text class="a1bC" x="70" y="112">click_btn_3</text>
+        <text class="a1bC" x="200" y="108">pushed</text>
+        <text class="a1bC" x="300" y="114">Repo-create</text>
+        <text class="a1bC" x="92" y="156">repoCreated</text>
+        <text class="a1bC" x="232" y="158">new_repo_v2</text>
+        <text class="a1bS" x="58" y="196">three of these might be the same moment,</text>
+        <text class="a1bS" x="58" y="212">and nobody can say which without the code</text>
+
+        <text class="a1bH" x="468" y="80">✓ A plan: Object Action, Proper Case</text>
+        <text class="a1bL" x="468" y="101">Repository Created</text>
+        <text class="a1bS" x="640" y="101">repo_id · owner_id · is_org</text>
+        <text class="a1bL" x="468" y="121">Code Pushed</text>
+        <text class="a1bS" x="640" y="121">repo_id · actor_id · commits</text>
+        <text class="a1bL" x="468" y="141">Pull Request Opened</text>
+        <text class="a1bS" x="640" y="141">repo_id · actor_id · base_branch</text>
+        <text class="a1bL" x="468" y="161">Repository Starred</text>
+        <text class="a1bS" x="640" y="161">repo_id · actor_id</text>
+        <text class="a1bL" x="468" y="181">Issue Opened</text>
+        <text class="a1bS" x="640" y="181">repo_id · actor_id · issue_number</text>
+        <text class="a1bV" x="468" y="214">67.9%</text>
+        <text class="a1bS" x="532" y="214">of one real hour tracked by five names</text>
+
+        <text class="a1bN" x="40" y="264">Five well-named events cover two thirds of GitHub's public diary. The other third is not noise:</text>
+        <text class="a1bN" x="40" y="282">it is branches, deletions and comments, and a plan says out loud that it chose not to track them.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the right panel is short on purpose: a plan is a decision about what not to track as much as what to track</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Object Action, and the three rules that come with it<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Segment's guidance, which most tools and teams have converged on, is to pick objects first (Product, Application, Repository) and then the actions a customer performs on them (Viewed, Installed, Created), so that an event reads "Product Viewed". Their house style is Proper Case for event names and snake_case for properties, and they are explicit that the style matters less than the consistency: "The only thing that really matters is that you keep it consistent!"</p>
+        <p>Three rules follow. <strong>Past tense</strong>, because an event records something that happened. <strong>No variables in the name</strong>: "Plan Upgraded" with a property <code>plan = "pro"</code>, never "Upgraded To Pro", or every new plan becomes a new event nobody remembers to add to the chart. <strong>One moment, one name</strong>: if two names might mean the same thing, one of them is a bug.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What a tracking plan is for<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A tracking plan is a table: event name, the moment that triggers it, the properties it must carry with their types, and an owner. It looks like documentation and works like a contract. Engineers implement against it, analysts query against it, and a validator can check the live stream against it. Run against the real hour, the five-line plan above finds zero type violations, and still catches 234 "Code Pushed" events with <code>commits = 0</code>: valid by type, wrong by meaning. That is the kind of thing only a written plan lets you notice, because only a written plan says what a push is supposed to mean.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>One name hiding three moments<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>GitHub's own CreateEvent is the cautionary example. In the hour we opened, 39,497 CreateEvents are split 27,168 branches, 10,384 repositories and 1,945 tags. A chart titled "Creates per hour" would be 69 percent branches and read as if it counted new projects. The payload knows the difference; the name does not. When you inherit a diary, the first job is to find the names that hide more than one moment and split them in the plan.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers what the diary cannot see</span>
+      <h2>The pages that were never written</h2>
+      <span class="tag concept">4 min live</span>
+    </div>
+    <p class="lede">A diary is also defined by its blank pages. GitHub's public stream never records an account being created, never records anything in a private repository, and never records a person reading code without touching it. Every product's diary has blanks like these, and the dangerous ones are the blanks nobody wrote down.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="One account's life drawn on a rail. Some moments are solid dots that GH Archive records: a public repository created, code pushed, a star given. Others are hollow dashed dots it never records: the account being signed up, work in a private repository, reading without acting. Below the rail a bracket marks the first time the account appears in a data window, which is not the day it was created.">
+        <defs>
+          <filter id="a1cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="37" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <marker id="a1cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .a1cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .a1cL { font: 600 11px Inter, sans-serif; fill: #0F1535; }
+          .a1cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a1cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a1cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="a1cH" x="30" y="26">ONE ACCOUNT'S LIFE, AND WHAT THE PUBLIC DIARY KEEPS</text>
+
+        <g filter="url(#a1cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 120 L840 120" marker-end="url(#a1cAr)"/>
+          <!-- invisible moments -->
+          <circle cx="80" cy="120" r="10" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="4 3"/>
+          <circle cx="230" cy="120" r="10" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="4 3"/>
+          <circle cx="530" cy="120" r="10" fill="#FFFFFF" stroke="#4B5372" stroke-dasharray="4 3"/>
+          <!-- visible moments -->
+          <circle cx="380" cy="120" r="10" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <circle cx="660" cy="120" r="10" fill="#F7B928" stroke="#614300"/>
+          <circle cx="780" cy="120" r="10" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <!-- window bracket -->
+          <path d="M600 170 L600 184 L840 184 L840 170" stroke="#1030B0"/>
+        </g>
+
+        <text class="a1cL" x="80" y="92" text-anchor="middle">signs up</text>
+        <text class="a1cS" x="80" y="152" text-anchor="middle">never recorded</text>
+        <text class="a1cL" x="230" y="92" text-anchor="middle">private work</text>
+        <text class="a1cS" x="230" y="152" text-anchor="middle">never recorded</text>
+        <text class="a1cL" x="380" y="92" text-anchor="middle">public push</text>
+        <text class="a1cS" x="380" y="152" text-anchor="middle">PushEvent</text>
+        <text class="a1cL" x="530" y="92" text-anchor="middle">reads code</text>
+        <text class="a1cS" x="530" y="152" text-anchor="middle">never recorded</text>
+        <text class="a1cL" x="660" y="92" text-anchor="middle">creates a repository</text>
+        <text class="a1cB" x="660" y="152" text-anchor="middle">a visible birth</text>
+        <text class="a1cL" x="780" y="92" text-anchor="middle">gives a star</text>
+        <text class="a1cS" x="780" y="152" text-anchor="middle">WatchEvent</text>
+        <text class="a1cB" x="720" y="204" text-anchor="middle">"first seen" in a window</text>
+        <text class="a1cS" x="720" y="220" text-anchor="middle">is not "new": the account is years old</text>
+
+        <text class="a1cN" x="30" y="262">A repository's birth is written down; an account's is not. That one fact decides how the activation bench is built.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold dot is the only birth the public diary sees, so the bench counts new repositories, not new people</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>First seen is not new<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The tempting shortcut, when a data source has no signup event, is to call the first time an account appears in your window its start. On GitHub that is almost always wrong: most accounts active in any given hour have existed for years and were simply quiet before the window opened. A "new users" chart built that way counts people who took a holiday.</p>
+        <p>What the public diary does record is the birth of a repository: a CreateEvent whose payload says <code>repository</code> happens exactly once, at the moment it is created. In our hour, 10,384 public repositories were born. That is why the activation bench in analyst session 8 treats a new repository the way a SaaS product treats a new workspace, and why it says so on the widget.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Write the blanks into the plan<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every tracking plan should carry a short section called "what we do not see": logged-out browsing, activity inside an integration, offline use, consent opt-outs, anything behind an ad blocker. It costs five lines and it prevents the most common executive misreading, which is treating the absence of an event as the absence of the behaviour. A product review that asks "is this a real drop, or a drop in what we can see?" is only possible if someone wrote the blanks down.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Your first tracking plan, on one page</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">No tools and no data access. A blank sheet, your product, and five decisions per row. This is the artifact every later leader session leans on: session 2 picks your activation candidate from it, session 4 adds the features you want adopted, session 5 adds the AI feature.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hand-drawn one-page tracking plan with five columns: event name in Object Action form, the trigger moment, required properties with types, the owner, and what it answers. One row is filled in as an example: Workspace Created, fires when the first workspace is saved, workspace_id, plan, is_invited, owned by the growth PM, answers how many new workspaces a week. A gold tab at the bottom says what we do not see.">
+        <defs>
+          <filter id="a1dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="a1dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+        </defs>
+        <style>
+          .a1dH { font: 800 11px Inter, sans-serif; fill: #0F1535; letter-spacing: .04em; }
+          .a1dL { font: 600 11px Inter, sans-serif; fill: #0F1535; }
+          .a1dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .a1dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .a1dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <g filter="url(#a1dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="30" width="820" height="160" rx="8" transform="rotate(-0.3 440 110)" fill="#FFFFFF"/>
+          <path d="M30 62 L850 62" />
+          <path d="M200 30 L200 190 M370 30 L370 190 M560 30 L560 190 M680 30 L680 190" stroke="#C8CFEA"/>
+          <rect x="36" y="68" width="808" height="46" rx="4" fill="#EEF1FF" stroke="#EEF1FF"/>
+          <path d="M40 140 L840 140 M40 166 L840 166" stroke="#E0E4F5"/>
+          <rect x="30" y="200" width="250" height="28" rx="6" transform="rotate(0.8 155 214)" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="a1dH" x="44" y="51">EVENT (OBJECT ACTION)</text>
+        <text class="a1dH" x="212" y="51">FIRES WHEN</text>
+        <text class="a1dH" x="382" y="51">PROPERTIES : TYPE</text>
+        <text class="a1dH" x="572" y="51">OWNER</text>
+        <text class="a1dH" x="692" y="51">ANSWERS</text>
+        <text class="a1dL" x="44" y="88">Workspace Created</text>
+        <text class="a1dS" x="212" y="88">first workspace saved</text>
+        <text class="a1dS" x="212" y="104">server side, once</text>
+        <text class="a1dS" x="382" y="88">workspace_id : str</text>
+        <text class="a1dS" x="382" y="104">plan : str · is_invited : bool</text>
+        <text class="a1dS" x="572" y="88">growth PM</text>
+        <text class="a1dS" x="692" y="88">new workspaces</text>
+        <text class="a1dS" x="692" y="104">a week, by plan</text>
+        <text class="a1dS" x="44" y="134">four more rows, yours</text>
+        <text class="a1dB" x="44" y="219">What we do not see: five lines</text>
+
+        <text class="a1dN" x="300" y="219">Five rows, five columns, one blank-pages tab. Nothing more tonight.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the example row is constructed; the five columns are the part to copy</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>List the five moments your product most needs to know about.</strong> Not the five easiest to track. Start from the decisions your team makes every quarter: whether onboarding works, whether a feature is used, whether people come back. Each decision needs at least one moment, and one of the five should be the birth of the thing your product is organised around: an account, a workspace, a project.</p>
+      </div>
+      <div class="step">
+        <p><strong>Name each one Object Action, past tense, Proper Case.</strong> Choose the objects first, then the verbs. If a name needs a variable in it, move the variable into a property.</p>
+        <div class="prompt-box good"><span class="label">★ Five names, checked against three rules</span>Workspace Created      past tense, object first, one moment
+Invite Sent            not "Invited User To Workspace"
+Report Exported        format goes in a property: format = "csv"
+Plan Upgraded          plan goes in a property: plan = "pro"
+Integration Connected  provider goes in a property: provider = "slack"</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the trigger precisely.</strong> "When the user creates a workspace" is not a trigger. "When the first workspace is saved, server side, fired once" is. The difference is whether a double click, a retry or a page reload fires it twice, and that difference decides whether the count is true.</p>
+      </div>
+      <div class="step">
+        <p><strong>Give each event two to four properties, with types, and an owner.</strong> An id for the object, an id for the actor, and the one or two details a question will need. The owner is the person who says what it means when two dashboards disagree.</p>
+        <div class="prompt-box good"><span class="label">★ One row, complete</span>Event:      Workspace Created
+Fires when: first workspace saved, server side, once per workspace
+Properties: workspace_id : str   owner_id : str   plan : str   is_invited : bool
+Owner:      growth PM
+Answers:    how many new workspaces a week, by plan, and how many arrived by invite</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the blank-pages tab.</strong> Five lines on what the plan cannot see, and why. Logged-out use, activity inside partner integrations, users who declined tracking. Put the date on the page. You will come back to it in session 6.</p>
+      </div>
+    </div>
+
+    <div class="prompt-box bad"><span class="label">✗ The plan that becomes three dashboards and an argument</span>track clicks on all buttons, page views, and anything else useful
+name events whatever makes sense to the engineer
+we can clean it up later in the warehouse</div>
+
+    <div class="callout tip">
+      <p><strong>Later never comes cheaper.</strong> An event that shipped with the wrong name has history under that name. Renaming it splits the chart at the rename date or needs a mapping forever. Twenty minutes on the plan before the sprint is the cheapest analytics work there is.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 2</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Find your product's current event list,</strong> in whatever tool holds it, and count the names. Mark the ones that break a rule: present tense, a variable in the name, two names for one moment.</li>
+      <li><strong>Find one name hiding several moments,</strong> the way GitHub's CreateEvent hides branches, tags and repositories. Write down what share of that event is each moment, or who could tell you.</li>
+      <li><strong>Check how people are counted.</strong> Ask the analyst which field defines a user in the weekly active chart. If the answer is an email or a username, you have found a renaming problem.</li>
+      <li><strong>Bring the one-page plan.</strong> Session 2 asks which of its five moments predicts that someone stays, and the answer is usually not the one you would guess.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and leader session 1 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · In one real GitHub hour, 7 accounts appear under more than one login. What does that mean for a weekly active users chart?</p>
+      <button class="qopt" type="button">A · Nothing; logins are unique, so the chart is correct</button>
+      <button class="qopt" type="button">B · Those accounts should be removed from the chart as suspicious</button>
+      <button class="qopt" type="button">C · People must be counted by an id that never changes; counting by login turns a rename into one user leaving and another arriving</button>
+      <button class="qopt" type="button">D · The chart should be weekly instead of daily to smooth it out</button>
+      <p class="qwhy">A login is a label; an id is an identity. Renames are ordinary behaviour, and a count keyed on the label quietly inflates both "churned" and "new". The decision belongs in the tracking plan, written once.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · Which event name follows Object Action and the no-variables rule?</p>
+      <button class="qopt" type="button">A · UpgradedToPro</button>
+      <button class="qopt" type="button">B · Plan Upgraded, with a property plan = "pro"</button>
+      <button class="qopt" type="button">C · click_upgrade_btn</button>
+      <button class="qopt" type="button">D · Upgrade</button>
+      <p class="qwhy">Object first, past-tense action second, and the thing that varies travels as a property. "UpgradedToPro" becomes a new event for every new plan, and nobody remembers to add it to the chart.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · GitHub's public stream has no signup event. Why does the activation bench count new repositories rather than accounts first seen in a window?</p>
+      <button class="qopt" type="button">A · A repository's birth is recorded exactly once as a CreateEvent; "first seen" mostly finds old accounts that were quiet before the window opened, so it would call veterans new</button>
+      <button class="qopt" type="button">B · Repositories are more important than people</button>
+      <button class="qopt" type="button">C · Accounts are private and cannot be counted at all</button>
+      <button class="qopt" type="button">D · Because it makes the numbers bigger</button>
+      <p class="qwhy">A cohort has to start at a moment the diary actually records. When the birth you care about is a blank page, pick a birth that is written down and say plainly what it stands for.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The GitHub event object: id, type, actor, repo, payload, public, created_at</span><span class="note">GitHub Docs, "GitHub event types"; every count on this page measured on the GH Archive hour 2024-03-04 15:00 UTC in this build</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Object Action naming, Proper Case events, snake_case properties</span><span class="note">Twilio Segment, "Naming conventions for clean data", read at source</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The tracking plan as a contract, and the validator result</span><span class="note">Standard practice; the five-row plan run against the real hour: 67.9 percent tracked, zero type violations, 234 zero-commit pushes</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What GH Archive can and cannot see</span><span class="note">GH Archive records the public timeline only; no signups, no private repositories</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">The Workspace Created example row</span><span class="note">Constructed for the build-along; not from any real product</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Leader session 1 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Five parts of an event</b><span>Who, did what, to what, when, with which properties.</span></div>
+      <div class="cheat-item"><b>Count people by id</b><span>Logins and emails change. 7 renames in one GitHub hour.</span></div>
+      <div class="cheat-item"><b>Object Action, past tense</b><span>Repository Created, Plan Upgraded. Variables go in properties.</span></div>
+      <div class="cheat-item"><b>The plan is a contract</b><span>Name, trigger, typed properties, owner, the question it answers.</span></div>
+      <div class="cheat-item"><b>One name, one moment</b><span>CreateEvent hides branches, tags and repositories. Split them.</span></div>
+      <div class="cheat-item"><b>Write the blank pages</b><span>What the diary cannot see. First seen is not new.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Your plan has five moments. Which one predicts that someone stays? Facebook's growth team is reported to have answered "7 friends in 10 days" and Slack's founder said "2,000 messages". Session 2 traces both to the earliest source that can be read, shows what each one can and cannot prove, and puts eight candidate definitions side by side on 8,348 real new repositories. Bring your plan.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Leader session 1 of 6 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="../index.html">← Course home</a> &nbsp;·&nbsp; <a href="a2-the-moment-that-predicts-staying.html">Next: The moment that predicts staying →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>

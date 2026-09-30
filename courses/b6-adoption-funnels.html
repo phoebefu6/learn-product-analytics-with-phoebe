@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Analyst session 6 of 8. Feature adoption measured on 8,348 real new GitHub repositories: breadth, depth and time to first use for six features, the came-back rate of users against the rest, and why the widest-adopted feature is the weakest signal.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Adoption funnels and time to adopt - learn product analytics with phoebe">
+<meta property="og:description" content="Analyst session 6 of 8. Branch creation reaches 68.8 percent of new repositories and barely separates who comes back; issues reach 0.5 percent and separate the most.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/courses/b6-adoption-funnels.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Adoption funnels and time to adopt - learn product analytics with phoebe">
+<meta name="twitter:description" content="Analyst session 6 of 8. Breadth, depth, time to adopt and the breadth gradient, on real GitHub rows.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-product-analytics-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Analyst session 6 · Adoption funnels and time to adopt - learn product analytics with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-product-analytics-with-phoebe</a> / Analyst session 6 of 8</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Product Analytics with Phoebe · Analyst track · Session 6 of 8</div>
+    <h1>Adoption funnels and <span class="accent">time to adopt</span></h1>
+    <p class="sub">"How many people use the feature" is the question every launch review asks first, and it is the least useful of the four you can answer. Tonight we take six GitHub features and the same 8,348 new repositories as the bench, and for each feature we measure how wide it spread in week one, how deep, how fast, and whether its users came back more often than everyone else. The widest feature turns out to be a setup artefact, and the rarest ones carry the signal.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Hands-on</span>
+      <span class="chip audience">Product and data analysts</span>
+      <span class="chip audience">Python, standard library</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-18 · Breadth, depth, time, value</span>
+      <span class="a3" style="flex:5">18-40 · Build-along: six features, one cohort</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where we start</h2>
+    </div>
+    <p class="lede">Sessions 4 and 5 asked which accounts stay and how often they show up. Adoption asks a narrower question about one feature at a time: of everyone who could have used it, who did, how much, how soon, and did using it go with staying. The unit is the same new public repository as the bench, born in the hour 2024-03-04 15:00 UTC, one per non-bot account, 8,348 in all, 325 of them seen again in days 28 to 41. A "feature" is a GitHub capability read straight from the event type, and every count is "seen in the sampled hours", one hour in two.</p>
+
+    <div class="legend">
+      <span class="pill">🎫 Clear all three quiz questions to stamp your passport</span>
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">★ Build-along = run the code yourself</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A per-feature adoption table with four columns (breadth, depth, time to first use, came-back rate of users against the rest), a breadth gradient from 0 to 4+ features, and the habit of asking, before any adoption number goes in a deck, how much of it the product did by itself.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers breadth</span>
+      <h2>Who tried each feature in week one</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Breadth is the first column of any adoption table: the share of the cohort that used a feature at least once inside a fixed window. Here the window is the first 7 days (sampled hours 0 to 166) and the denominator is all 8,348 repositories, whether or not anyone ever looked at the feature. Six features, six very different numbers, and the ranking already hides a trap.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Horizontal bars of week-one breadth for six GitHub features across 8,348 new repositories. Branch created 5,744 repositories, 68.8 percent, drawn in gold. Push 3,268, 39.1 percent. Pull request opened 183, 2.2 percent. Issue opened 44, 0.5 percent. Release 36, 0.4 percent. Wiki edit 11, 0.1 percent. A note says most branch creation is the default branch made by the first push, a setup artefact.">
+        <defs>
+          <filter id="b6aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b6aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b6aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b6aH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b6aL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b6aS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b6aB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b6aV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b6aA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b6aN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b6aH" x="30" y="26">WHO TRIED EACH FEATURE IN WEEK ONE</text>
+        <text class="b6aS" x="30" y="44">8,348 new repositories · at least one sampled use in hours 0 to 166</text>
+
+        <g filter="url(#b6aSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- week-one doodle: seven day boxes -->
+          <rect x="700" y="14" width="14" height="14" rx="2" transform="rotate(-3 707 21)"/>
+          <rect x="718" y="14" width="14" height="14" rx="2" transform="rotate(2 725 21)"/>
+          <rect x="736" y="14" width="14" height="14" rx="2" transform="rotate(-2 743 21)"/>
+          <rect x="754" y="14" width="14" height="14" rx="2" transform="rotate(3 761 21)"/>
+          <rect x="772" y="14" width="14" height="14" rx="2" transform="rotate(-1 779 21)"/>
+          <rect x="790" y="14" width="14" height="14" rx="2" transform="rotate(2 797 21)"/>
+          <rect x="808" y="14" width="14" height="14" rx="2" transform="rotate(-3 815 21)"/>
+          <!-- bars, 6 px per percent -->
+          <rect x="170" y="61" width="413" height="22" rx="4" transform="rotate(-0.4 376 72)" fill="#F7B928" stroke="#614300"/>
+          <rect x="170" y="95" width="235" height="22" rx="4" transform="rotate(0.3 287 106)" fill="url(#b6aHc)"/>
+          <rect x="170" y="129" width="13" height="22" rx="2" fill="url(#b6aHc)"/>
+          <rect x="170" y="163" width="4" height="22" rx="1" fill="url(#b6aHc)"/>
+          <rect x="170" y="197" width="3" height="22" rx="1" fill="url(#b6aHc)"/>
+          <rect x="170" y="231" width="2" height="22" rx="1" fill="url(#b6aHc)"/>
+          <!-- axis -->
+          <path d="M170 262 L770 262"/>
+          <path d="M170 258 L170 266 M470 258 L470 266 M770 258 L770 266"/>
+          <!-- note arrow to the branch bar -->
+          <path d="M660 146 C646 116 600 100 572 88" marker-end="url(#b6aAr)"/>
+        </g>
+
+        <text class="b6aS" x="700" y="46">days 0 to 6</text>
+
+        <text class="b6aL" x="30" y="76">branch created</text>
+        <text class="b6aL" x="30" y="110">push</text>
+        <text class="b6aL" x="30" y="144">PR opened</text>
+        <text class="b6aL" x="30" y="178">issue opened</text>
+        <text class="b6aL" x="30" y="212">release</text>
+        <text class="b6aL" x="30" y="246">wiki edit</text>
+
+        <text class="b6aV" x="598" y="78">5,744 · 68.8%</text>
+        <text class="b6aV" x="418" y="112">3,268 · 39.1%</text>
+        <text class="b6aL" x="196" y="144">183 · 2.2%</text>
+        <text class="b6aS" x="276" y="144">small group</text>
+        <text class="b6aL" x="186" y="178">44 · 0.5%</text>
+        <text class="b6aS" x="260" y="178">small group</text>
+        <text class="b6aL" x="186" y="212">36 · 0.4%</text>
+        <text class="b6aS" x="260" y="212">small group</text>
+        <text class="b6aL" x="186" y="246">11 · 0.1%</text>
+        <text class="b6aS" x="260" y="246">small group</text>
+
+        <text class="b6aH" x="600" y="166">BRANCH, READ TWICE</text>
+        <text class="b6aB" x="600" y="184">most is the default branch</text>
+        <text class="b6aS" x="600" y="200">made by the first push:</text>
+        <text class="b6aS" x="600" y="216">a setup artefact, not a choice</text>
+
+        <text class="b6aA" x="170" y="280" text-anchor="middle">0</text>
+        <text class="b6aA" x="470" y="280" text-anchor="middle">50%</text>
+        <text class="b6aA" x="770" y="280" text-anchor="end">100% of the cohort</text>
+
+        <text class="b6aN" x="30" y="302">Breadth counts repositories with one or more uses. It cannot tell you whether anyone chose the feature.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gold bar is the widest adoption and, as Part 3 shows, the weakest signal</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Breadth is a share of the whole cohort<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The script tests each repository's week-one rows against one rule per feature: push is a PushEvent, branch is a CreateEvent whose detail is "branch", issue and PR are IssuesEvent and PullRequestEvent with action "opened", release is a ReleaseEvent, wiki is a GollumEvent. Any match in hours 0 to 166 makes the repository a user. Divide by 8,348 and you have breadth.</p>
+        <p>Read the ranking top to bottom: branch 68.8 percent, push 39.1, PR 2.2, issue 0.5, release 0.4, wiki 0.1. Four of the six features reach fewer than 300 repositories, so every rate built on them later is a small-group rate and moves a lot when one repository changes. That is not a reason to drop them; it is a reason to print the group size next to every rate.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The denominator is a decision<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A launch review usually wants "adoption among active users", because the number is bigger. Pick the denominator before you look: the whole cohort answers "how far did the feature reach", the active base answers "how many of the people who were around used it", and the two are not interchangeable across time, because the active base moves too. Here the denominator is the whole cohort, and 2,171 repositories (26.0 percent) used none of the six features in week one at all.</p>
+        <p>The window is a decision too. Seven days favours features used at setup; a feature people reach for in month two will look unadopted in any week-one table. Part 2 measures how much of each feature's adoption already falls outside day one.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>The feature every account "adopted" on day one.</strong> A common pattern, not a measured case: a team collaboration product creates a default channel, project or folder for every new workspace, and the launch dashboard counts "workspaces using channels". Adoption reads near total from the first week, the feature team is congratulated, and nobody has asked how many of those workspaces ever created a second one. Whenever the product performs an action on the user's behalf, count the user's own actions separately.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers depth and time to adopt</span>
+      <h2>How much, and how soon</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">Breadth says a repository used a feature once. Two more columns turn it into a feature funnel per repository: born, used once, used again (depth), and how many hours passed between birth and the first use (time to adopt). These are feature funnels inside one product, not purchase funnels; checkout paths and page-to-page journeys belong to <a href="https://phoebefu6.github.io/learn-user-journey-analytics-with-phoebe/">user journey analytics</a>.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 322" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A time rail for each of six features, from 0 to 24 hours after the repository was born, with a dot at the median hour of first use among the repositories that used it. Push 0 hours, 489 of 3,268 first used after day one. Branch created 0 hours, 87 of 5,744. Wiki edit 2 hours, 3 of 11. Release 3 hours, 9 of 36. Pull request opened 6 hours, 64 of 183. Issue opened 15 hours, drawn in gold, 17 of 44. The four smallest groups are flagged as small.">
+        <defs>
+          <filter id="b6bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b6bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b6bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b6bH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b6bL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b6bS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b6bB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b6bA { font: 700 11px Inter, sans-serif; fill: #1D4AFF; }
+          .b6bN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b6bH" x="30" y="26">HOW SOON EACH FEATURE WAS FIRST USED</text>
+        <text class="b6bS" x="30" y="44">median hours from birth, among the repositories that used it · the grid samples one hour in two</text>
+
+        <g filter="url(#b6bSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- clock doodle -->
+          <circle cx="840" cy="24" r="12"/>
+          <path d="M840 24 L840 16 M840 24 L846 27"/>
+          <!-- rails, 20 px per hour -->
+          <path d="M170 86 L650 86 M170 120 L650 120 M170 154 L650 154 M170 188 L650 188 M170 222 L650 222 M170 256 L650 256" stroke="#C8CFEA"/>
+          <!-- day one boundary -->
+          <path d="M650 70 L650 268" stroke-dasharray="5 4"/>
+          <!-- axis -->
+          <path d="M170 272 L650 272"/>
+          <path d="M170 268 L170 276 M290 268 L290 276 M410 268 L410 276 M530 268 L530 276"/>
+          <!-- median dots -->
+          <circle cx="170" cy="86" r="7" fill="url(#b6bHc)"/>
+          <circle cx="170" cy="120" r="7" fill="url(#b6bHc)"/>
+          <circle cx="210" cy="154" r="7" fill="#FFFFFF"/>
+          <circle cx="230" cy="188" r="7" fill="#FFFFFF"/>
+          <circle cx="290" cy="222" r="7" fill="#EEF1FF"/>
+          <circle cx="470" cy="256" r="8" fill="#F7B928" stroke="#614300"/>
+        </g>
+
+        <text class="b6bA" x="170" y="64">median first use</text>
+        <text class="b6bA" x="690" y="64">first used after day one</text>
+
+        <text class="b6bL" x="30" y="90">push</text>
+        <text class="b6bL" x="30" y="124">branch created</text>
+        <text class="b6bL" x="30" y="158">wiki edit</text>
+        <text class="b6bL" x="30" y="192">release</text>
+        <text class="b6bL" x="30" y="226">PR opened</text>
+        <text class="b6bL" x="30" y="260">issue opened</text>
+
+        <text class="b6bL" x="184" y="90">0 h</text>
+        <text class="b6bL" x="184" y="124">0 h</text>
+        <text class="b6bL" x="224" y="158">2 h</text>
+        <text class="b6bL" x="244" y="192">3 h</text>
+        <text class="b6bL" x="304" y="226">6 h</text>
+        <text class="b6bB" x="486" y="260">15 h</text>
+
+        <text class="b6bL" x="690" y="90">489 of 3,268</text>
+        <text class="b6bL" x="690" y="124">87 of 5,744</text>
+        <text class="b6bL" x="690" y="158">3 of 11</text>
+        <text class="b6bS" x="750" y="158">small group</text>
+        <text class="b6bL" x="690" y="192">9 of 36</text>
+        <text class="b6bS" x="750" y="192">small group</text>
+        <text class="b6bL" x="690" y="226">64 of 183</text>
+        <text class="b6bS" x="766" y="226">small group</text>
+        <text class="b6bB" x="690" y="260">17 of 44</text>
+        <text class="b6bS" x="760" y="260">small group</text>
+
+        <text class="b6bA" x="170" y="290" text-anchor="middle">0 h</text>
+        <text class="b6bA" x="290" y="290" text-anchor="middle">6 h</text>
+        <text class="b6bA" x="410" y="290" text-anchor="middle">12 h</text>
+        <text class="b6bA" x="530" y="290" text-anchor="middle">18 h</text>
+        <text class="b6bA" x="650" y="290" text-anchor="middle">24 h, day one ends</text>
+
+        <text class="b6bN" x="30" y="312">Push and branch happen in the birth hour. The deliberate features arrive hours later, often after day one.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - a feature used at the moment of setup has a time to adopt of zero, which is the first hint it was not adopted at all</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Depth: the used-again step of the funnel<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Depth is counted only among users: how many sampled uses each user repository had in week one, reported as a median and a mean. The funnel reads born (8,348), used once (the breadth count), used again (two or more uses). The table gives only medians and means, so read the used-again step from what a median can tell you and compute nothing it cannot:</p>
+        <ul>
+          <li><strong>Push:</strong> median 2, mean 3.6 among 3,268 users. A median of 2 means at least half of the pushing repositories pushed again. It is the only feature with that property.</li>
+          <li><strong>Every other feature:</strong> median 1. At least half of each feature's users used it exactly once in the week, branch (mean 1.4) most of all.</li>
+          <li><strong>Mean above median</strong> (issue 2.5, PR 3.3, wiki 3.9) says a few users went deep while most stopped at one. With 11 wiki repositories, that mean is a handful of repositories and nothing more.</li>
+        </ul>
+        <p>Depth counts events in sampled hours, not separate days. Ten pushes in one afternoon and one push on each of ten days both read as depth 10 here; the bench's "seen on 2+ days" rule (5.44x) against "3+ events" (2.93x) is the reason separate days are the better measure of returning.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Time to first use, and who arrives late<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Time to adopt is hours from the birth hour to the first sampled use. Push and branch have a median of 0: they happen in the hour the repository is born, because that is how a repository gets its first code. Wiki (2 h), release (3 h) and PR (6 h) follow, and issues come last at 15 h.</p>
+        <p>The right-hand column matters as much as the median. 17 of the 44 issue-opening repositories first opened one after day one, and 64 of 183 for pull requests. A day-one adoption metric would miss those repositories entirely. The grid samples one hour in two, so every time here is precise to about two hours; that is fine for comparing features and too coarse for anything finer.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What a funnel per repository adds over a funnel per feature<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A funnel per feature is one row of the table: breadth, then depth, then time. A funnel per repository asks, for each repository, which features it reached and in what order. That second view is the one that produces the breadth gradient in Part 3, because it lets you count features per repository. Keep both: the first tells a feature team how their feature did, the second tells the product team what kinds of repository exist.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>Slack's 2,000 messages as a depth threshold.</strong> Stewart Butterfield told First Round Review in 2015 that a team which had exchanged 2,000 messages had "really tried" Slack, based on which companies stuck with them. That is a depth cut-off on the core feature, and it carries a survivorship problem: a team only reaches 2,000 messages by staying long enough to send them, so depth and staying are partly the same fact counted twice. Measure depth inside a fixed early window, as the table here does, and the problem shrinks.</p>
+    </div>
+  </section>
+
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers adopted against valued</span>
+      <h2>Adopted is not valued</h2>
+      <span class="tag concept">5 min live</span>
+    </div>
+    <p class="lede">The fourth column is the one that earns the table its place in a review: of the repositories that used a feature in week one, how many were seen again in days 28 to 41, against the repositories that did not use it. Then count features per repository and the same question produces a gradient. Both are correlations. Neither says a feature makes a repository come back.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 314" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five vertical bars of the came-back rate by how many of the six features a repository used in week one. 0 features, 2,171 repositories, 26.0 percent of the cohort, came back 2.0 percent. 1 feature, 3,289, 39.4 percent, came back 3.0 percent. 2 features, 2,685, 32.2 percent, came back 5.7 percent. 3 features, 187, 2.2 percent, small, came back 11.8 percent. 4 or more features, 16 repositories, 0.2 percent, small, came back 37.5 percent, drawn in gold. A rising arrow marks the gradient and a note says it is a correlation.">
+        <defs>
+          <filter id="b6cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b6cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b6cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b6cH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b6cL { font: 600 12px Inter, sans-serif; fill: #0F1535; }
+          .b6cS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b6cB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b6cV { font: 800 16px Inter, sans-serif; fill: #1030B0; }
+          .b6cN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b6cH" x="30" y="26">THE BREADTH GRADIENT</text>
+        <text class="b6cS" x="30" y="44">came-back rate by how many of the six features a repository used in week one · 8,348 repositories</text>
+
+        <g filter="url(#b6cSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- bars, 4.4 px per point -->
+          <rect x="115" y="231" width="70" height="9" rx="2" fill="url(#b6cHc)"/>
+          <rect x="255" y="227" width="70" height="13" rx="2" transform="rotate(0.5 290 233)" fill="url(#b6cHc)"/>
+          <rect x="395" y="215" width="70" height="25" rx="3" transform="rotate(-0.5 430 227)" fill="url(#b6cHc)"/>
+          <rect x="535" y="188" width="70" height="52" rx="3" transform="rotate(0.4 570 214)" fill="url(#b6cHc)"/>
+          <rect x="675" y="75" width="70" height="165" rx="4" transform="rotate(-0.3 710 157)" fill="#F7B928" stroke="#614300"/>
+          <!-- baseline -->
+          <path d="M80 240 L790 240"/>
+          <!-- the gradient, one rising stroke -->
+          <path d="M200 198 C330 180 520 150 656 98" stroke="#1030B0" stroke-dasharray="6 5" marker-end="url(#b6cAr)"/>
+        </g>
+
+        <text class="b6cH" x="60" y="92">EACH EXTRA FEATURE, A HIGHER RETURN RATE</text>
+        <text class="b6cS" x="60" y="110">a correlation: repositories being worked on use more features and come back</text>
+        <text class="b6cS" x="60" y="126">neither number shows that one causes the other</text>
+
+        <text class="b6cV" x="150" y="223" text-anchor="middle">2.0%</text>
+        <text class="b6cV" x="290" y="219" text-anchor="middle">3.0%</text>
+        <text class="b6cV" x="430" y="207" text-anchor="middle">5.7%</text>
+        <text class="b6cV" x="570" y="180" text-anchor="middle">11.8%</text>
+        <text class="b6cV" x="710" y="67" text-anchor="middle">37.5%</text>
+
+        <text class="b6cL" x="150" y="258" text-anchor="middle">0 features</text>
+        <text class="b6cL" x="290" y="258" text-anchor="middle">1 feature</text>
+        <text class="b6cL" x="430" y="258" text-anchor="middle">2 features</text>
+        <text class="b6cL" x="570" y="258" text-anchor="middle">3 features</text>
+        <text class="b6cL" x="710" y="258" text-anchor="middle">4+ features</text>
+        <text class="b6cS" x="150" y="274" text-anchor="middle">2,171 · 26.0%</text>
+        <text class="b6cS" x="290" y="274" text-anchor="middle">3,289 · 39.4%</text>
+        <text class="b6cS" x="430" y="274" text-anchor="middle">2,685 · 32.2%</text>
+        <text class="b6cS" x="570" y="274" text-anchor="middle">187 · 2.2% · small</text>
+        <text class="b6cB" x="710" y="274" text-anchor="middle">16 repos · small</text>
+
+        <text class="b6cN" x="30" y="298">Came back = seen in days 28 to 41. In the 16-repo group, one repository moves the rate by over 6 points.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the gradient is steady across the three big groups; the gold bar is 16 repositories and should be read as a direction, not a rate</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Users against the rest, feature by feature<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every repository in the cohort is either a user of a feature in week one or not, and each side has a came-back rate. The whole cohort's rate is 3.9 percent (325 of 8,348).</p>
+        <table class="clean">
+          <tr><th>Feature</th><th>Users</th><th>Came back, users</th><th>Came back, the rest</th></tr>
+          <tr><td>branch created</td><td>5,744 · 68.8%</td><td>4.3%</td><td>3.0%</td></tr>
+          <tr><td>push</td><td>3,268 · 39.1%</td><td>6.4%</td><td>2.3%</td></tr>
+          <tr><td>PR opened</td><td>183 · 2.2% · small</td><td>12.0%</td><td>3.7%</td></tr>
+          <tr><td>issue opened</td><td>44 · 0.5% · small</td><td>29.5%</td><td>3.8%</td></tr>
+          <tr><td>release</td><td>36 · 0.4% · small</td><td>11.1%</td><td>3.9%</td></tr>
+          <tr><td>wiki edit</td><td>11 · 0.1% · small</td><td>9.1%</td><td>3.9%</td></tr>
+        </table>
+        <p>The ordering inverts. The widest feature, branch, separates least: 4.3 against 3.0. The rarest deliberate features separate most, with issues at 29.5 against 3.8 on only 44 repositories. Wide adoption and a strong signal are different properties, and a table that only shows breadth rewards the wrong feature.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why branch is the widest and the weakest<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Most of the "branch created" events in week one are the default branch, created as a side effect of the first push into an empty repository. Nobody decided to use branching; the product did it for them. That is why its time to adopt is 0 hours, its depth median is 1, and its users come back barely more often than the rest. "Adopted" was counted from a setup artefact.</p>
+        <p>The fix is in the definition, not the dashboard: count the user's own action. For branches that means a branch other than the first one, or a branch created after day one. The same rule applies to any feature your product switches on by default.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>A predictor, not a lever<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Repositories that open issues or ship releases are, for the most part, projects someone is actively working on, and projects being worked on come back. The gradient is what that looks like counted by features. It does not say that prompting a new repository to open an issue would lift its return rate. Proving a lever needs a randomised test; that design belongs to <a href="https://phoebefu6.github.io/learn-experimentation-with-phoebe/">experimentation</a>, and full return curves by cohort to <a href="https://phoebefu6.github.io/learn-customer-retention-with-phoebe/">customer retention</a>.</p>
+        <p>Three honest limits on the numbers: public repositories only; bots without the <code>[bot]</code> suffix stay in; every count is from one hour in two. The four features under 300 users and the 3-feature and 4+ groups are small groups, and their rates carry that label wherever they are quoted.</p>
+      </div>
+    </details>
+
+    <div class="callout example">
+      <span class="ex-pill">Real world</span>
+      <p><strong>GitHub's own default branch, measured.</strong> On the real cohort, the feature a naive launch dashboard would celebrate, reaching 68.8 percent of new repositories in a week, is mostly GitHub creating the default branch on first push. The measured version of "adopted is not valued" needed no survey: the came-back rate of its users is 4.3 percent against 3.0 for the rest. GitHub's documentation for its Copilot metrics gives the reading rule in one line: "Look for patterns across these signals rather than focusing on any single number".</p>
+    </div>
+  </section>
+
+  <section class="section" id="demo-1">
+    <div class="section-kicker">
+      <span class="klabel">Build-along</span>
+      <h2>Six features, one cohort, four numbers each</h2>
+      <span class="tag demo">★ 22 min · everyone builds</span>
+    </div>
+    <p class="lede">Standard-library Python on the same cache the bench uses. The numbers printed as comments below are what this code prints on that cache; the cohort is deterministic, so yours should match exactly. Building the cache is the slow part: it streams 252 GH Archive hourly files starting at <code>https://data.gharchive.org/2024-03-04-15.json.gz</code>, about 37 GB, and keeps only the cohort's 44,573 events. If you built it for sessions 4 or 8, skip step 1.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The build-along as a hand-drawn pipeline: the 8,348-repository cohort; six feature tests on event type and detail; each repository's uses in week one, sampled hours 0 to 166; four numbers per feature, breadth, depth, time and came-back rate; and the breadth gradient from 0 to 4+ features. Under the boxes: 8,348 repositories in, 6 features, 84 sampled hours, 3,268 pushed, 16 used 4 or more.">
+        <defs>
+          <filter id="b6dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="b6dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1D4AFF" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="b6dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#0F1535" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .b6dH { font: 800 12px Inter, sans-serif; fill: #0F1535; }
+          .b6dL { font: 700 11.5px Inter, sans-serif; fill: #0F1535; }
+          .b6dS { font: 400 11px Inter, sans-serif; fill: #4B5372; }
+          .b6dB { font: 800 11px Inter, sans-serif; fill: #614300; }
+          .b6dW { font: 800 11.5px Inter, sans-serif; fill: #FFFFFF; }
+          .b6dN { font: 400 12px Inter, sans-serif; fill: #4B5372; }
+        </style>
+
+        <text class="b6dH" x="30" y="26">FIVE STEPS, ONE CACHE</text>
+
+        <g filter="url(#b6dSk)" fill="none" stroke="#0F1535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="70" width="130" height="60" rx="6" transform="rotate(-1 95 100)" fill="url(#b6dHc)"/>
+          <rect x="186" y="70" width="130" height="60" rx="8" transform="rotate(0.6 251 100)" fill="#FFFFFF"/>
+          <rect x="342" y="70" width="140" height="60" rx="8" transform="rotate(-0.5 412 100)" fill="#EEF1FF"/>
+          <rect x="508" y="70" width="170" height="60" rx="8" transform="rotate(0.4 593 100)" fill="#1D4AFF" stroke="#1D4AFF"/>
+          <rect x="704" y="70" width="150" height="60" rx="8" transform="rotate(-0.4 779 100)" fill="#F7B928" stroke="#614300"/>
+          <path d="M164 100 L180 100" marker-end="url(#b6dAr)"/>
+          <path d="M320 100 L336 100" marker-end="url(#b6dAr)"/>
+          <path d="M486 100 L502 100" marker-end="url(#b6dAr)"/>
+          <path d="M682 100 L698 100" marker-end="url(#b6dAr)"/>
+        </g>
+
+        <text class="b6dL" x="44" y="96">1 · the cohort</text>
+        <text class="b6dS" x="44" y="114">one per account</text>
+        <text class="b6dL" x="200" y="96">2 · six tests</text>
+        <text class="b6dS" x="200" y="114">type plus detail</text>
+        <text class="b6dL" x="356" y="96">3 · week one</text>
+        <text class="b6dS" x="356" y="114">offsets 0 to 166</text>
+        <text class="b6dW" x="522" y="96">4 · per feature</text>
+        <text class="b6dW" x="522" y="114">breadth, depth, time</text>
+        <text class="b6dL" x="718" y="96">5 · the gradient</text>
+        <text class="b6dB" x="718" y="114">0 to 4+ features</text>
+
+        <text class="b6dS" x="30" y="160">8,348 repos in</text>
+        <text class="b6dS" x="186" y="160">6 features</text>
+        <text class="b6dS" x="342" y="160">84 sampled hours</text>
+        <text class="b6dS" x="508" y="160">push: 3,268 users</text>
+        <text class="b6dS" x="704" y="160">16 used 4+</text>
+
+        <text class="b6dN" x="30" y="206">Step 2 is the only product-specific part. Swap in your own feature tests and the other four steps run unchanged.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - step 4 also prints the came-back rate of users against the rest, which is the column that matters</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step">
+        <p><strong>Build the cohort cache.</strong> Two scripts from <code>materials/</code>, run once. The first streams the hours and keeps only the cohort's events; <code>adoption-numbers.py</code> then runs steps 2 to 5 in one go, and the steps below take it apart.</p>
+        <div class="prompt-box good"><span class="label">★ Step 1 · the cache (skip if you have it)</span>python3 materials/fetch-gharchive-cohort.py cache --workers 6
+# writes cache/cohort.json and cache/cohort-events.jsonl
+# one row per kept event: [offset_hours, type, repo_id, actor_id, actor_login, detail]
+python3 materials/adoption-numbers.py cache      # the whole build-along in one run</div>
+      </div>
+      <div class="step">
+        <p><strong>Write the feature tests.</strong> One rule per feature, on the event type and the detail field. This dictionary is the adoption equivalent of the tracking plan in session 1.</p>
+        <div class="prompt-box good"><span class="label">★ Step 2 · six features as tests</span>FEATS = {
+    "push": lambda t, d: t == "PushEvent",
+    "branch": lambda t, d: t == "CreateEvent" and d == "branch",
+    "issue": lambda t, d: t == "IssuesEvent" and d == "opened",
+    "pr": lambda t, d: t == "PullRequestEvent" and d == "opened",
+    "release": lambda t, d: t == "ReleaseEvent",
+    "wiki": lambda t, d: t == "GollumEvent",
+}</div>
+      </div>
+      <div class="step">
+        <p><strong>Load the events and pick the cohort.</strong> The first new repository of each non-bot account, bot rows dropped, and "came back" as any row in offsets 672 to 1006 (days 28 to 41).</p>
+        <div class="prompt-box good"><span class="label">★ Step 3 · cohort and came back</span>import json, os, statistics
+from collections import defaultdict
+
+def is_bot(login):                      # the same rule as build-activation-sample.py
+    return login.endswith("[bot]")
+
+cache = "cache"
+cohort_all = {int(k): v for k, v in json.load(open(os.path.join(cache, "cohort.json"))).items()}
+ev, birth = defaultdict(list), {}
+for i, line in enumerate(open(os.path.join(cache, "cohort-events.jsonl"))):
+    o, t, rid, aid, login, det = json.loads(line)
+    ev[rid].append((o, t, aid, login, det))
+    if o == 0 and t == "CreateEvent" and det == "repository" and rid not in birth:
+        birth[rid] = i
+first = {}
+for rid, (aid, login, _) in cohort_all.items():
+    if is_bot(login):
+        continue
+    k = birth.get(rid, 10 ** 12)
+    if aid not in first or k &lt; first[aid][0]:
+        first[aid] = (k, rid)
+repos = sorted(rid for _, rid in first.values())
+n = len(repos)
+rows = {r: [e for e in ev[r] if not is_bot(e[3])] for r in repos}
+back = {r: any(672 &lt;= e[0] &lt; 1008 for e in rows[r]) for r in repos}
+print("cohort", n, "came back", sum(back.values()))
+# cohort 8348 came back 325</div>
+      </div>
+      <div class="step">
+        <p><strong>Four numbers per feature.</strong> Uses in offsets 0 to 166, then breadth, depth among users, hours to first use, how many first uses came after day one, and the came-back rate of users against the rest. Each printed line is split over two comment lines below so it fits.</p>
+        <div class="prompt-box good"><span class="label">★ Step 4 · the adoption table</span>for name, test in FEATS.items():
+    uses = {r: [e[0] for e in rows[r] if e[0] &lt; 168 and test(e[1], e[4])] for r in repos}
+    users = [r for r in repos if uses[r]]
+    depth = [len(uses[r]) for r in users]
+    ttime = [min(uses[r]) for r in users]
+    bu = sum(back[r] for r in users) / len(users)
+    non = [r for r in repos if not uses[r]]
+    bn = sum(back[r] for r in non) / len(non)
+    later = sum(1 for x in ttime if x &gt;= 24)
+    print("%-8s breadth %5d = %5.1f%%  depth median %d mean %.1f  first use: median %dh, %d of %d after day one"
+          "  back: users %.1f%% vs rest %.1f%%" % (
+              name, len(users), 100 * len(users) / n, statistics.median(depth), statistics.mean(depth),
+              statistics.median(ttime), later, len(users), 100 * bu, 100 * bn))
+# push     breadth  3268 =  39.1%  depth median 2 mean 3.6
+#          first use: median 0h, 489 of 3268 after day one  back: users 6.4% vs rest 2.3%
+# branch   breadth  5744 =  68.8%  depth median 1 mean 1.4
+#          first use: median 0h, 87 of 5744 after day one  back: users 4.3% vs rest 3.0%
+# issue    breadth    44 =   0.5%  depth median 1 mean 2.5
+#          first use: median 15h, 17 of 44 after day one  back: users 29.5% vs rest 3.8%
+# pr       breadth   183 =   2.2%  depth median 1 mean 3.3
+#          first use: median 6h, 64 of 183 after day one  back: users 12.0% vs rest 3.7%
+# release  breadth    36 =   0.4%  depth median 1 mean 2.2
+#          first use: median 3h, 9 of 36 after day one  back: users 11.1% vs rest 3.9%
+# wiki     breadth    11 =   0.1%  depth median 1 mean 3.9
+#          first use: median 2h, 3 of 11 after day one  back: users 9.1% vs rest 3.9%</div>
+      </div>
+      <div class="step">
+        <p><strong>The breadth gradient.</strong> Count how many of the six features each repository used in week one, group 0, 1, 2, 3 and 4 or more, and print each group's size and came-back rate.</p>
+        <div class="prompt-box good"><span class="label">★ Step 5 · features per repository</span>breadth = [sum(1 for f, test in FEATS.items()
+                if any(e[0] &lt; 168 and test(e[1], e[4]) for e in rows[r])) for r in repos]
+for k in range(0, 5):
+    grp = [r for r, b in zip(repos, breadth) if (b == k if k &lt; 4 else b &gt;= 4)]
+    if grp:
+        print("used %s%d features: %5d repos (%5.1f%%), came back %.1f%%" % (
+            "" if k &lt; 4 else "&gt;=", k, len(grp), 100 * len(grp) / n,
+            100 * sum(back[r] for r in grp) / len(grp)))
+# used 0 features:  2171 repos ( 26.0%), came back 2.0%
+# used 1 features:  3289 repos ( 39.4%), came back 3.0%
+# used 2 features:  2685 repos ( 32.2%), came back 5.7%
+# used 3 features:   187 repos (  2.2%), came back 11.8%
+# used &gt;=4 features:    16 repos (  0.2%), came back 37.5%</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Print the group size next to every rate.</strong> The script does, and it is the habit that stops a 16-repository 37.5 percent from being read as a law. Any row under 300 gets a "small" flag in the report you hand on, and the flag travels with the number into every deck.</p>
+    </div>
+  </section>
+
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Homework</span>
+      <h2>Before session 7</h2>
+      <span class="tag exercise">30 min</span>
+    </div>
+    <ol>
+      <li><strong>Separate the setup artefact.</strong> Change the branch test so the first branch created in the birth hour does not count, re-run step 4, and write down whether branch's gap between users and the rest widens or narrows.</li>
+      <li><strong>Move the window.</strong> Replace <code>e[0] &lt; 168</code> with <code>e[0] &lt; 24</code> (day one only) and compare breadth for issues and pull requests against the week-one table. Say in one sentence which features a day-one metric undersells.</li>
+      <li><strong>Add a seventh feature</strong>, for example a fork or a star received, from the event types already in the cache, and place it in the table. Flag it as small if it has fewer than 300 users.</li>
+      <li><strong>Write the four-column adoption table for one feature in your own product,</strong> with its denominator and window stated above it, and mark which column you could not fill today.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+    <p>Clear all three and analyst session 6 gets stamped in your passport.</p>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · "Branch created" reaches 68.8 percent of new repositories in week one, yet its users come back at 4.3 percent against 3.0 for the rest. What explains the weak signal?</p>
+      <button class="qopt" type="button">A · Branching is a feature nobody values</button>
+      <button class="qopt" type="button">B · The sample of branch users is too small to read</button>
+      <button class="qopt" type="button">C · Most of it is the default branch created by the first push, a setup artefact the product performs, so "adopted" was counted from something nobody chose</button>
+      <button class="qopt" type="button">D · Branch events are sent by bots</button>
+      <p class="qwhy">5,744 repositories is the largest group in the table, so size is not the problem. Its time to adopt of 0 hours and depth median of 1 point the same way: count the user's own branches, not the one the product made.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">2 · Push has a depth median of 2; every other feature has a median of 1. What can you say about the used-again step of each funnel without computing anything new?</p>
+      <button class="qopt" type="button">A · At least half of pushing repositories pushed again in week one, and for every other feature at least half of its users used it exactly once</button>
+      <button class="qopt" type="button">B · Exactly half of every feature's users used it again</button>
+      <button class="qopt" type="button">C · Push users are twice as valuable as other users</button>
+      <button class="qopt" type="button">D · Nothing; medians say nothing about a distribution</button>
+      <p class="qwhy">A median splits the users in half, so it bounds the used-again share from one side. A mean above the median, like wiki's 3.9 on 11 repositories, says a few users went deep, and on a small group that is a handful of rows.</p>
+    </div>
+
+    <div class="quiz-q" data-answer="3">
+      <p class="qtext">3 · Repositories using 4 or more features come back at 37.5 percent. How should that number appear in a review?</p>
+      <button class="qopt" type="button">A · As proof that nudging users toward four features will lift return to 37.5 percent</button>
+      <button class="qopt" type="button">B · As the new activation target for every team</button>
+      <button class="qopt" type="button">C · It should be removed, because small groups are always wrong</button>
+      <button class="qopt" type="button">D · As the top of a steady gradient (2.0, 3.0, 5.7, 11.8 percent), flagged as 16 repositories, and described as a correlation that an experiment would have to test</button>
+      <p class="qwhy">The three large groups carry the gradient; the 16-repository group shows its direction. Repositories being worked on use more features and come back, and only a randomised test can say whether pushing a feature changes return.</p>
+    </div>
+
+    <p class="quiz-score"></p>
+  </section>
+
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Sources covered</span>
+      <h2>What this session teaches, and where it came from</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Breadth, depth, time to first use and came-back rate for six features</span><span class="note">Measured on the 8,348-repository GH Archive cohort by <code>adoption-numbers.py</code>, the code on this page</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The breadth gradient, 0 to 4+ features</span><span class="note">Measured, same script; the 187 and 16 repository groups flagged as small</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Event types used as feature tests</span><span class="note">GitHub Docs, "GitHub event types": CreateEvent ref_type, IssuesEvent and PullRequestEvent actions</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Slack's 2,000 messages as a depth threshold</span><span class="note">Stewart Butterfield in First Round Review (2015), read at source, taught with its survivorship problem</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">"Look for patterns across these signals"</span><span class="note">GitHub Docs, Copilot metrics concepts page, read at source</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Whether any feature causes return</span><span class="note">Not answerable from observational rows; needs an experiment</span></div>
+    </div>
+    <p class="mono" style="margin-top:14px">Every fact on this page, and its verification tier, is recorded in the course's source map.</p>
+  </section>
+
+  <section class="cheat" id="cheatsheet">
+    <h3>Analyst session 6 cheat sheet <span>· pin this</span></h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Four columns</b><span>Breadth, depth, time to first use, came back: users against the rest.</span></div>
+      <div class="cheat-item"><b>State denominator and window</b><span>Here: all 8,348 repositories, first 7 days.</span></div>
+      <div class="cheat-item"><b>Widest is not strongest</b><span>Branch 68.8% reach, 4.3% vs 3.0%. Issue 0.5% reach, 29.5% vs 3.8%.</span></div>
+      <div class="cheat-item"><b>Zero hours is a warning</b><span>A feature adopted at the moment of setup was probably done by the product.</span></div>
+      <div class="cheat-item"><b>Read medians as bounds</b><span>Median 2 means half used it again; median 1 means half stopped at one.</span></div>
+      <div class="cheat-item"><b>Gradient, not lever</b><span>2.0% to 37.5% across 0 to 4+ features; 16 repos at the top. Correlation.</span></div>
+    </div>
+  </section>
+
+  <div class="callout next">
+    <span class="nx-pill">Next session</span>
+    <p>Session 7 takes the four columns to an AI feature, where "used" splits again: a suggestion is shown, accepted, then kept, edited or deleted. On a constructed code-assistant stream of 119,905 suggestions, the long-suggestion version wins on acceptance (0.309 against 0.262) and the short one wins on what is still there ten minutes later, so the metric has to be chosen for the decision.</p>
+  </div>
+
+  <footer class="pagefoot">
+    <span>Analyst session 6 of 8 · learn-product-analytics-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="b5-the-power-user-curve.html">← Prev: The power-user curve from real rows</a> &nbsp;·&nbsp; <a href="b7-ai-feature-metrics.html">Next: AI feature metrics →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=2"></script>
+</body>
+</html>
