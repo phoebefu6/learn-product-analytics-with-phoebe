@@ -52,7 +52,7 @@ body {
   font-size: .75rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  opacity: .85;
+  opacity: 1;
   font-weight: 600;
 }
 .masthead h1 {
@@ -63,7 +63,7 @@ body {
   letter-spacing: -.02em;
 }
 .masthead h1 .accent { color: inherit; }
-.masthead .sub { font-size: 1.05rem; opacity: .92; max-width: 44rem; }
+.masthead .sub { font-size: 1.05rem; opacity: 1; max-width: 44rem; }
 
 .chip-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
 .chip {
@@ -562,7 +562,7 @@ details.card summary:hover { background: #EEF1FF; }
   margin-top: 1.1rem;
   flex-wrap: wrap;
 }
-.journey .jlabel { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; opacity: .8; margin-right: .3rem; }
+.journey .jlabel { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; opacity: 1; margin-right: .3rem; }
 .journey a {
   width: 1.7rem; height: 1.7rem;
   border-radius: 999px;
@@ -1150,7 +1150,7 @@ figure.zoomable.can-scroll figcaption::after {
   background: var(--indigo-50); color: var(--indigo-deep);
   border: 1px solid var(--indigo-soft); cursor: default;
 }
-.pp-pill.full { background: var(--amber); color: var(--amber-ink); border-color: var(--amber); }
+.pp-pill.full { background: var(--amber); color: #0F1535; border-color: var(--amber); }
 .pp-strip { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 6px; }
 .pp-stamp {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -1160,7 +1160,7 @@ figure.zoomable.can-scroll figcaption::after {
   transition: all .18s ease;
 }
 .pp-stamp:hover { border-color: var(--indigo-soft); }
-.pp-stamp i { font-size: 1.3rem; font-style: normal; opacity: .35; }
+.pp-stamp i { font-size: 1.3rem; font-style: normal; opacity: .7; }
 .pp-stamp b { font: 800 0.7rem Inter, sans-serif; }
 .pp-stamp.got {
   border-style: solid; border-color: var(--indigo);
